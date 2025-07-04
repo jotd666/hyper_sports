@@ -12,6 +12,38 @@
 ;	map(0x3000, 0x37ff).ram();
 ;	map(0x3800, 0x3fff).ram().share("nvram");
 ;	map(0x4000, 0xffff).rom();
+;	ls259_device &mainlatch(LS259(config, "mainlatch")); // F2
+;	mainlatch.q_out_cb<0>().set(FUNC(base_state::flip_screen_set));
+;	mainlatch.q_out_cb<1>().set(m_soundbrd, FUNC(trackfld_audio_device::sh_irqtrigger_w)); // SOUND ON
+;	mainlatch.q_out_cb<2>().set_nop(); // END
+;	mainlatch.q_out_cb<3>().set(FUNC(base_state::coin_counter_w<0>)); // COIN 1
+;	mainlatch.q_out_cb<4>().set(FUNC(base_state::coin_counter_w<1>)); // COIN 2
+;	mainlatch.q_out_cb<5>().set_nop(); // SA
+;	mainlatch.q_out_cb<7>().set(FUNC(base_state::irq_mask_w)); // INT
+
+; page $38xx
+
+game_playing_00 = $00
+dsw2_copy_0d = $0d
+event_pointer_1c = $1c
+watchdog_1400 = $1400
+sound_queue_3340 = $3340
+
+dsw2_1600 = $1600
+system_1680 = $1680
+in0_1681 = $1681
+in1_1682 = $1682
+dsw1_1683 = $1683
+sprite_ram_1000 = $1000
+scroll_registers_10c0 = $10c0
+flip_screen_set_1480 = $1480
+sh_irqtrigger_w_1481 = $1481
+coin_counter_1_w_1483 = $1483
+coin_counter_1_w_1484 = $1484
+irq_mask_w_1487 = $1487
+audio_register_w_1500 = $1500
+video_ram_2000 = $2000
+color_ram_2800 = $2800
 
 ;	PORT_START("SYSTEM")
 ;	PORT_BIT( 0x01, IP_ACTIVE_LOW, IPT_COIN1 )
@@ -81,10 +113,6 @@
 
 
 
-game_playing_00 = $00
-dsw2_copy_0d = $0d
-event_pointer_1c = $1c
-sound_queue_3340 = $3340
 
 4000: 7F 36 05       CLR    $1487
 4003: 10 CE 15 02    LDS    #$3780
@@ -96,19 +124,19 @@ sound_queue_3340 = $3340
 4013: 5F             CLRB
 4014: E7 AB 8A 82    STB    $0800,X
 4018: A7 A8          STA    ,X+
-401A: B7 9C 28       STA    $1400
+401A: B7 9C 28       STA    watchdog_1400
 401D: 8C A0 88       CMPX   #$2800
 4020: 26 D0          BNE    $4014
 4022: 86 83          LDA    #$01
 4024: 8E 12 82       LDX    #$3000
 4027: 6F A8          CLR    ,X+
-4029: B7 9C 88       STA    $1400
+4029: B7 9C 88       STA    watchdog_1400
 402C: 8C 10 88       CMPX   #$3800
 402F: 26 D4          BNE    $4027
 4031: 8E 92 82       LDX    #$1000
 4034: 6F A2          CLR    ,X+
-4036: B7 96 28       STA    $1400
-4039: 8C 9C 88       CMPX   #$1400
+4036: B7 96 28       STA    watchdog_1400
+4039: 8C 9C 88       CMPX   #watchdog_1400
 403C: 26 DE          BNE    $4034
 403E: 4F             CLRA
 403F: 5F             CLRB
@@ -124,7 +152,7 @@ sound_queue_3340 = $3340
 4049: 12             NOP
 404A: 12             NOP
 404B: 12             NOP
-404C: B7 3C 88       STA    $1400
+404C: B7 3C 88       STA    watchdog_1400
 404F: 4A             DECA
 4050: 26 CC          BNE    $4040
 4052: 5A             DECB
@@ -199,7 +227,7 @@ sound_queue_3340 = $3340
 40D9: A7 08          STA    ,X+
 40DB: A7 A8          STA    ,X+
 40DD: A7 08          STA    ,X+
-40DF: B7 36 22       STA    $1400
+40DF: B7 36 22       STA    watchdog_1400
 40E2: 0A C3          DEC    $41
 40E4: 0C 60          INC    $42
 40E6: 0A C1          DEC    $43
@@ -243,7 +271,7 @@ sound_queue_3340 = $3340
 4138: 6F A1 80 88    CLR    $0800,X
 413C: 6F A1 80 89    CLR    $0801,X
 4140: ED A3          STD    ,X++
-4142: B7 96 22       STA    $1400
+4142: B7 96 22       STA    watchdog_1400
 4145: 8C AA 82       CMPX   #$2800
 4148: 26 C6          BNE    $4138
 414A: FC B7 28       LDD    $3F00
@@ -253,7 +281,7 @@ sound_queue_3340 = $3340
 4156: CE BD A8       LDU    #$3F80
 4159: C6 DF          LDB    #$57
 415B: A6 A8          LDA    ,X+
-415D: B7 9C 88       STA    $1400
+415D: B7 9C 88       STA    watchdog_1400
 4160: A1 E2          CMPA   ,U+
 4162: 26 87          BNE    $4169
 4164: 5A             DECB
@@ -271,13 +299,13 @@ sound_queue_3340 = $3340
 4183: 97 6A          STA    $48
 4185: A6 02          LDA    ,X+
 4187: 80 18          SUBA   #$30
-4189: B7 9C 88       STA    $1400
+4189: B7 9C 88       STA    watchdog_1400
 418C: BD 6A A4       JSR    $422C
 418F: 0A 6A          DEC    $48
 4191: 26 70          BNE    $4185
 4193: 4F             CLRA
 4194: 5F             CLRB
-4195: B7 96 82       STA    $1400
+4195: B7 96 82       STA    watchdog_1400
 4198: 12             NOP
 4199: 12             NOP
 419A: 12             NOP
@@ -307,7 +335,7 @@ sound_queue_3340 = $3340
 41C2: 26 81          BNE    $41C7
 41C4: 8E 11 82       LDX    #$3300
 41C7: 9F 36          STX    $1E
-41C9: 8E 47 B8       LDX    #$CF30
+41C9: 8E 47 B8       LDX   #table_cf30
 41CC: AD BE          JSR    [A,X]		; [jump_table]
 41CE: 20 69          BRA    $41B1
 
@@ -701,14 +729,14 @@ sound_queue_3340 = $3340
 44F2: 7E C0 0F       JMP    $422D
 44F5: 7F 96 05       CLR    $1487
 44F8: 86 29          LDA    #$01
-44FA: B7 9C 28       STA    $1400
+44FA: B7 9C 28       STA    watchdog_1400
 44FD: BD CD 94       JSR    $451C
 4500: BD 67 C6       JSR    $4544
 4503: BD 67 F6       JSR    $45D4
 4506: 0C 8D          INC    $0F
 4508: 96 08          LDA    $20
 450A: 48             ASLA
-450B: 8E FB 12       LDX    #$D33A
+450B: 8E FB 12       LDX   #table_d33a
 450E: AD 1E          JSR    [A,X]		; [jump_table]
 4510: BD 6D 50       JSR    $4FD2
 4513: BD 6D 9F       JSR    $4FBD
@@ -840,14 +868,14 @@ sound_queue_3340 = $3340
 45F7: BD A1 CB       JSR    $89E3
 45FA: 96 AA          LDA    $22
 45FC: 48             ASLA
-45FD: 8E 5B CC       LDX    #$D344
+45FD: 8E 5B CC       LDX   #table_d344
 4600: 6E B4          JMP    [A,X]		; [jump_table]
-4602: 8E 51 6E       LDX    #$D34C
+4602: 8E 51 6E       LDX   #table_d34c
 4605: 96 A0          LDA    $22
 4607: 48             ASLA
 4608: 6E BE          JMP    [A,X]		; [jump_table]
 460A: 7F 9C A8       CLR    $1480
-460D: 8E 5B DA       LDX    #$D352
+460D: 8E 5B DA       LDX   #table_d352
 4610: 96 06          LDA    $24
 4612: 48             ASLA
 4613: AD B4          JSR    [A,X]		; [jump_table]
@@ -937,15 +965,15 @@ sound_queue_3340 = $3340
 46C6: 0F A6          CLR    $24
 46C8: 39             RTS
 
-46C9: 8E 5B D0       LDX    #$D358
+46C9: 8E 5B D0       LDX   #table_d358
 46CC: 96 0E          LDA    $26
 46CE: 48             ASLA
 46CF: 6E B4          JMP    [A,X]		; [jump_table]
 46D1: 96 AA          LDA    $28
 46D3: 48             ASLA
-46D4: 8E F1 E4       LDX    #$D366
+46D4: 8E F1 E4       LDX   #table_d366
 46D7: 6E BE          JMP    [A,X]		; [jump_table]
-46D9: 8E 5B E4       LDX    #$D36C
+46D9: 8E 5B E4       LDX   #table_d36c
 46DC: 96 02          LDA    $2A
 46DE: 48             ASLA
 46DF: 6E B4          JMP    [A,X]		; [jump_table]
@@ -1065,7 +1093,7 @@ sound_queue_3340 = $3340
 47D6: BD D4 F4       JSR    $56DC
 47D9: 96 A0          LDA    $28
 47DB: 48             ASLA
-47DC: 8E FB FF       LDX    #$D377
+47DC: 8E FB FF       LDX   #table_d377
 47DF: 6E B4          JMP    [A,X]		; [jump_table]
 47E1: 4F             CLRA
 47E2: 5F             CLRB
@@ -1126,18 +1154,18 @@ sound_queue_3340 = $3340
 4869: 0C A0          INC    $28
 486B: 39             RTS
 
-486C: 8E FB 0F       LDX    #$D387
+486C: 8E FB 0F       LDX   #table_d387
 486F: 96 08          LDA    $2A
 4871: 48             ASLA
 4872: 6E 14          JMP    [A,X]		; [jump_table]
-4874: 8E F1 19       LDX    #$D39B
+4874: 8E F1 19       LDX   #table_d39b
 4877: 96 41          LDA    $69
 4879: 48             ASLA
 487A: AD 1E          JSR    [A,X]		; [jump_table]
 487C: 0C 02          INC    $2A
 487E: 39             RTS
 
-487F: 8E F1 8B       LDX    #$D3A9
+487F: 8E F1 8B       LDX   #table_d3a9
 4882: 96 EB          LDA    $69
 4884: 48             ASLA
 4885: AD 14          JSR    [A,X]		; [jump_table]
@@ -1319,12 +1347,12 @@ sound_queue_3340 = $3340
 49FC: BD 7E 54       JSR    $56DC
 49FF: 96 4B          LDA    $69
 4A01: 48             ASLA
-4A02: 8E 51 95       LDX    #$D3B7
+4A02: 8E 51 95       LDX   #table_d3b7
 4A05: 6E 14          JMP    [A,X]		; [jump_table]
 4A07: BD 70 04       JSR    $582C
 4A0A: BD DA E4       JSR    $52CC
 4A0D: BD DE 54       JSR    $56DC
-4A10: 8E F1 47       LDX    #$D3C5
+4A10: 8E F1 47       LDX   #table_d3c5
 4A13: 96 0A          LDA    $28
 4A15: 48             ASLA
 4A16: 6E 14          JMP    [A,X]		; [jump_table]
@@ -1683,7 +1711,7 @@ sound_queue_3340 = $3340
 4D05: 0F AA          CLR    $28
 4D07: 39             RTS
 
-4D08: 8E FB 57       LDX    #$D3DF
+4D08: 8E FB 57       LDX   #table_d3df
 4D0B: 96 00          LDA    $28
 4D0D: 48             ASLA
 4D0E: 6E 1E          JMP    [A,X]		; [jump_table]
@@ -1715,7 +1743,7 @@ sound_queue_3340 = $3340
 4D40: 0C 0A          INC    $28
 4D42: 39             RTS
 
-4D43: 8E F1 CF       LDX    #$D3ED
+4D43: 8E F1 CF       LDX   #table_d3ed
 4D46: 96 A8          LDA    $2A
 4D48: 48             ASLA
 4D49: 6E 1E          JMP    [A,X]		; [jump_table]
@@ -1845,7 +1873,7 @@ sound_queue_3340 = $3340
 4E33: 0F 0A          CLR    $28
 4E35: 39             RTS
 
-4E36: 8E 51 D9       LDX    #$D3F1
+4E36: 8E 51 D9       LDX   #table_d3f1
 4E39: 96 A0          LDA    $28
 4E3B: 48             ASLA
 4E3C: 6E BE          JMP    [A,X]		; [jump_table]
@@ -2849,7 +2877,7 @@ queue_sound_event_4ead:
 55B3: 39             RTS
 
 55B4: 8E 12 22       LDX    #$30A0
-55B7: CE FC 2D       LDU    #$D405
+55B7: CE FC 2D       LDU   #table_d405
 55BA: 96 E1          LDA    $69
 55BC: 48             ASLA
 55BD: 6E 5E          JMP    [A,U]		; [jump_table]
@@ -4193,11 +4221,11 @@ queue_sound_event_4ead:
 6099: DD 30          STD    $B8
 609B: 39             RTS
 
-609C: 8E FC 57       LDX    #$D4DF
+609C: 8E FC 57       LDX   #table_d4df
 609F: 96 0A          LDA    $28
 60A1: 48             ASLA
 60A2: 6E 14          JMP    [A,X]		; [jump_table]
-60A4: 8E F6 71       LDX    #$D4F3
+60A4: 8E F6 71       LDX   #table_d4f3
 60A7: 96 02          LDA    $2A
 60A9: 48             ASLA
 60AA: 6E 1E          JMP    [A,X]		; [jump_table]
@@ -4394,7 +4422,7 @@ queue_sound_event_4ead:
 623C: 39             RTS
 
 623D: 8E B8 28       LDX    #$30A0
-6240: CE F6 75       LDU    #$D4F7
+6240: CE F6 75       LDU   #table_d4f7
 6243: 96 08          LDA    $2A
 6245: 48             ASLA
 6246: 6E 54          JMP    [A,U]		; [jump_table]
@@ -4446,7 +4474,7 @@ queue_sound_event_4ead:
 62AA: 39             RTS
 
 62AB: 8E 18 88       LDX    #$30A0
-62AE: CE 5D 25       LDU    #$D507
+62AE: CE 5D 25       LDU   #table_d507
 62B1: 96 A8          LDA    $2A
 62B3: 48             ASLA
 62B4: 6E F4          JMP    [A,U]		; [jump_table]
@@ -4499,7 +4527,7 @@ queue_sound_event_4ead:
 631A: 39             RTS
 
 631B: 8E 18 88       LDX    #$30A0
-631E: CE 5D 29       LDU    #$D50B
+631E: CE 5D 29       LDU   #table_d50b
 6321: 96 A8          LDA    $2A
 6323: 48             ASLA
 6324: 6E F4          JMP    [A,U]		; [jump_table]
@@ -4544,7 +4572,7 @@ queue_sound_event_4ead:
 6375: 39             RTS
 
 6376: 8E B2 88       LDX    #$30A0
-6379: CE 5D 87       LDU    #$D50F
+6379: CE 5D 87       LDU   #table_d50f
 637C: 96 02          LDA    $2A
 637E: 48             ASLA
 637F: 6E F4          JMP    [A,U]		; [jump_table]
@@ -4654,7 +4682,7 @@ queue_sound_event_4ead:
 6454: 39             RTS
 
 6455: 8E B2 22       LDX    #$30A0
-6458: CE FD 9D       LDU    #$D515
+6458: CE FD 9D       LDU   #table_d515
 645B: 96 02          LDA    $2A
 645D: 48             ASLA
 645E: 6E 5E          JMP    [A,U]		; [jump_table]
@@ -4759,7 +4787,7 @@ queue_sound_event_4ead:
 6535: 39             RTS
 
 6536: 8E B2 88       LDX    #$30A0
-6539: CE 5D AB       LDU    #$D523
+6539: CE 5D AB       LDU   #table_d523
 653C: 96 02          LDA    $2A
 653E: 48             ASLA
 653F: 6E F4          JMP    [A,U]		; [jump_table]
@@ -4825,11 +4853,11 @@ queue_sound_event_4ead:
 65B4: 39             RTS
 
 65B5: 7E E6 7E       JMP    $64FC
-65B8: 8E FD A3       LDX    #$D52B
+65B8: 8E FD A3       LDX   #table_d52b
 65BB: 96 00          LDA    $28
 65BD: 48             ASLA
 65BE: 6E 1E          JMP    [A,X]		; [jump_table]
-65C0: 8E F7 B7       LDX    #$D535
+65C0: 8E F7 B7       LDX   #table_d535
 65C3: 96 08          LDA    $2A
 65C5: 48             ASLA
 65C6: 6E 14          JMP    [A,X]		; [jump_table]
@@ -4875,7 +4903,7 @@ queue_sound_event_4ead:
 
 6620: 8E 12 22       LDX    #$30A0
 6623: 0F 3B          CLR    $19
-6625: CE 57 BB       LDU    #$D539
+6625: CE 57 BB       LDU   #table_d539
 6628: 96 02          LDA    $2A
 662A: 48             ASLA
 662B: 6E FE          JMP    [A,U]		; [jump_table]
@@ -5158,7 +5186,7 @@ queue_sound_event_4ead:
 6863: 97 47          STA    $65
 6865: 0F A3          CLR    $21
 6867: 8E 18 88       LDX    #$30A0
-686A: CE 5D 65       LDU    #$D54D
+686A: CE 5D 65       LDU   #table_d54d
 686D: A6 0C          LDA    ,X
 686F: 81 25          CMPA   #$07
 6871: 26 80          BNE    $6875
@@ -5436,10 +5464,10 @@ queue_sound_event_4ead:
 6AC5: 34 D2          PSHS   U,X
 6AC7: 96 31          LDA    $19
 6AC9: 97 FF          STA    $77
-6ACB: CE FD 75       LDU    #$D55D
+6ACB: CE FD 75       LDU   #table_d55d
 6ACE: 96 91          LDA    $19
 6AD0: 48             ASLA
-6AD1: AD 54          JSR    [A,U]
+6AD1: AD 54          JSR    [A,U]        ; [jump_table]
 6AD3: 96 55          LDA    $77
 6AD5: 97 9B          STA    $19
 6AD7: 35 78          PULS   X,U
@@ -5466,10 +5494,10 @@ queue_sound_event_4ead:
 6AFE: BD C6 91       JSR    $4EB3
 6B01: 39             RTS
 
-6B02: 8E 57 47       LDX    #$D565
+6B02: 8E 57 47       LDX   #table_d565
 6B05: 96 A8          LDA    $2A
 6B07: 48             ASLA
-6B08: 6E BE          JMP    [A,X]
+6B08: 6E BE          JMP    [A,X]        ; [jump_table]
 6B0A: 8E BA B8       LDX    #$3290
 6B0D: CE 5D E1       LDU    #$D569
 6B10: 86 26          LDA    #$04
@@ -5561,14 +5589,14 @@ queue_sound_event_4ead:
 6BCB: 39             RTS
 
 6BCC: 8E 18 28       LDX    #$30A0
-6BCF: CE F7 53       LDU    #$D571
+6BCF: CE F7 53       LDU   #table_d571
 6BD2: 96 AA          LDA    $28
 6BD4: 48             ASLA
-6BD5: 6E 54          JMP    [A,U]
-6BD7: CE FD A5       LDU    #$D58D
+6BD5: 6E 54          JMP    [A,U]        ; [jump_table]
+6BD7: CE FD A5       LDU   #table_d58d
 6BDA: 96 A2          LDA    $2A
 6BDC: 48             ASLA
-6BDD: 6E 5E          JMP    [A,U]
+6BDD: 6E 5E          JMP    [A,U]        ; [jump_table]
 6BDF: BD A0 85       JSR    $82A7
 6BE2: CC 8E 32       LDD    #$0C10
 6BE5: FD B1 F7       STD    $3375
@@ -5591,10 +5619,10 @@ queue_sound_event_4ead:
 6C0A: 0F A2          CLR    $2A
 6C0C: 39             RTS
 
-6C0D: CE 5D 19       LDU    #$D591
+6C0D: CE 5D 19       LDU   #table_d591
 6C10: 96 08          LDA    $2A
 6C12: 48             ASLA
-6C13: 6E F4          JMP    [A,U]
+6C13: 6E F4          JMP    [A,U]        ; [jump_table]
 6C15: 0D 82          TST    game_playing_00
 6C17: 27 2F          BEQ    $6C20
 6C19: BD C7 29       JSR    $4FA1
@@ -5735,10 +5763,10 @@ queue_sound_event_4ead:
 6D35: 97 AA          STA    $28
 6D37: 39             RTS
 
-6D38: CE FD 11       LDU    #$D599
+6D38: CE FD 11       LDU   #table_d599
 6D3B: 96 02          LDA    $2A
 6D3D: 48             ASLA
-6D3E: 6E 5E          JMP    [A,U]
+6D3E: 6E 5E          JMP    [A,U]        ; [jump_table]
 6D40: CE F7 1D       LDU    #$D59F
 6D43: 96 C9          LDA    $EB
 6D45: A6 44          LDA    A,U
@@ -6075,10 +6103,10 @@ queue_sound_event_4ead:
 6FFF: 7C 16 C5       INC    $34E7
 7002: C6 8B          LDB    #$09
 7004: 20 D2          BRA    $6FF6
-7006: CE 57 C0       LDU    #$D5E8
+7006: CE 57 C0       LDU   #table_d5e8
 7009: 96 A2          LDA    $2A
 700B: 48             ASLA
-700C: 6E FE          JMP    [A,U]
+700C: 6E FE          JMP    [A,U]        ; [jump_table]
 
 700E: BD 48 05       JSR    $C027
 7011: AB 80          ADDA   $2,X
@@ -6137,10 +6165,10 @@ queue_sound_event_4ead:
 
 7074: BD A2 F5       JSR    $8077
 7077: 8E 18 88       LDX    #$30A0
-707A: CE 5D C4       LDU    #$D5EC
+707A: CE 5D C4       LDU   #table_d5ec
 707D: 96 A2          LDA    $2A
 707F: 48             ASLA
-7080: 6E F4          JMP    [A,U]
+7080: 6E F4          JMP    [A,U]        ; [jump_table]
 7082: 86 DE          LDA    #$5C
 7084: A7 23          STA    $1,X
 7086: 86 A0          LDA    #$22
@@ -6211,10 +6239,10 @@ queue_sound_event_4ead:
 7108: 0A 00          DEC    $28
 710A: 39             RTS
 
-710B: CE FE 2D       LDU    #$D605
+710B: CE FE 2D       LDU   #table_d605
 710E: 96 A2          LDA    $2A
 7110: 48             ASLA
-7111: 6E 54          JMP    [A,U]
+7111: 6E 54          JMP    [A,U]        ; [jump_table]
 7113: 86 74          LDA    #$56
 7115: A7 83          STA    $1,X
 7117: 86 4C          LDA    #$64
@@ -6270,10 +6298,10 @@ queue_sound_event_4ead:
 717E: 0F A2          CLR    $2A
 7180: 39             RTS
 
-7181: CE 54 8B       LDU    #$D609
+7181: CE 54 8B       LDU   #table_d609
 7184: 96 08          LDA    $2A
 7186: 48             ASLA
-7187: 6E FE          JMP    [A,U]
+7187: 6E FE          JMP    [A,U]        ; [jump_table]
 7189: 0A A1          DEC    $29
 718B: 26 2A          BNE    $718F
 718D: 0C A2          INC    $2A
@@ -6285,10 +6313,10 @@ queue_sound_event_4ead:
 7196: 0F A8          CLR    $2A
 7198: 39             RTS
 
-7199: CE 5E 9B       LDU    #$D613
+7199: CE 5E 9B       LDU   #table_d613
 719C: 96 02          LDA    $2A
 719E: 48             ASLA
-719F: 6E F4          JMP    [A,U]
+719F: 6E F4          JMP    [A,U]        ; [jump_table]
 71A1: 0A AB          DEC    $29
 71A3: 26 20          BNE    $71A7
 71A5: 0C A8          INC    $2A
@@ -6601,11 +6629,11 @@ queue_sound_event_4ead:
 7420: 86 21          LDA    #$03
 7422: 97 CA          STA    $48
 7424: 7E 72 53       JMP    $50D1
-7427: CE FE 02       LDU    #$D62A
+7427: CE FE 02       LDU   #table_d62a
 742A: 96 28          LDA    $A0
 742C: 80 2A          SUBA   #$02
 742E: 48             ASLA
-742F: 6E F4          JMP    [A,U]
+742F: 6E F4          JMP    [A,U]        ; [jump_table]
 7431: DC 32          LDD    $B0
 7433: 10 83 23 87    CMPD   #$0105
 7437: 25 21          BCS    $7442
@@ -7065,12 +7093,12 @@ queue_sound_event_4ead:
 782F: 26 C1          BNE    $7814
 7831: 39             RTS
 
-7832: CE 54 12       LDU    #$D630
+7832: CE 54 12       LDU   #table_d630
 7835: A6 06          LDA    ,X
 7837: 81 2B          CMPA   #$03
 7839: 24 8B          BCC    $783E
 783B: 48             ASLA
-783C: 6E FE          JMP    [A,U]
+783C: 6E FE          JMP    [A,U]        ; [jump_table]
 783E: 6D 00 7A       TST    $58,X
 7841: 26 8D          BNE    $7852
 7843: A6 AA 02       LDA    $20,X
@@ -7480,10 +7508,10 @@ queue_sound_event_4ead:
 7B93: A7 63          STA    $1,U
 7B95: 39             RTS
 
-7B96: 8E 54 80       LDX    #$D6A8
+7B96: 8E 54 80       LDX   #table_d6a8
 7B99: 96 AC          LDA    $24
 7B9B: 48             ASLA
-7B9C: 6E BE          JMP    [A,X]
+7B9C: 6E BE          JMP    [A,X]        ; [jump_table]
 7B9E: 96 84          LDA    $0C
 7BA0: 84 2D          ANDA   #$0F
 7BA2: 81 8D          CMPA   #$0F
@@ -7529,10 +7557,10 @@ queue_sound_event_4ead:
 7BF2: 27 83          BEQ    $7BF5
 7BF4: 39             RTS
 
-7BF5: 8E 54 33       LDX    #$D6B1
+7BF5: 8E 54 33       LDX   #table_d6b1
 7BF8: 96 0E          LDA    $26
 7BFA: 48             ASLA
-7BFB: 6E BE          JMP    [A,X]
+7BFB: 6E BE          JMP    [A,X]        ; [jump_table]
 7BFD: 8E BD 88       LDX    #$3500
 7C00: 4F             CLRA
 7C01: 5F             CLRB
@@ -8092,10 +8120,10 @@ queue_sound_event_4ead:
 8077: 7D 1C CF       TST    $34E7
 807A: 27 A9          BEQ    $809D
 807C: 8E 1A D8       LDX    #$3250
-807F: CE FA 0C       LDU    #$D82E
+807F: CE FA 0C       LDU   #table_d82e
 8082: A6 06          LDA    ,X
 8084: 48             ASLA
-8085: 6E 54          JMP    [A,U]
+8085: 6E 54          JMP    [A,U]        ; [jump_table]
 8087: 6A 29          DEC    $1,X
 8089: 6A 89          DEC    $1,X
 808B: A6 29          LDA    $1,X
@@ -9284,10 +9312,10 @@ queue_sound_event_4ead:
 8A29: 7F BC 6C       CLR    $34E4
 8A2C: 39             RTS
 
-8A2D: 8E 50 12       LDX    #$D89A
+8A2D: 8E 50 12       LDX   #table_d89a
 8A30: 96 04          LDA    $26
 8A32: 48             ASLA
-8A33: 6E B4          JMP    [A,X]
+8A33: 6E B4          JMP    [A,X]        ; [jump_table]
 8A35: 4F             CLRA
 8A36: 5F             CLRB
 8A37: DD 58          STD    $70
@@ -9359,8 +9387,8 @@ queue_sound_event_4ead:
 
 8AAF: 96 0A          LDA    $28
 8AB1: 48             ASLA
-8AB2: 8E 6E C8       LDX    #$ECEA
-8AB5: 6E 14          JMP    [A,X]
+8AB2: 8E 6E C8       LDX   #table_ecea
+8AB5: 6E 14          JMP    [A,X]        ; [jump_table]
 8AB7: 8E 19 E8       LDX    #$31C0
 8ABA: CC E8 A6       LDD    #$608E
 8ABD: ED 89          STD    $1,X
@@ -10298,8 +10326,8 @@ queue_sound_event_4ead:
 927A: 7E 2B 57       JMP    $A37F
 927D: 96 AC          LDA    $24
 927F: 48             ASLA
-9280: 8E CC 07       LDX    #$EE85
-9283: AD B4          JSR    [A,X]
+9280: 8E CC 07       LDX   #table_ee85
+9283: AD B4          JSR    [A,X]        ; [jump_table]
 9285: 96 A6          LDA    $24
 9287: 81 29          CMPA   #$01
 9289: 23 8B          BLS    $928E
@@ -10850,8 +10878,8 @@ queue_sound_event_4ead:
 
 96F1: 96 A6          LDA    $24
 96F3: 48             ASLA
-96F4: 8E CD 97       LDX    #$EF15
-96F7: 6E BE          JMP    [A,X]
+96F4: 8E CD 97       LDX   #table_ef15
+96F7: 6E BE          JMP    [A,X]        ; [jump_table]
 96F9: 4F             CLRA
 96FA: BD C6 B2       JSR    queue_event_4e9a
 96FD: CC 8A 9B       LDD    #$0213
@@ -11211,8 +11239,8 @@ queue_sound_event_4ead:
 
 9A12: 96 AA          LDA    $28
 9A14: 48             ASLA
-9A15: 8E 6D 3A       LDX    #$EFB8
-9A18: 6E BE          JMP    [A,X]
+9A15: 8E 6D 3A       LDX   #table_efb8
+9A18: 6E BE          JMP    [A,X]        ; [jump_table]
 9A1A: BD 27 87       JSR    $AFAF
 9A1D: 8E B9 48       LDX    #$31C0
 9A20: 86 62          LDA    #$40
@@ -12002,9 +12030,9 @@ A08D: 7E 1E 63       JMP    $96EB
 A090: 39             RTS
 
 A091: 96 AA          LDA    $28
-A093: 8E D2 B4       LDX    #$F096
+A093: 8E D2 B4       LDX   #table_f096
 A096: 48             ASLA
-A097: AD BE          JSR    [A,X]
+A097: AD BE          JSR    [A,X]        ; [jump_table]
 A099: 96 84          LDA    $0C
 A09B: 84 27          ANDA   #$0F
 A09D: 81 87          CMPA   #$0F
@@ -12037,6 +12065,7 @@ A0D3: E7 AB 2A 82    STB    $0800,X
 A0D7: A7 A8          STA    ,X+
 A0D9: 8C AB 08       CMPX   #$2380
 A0DC: 26 DD          BNE    $A0D3
+; protection to crash if coin 4 was set??
 A0DE: 12             NOP			; bootleg_hack   LDA    $1680
 A0DF: 12             NOP			; bootleg_hack   ANDA   #$20
 A0E0: 12             NOP			; bootleg_hack   LBEQ   $A25D
@@ -12345,9 +12374,9 @@ A37C: 0F 03          CLR    $2B
 A37E: 39             RTS
 
 A37F: 96 06          LDA    $24
-A381: 8E 70 E1       LDX    #$F263
+A381: 8E 70 E1       LDX   #table_f263
 A384: 48             ASLA
-A385: AD 14          JSR    [A,X]
+A385: AD 14          JSR    [A,X]        ; [jump_table]
 A387: 96 24          LDA    $0C
 A389: 84 87          ANDA   #$0F
 A38B: 81 27          CMPA   #$0F
@@ -12775,12 +12804,12 @@ A6D3: 39             RTS
 
 A6D4: 96 0A          LDA    $28
 A6D6: 48             ASLA
-A6D7: 8E DA D7       LDX    #$F2FF
-A6DA: 6E 1E          JMP    [A,X]
+A6D7: 8E DA D7       LDX   #table_f2ff
+A6DA: 6E 1E          JMP    [A,X]        ; [jump_table]
 A6DC: 96 02          LDA    $2A
 A6DE: 48             ASLA
-A6DF: 8E D1 2F       LDX    #$F30D
-A6E2: 6E 14          JMP    [A,X]
+A6DF: 8E D1 2F       LDX   #table_f30d
+A6E2: 6E 14          JMP    [A,X]        ; [jump_table]
 A6E4: CC 23 82       LDD    #$0100
 A6E7: BD 66 B2       JSR    queue_event_4e9a
 A6EA: CC 8A 27       LDD    #$020F
@@ -13086,8 +13115,8 @@ A98A: 39             RTS
 
 A98B: 96 02          LDA    $2A
 A98D: 48             ASLA
-A98E: 8E 7B 33       LDX    #$F311
-A991: 6E 14          JMP    [A,X]
+A98E: 8E 7B 33       LDX   #table_f311
+A991: 6E 14          JMP    [A,X]        ; [jump_table]
 A993: BD 93 2B       JSR    $B109
 A996: 96 8D          LDA    $0F
 A998: 46             RORA
@@ -14306,12 +14335,12 @@ B3D5: 10 8E 71 AB    LDY    #$F383
 B3D9: 7E 38 1E       JMP    $B096
 B3DC: 96 02          LDA    $2A
 B3DE: 48             ASLA
-B3DF: 8E D7 11       LDX    #$F533
-B3E2: 6E 14          JMP    [A,X]
+B3DF: 8E D7 11       LDX   #table_f533
+B3E2: 6E 14          JMP    [A,X]        ; [jump_table]
 B3E4: 96 0E          LDA    $2C
-B3E6: 8E 77 17       LDX    #$F53F
+B3E6: 8E 77 17       LDX   #table_f53f
 B3E9: 48             ASLA
-B3EA: 6E 1E          JMP    [A,X]
+B3EA: 6E 1E          JMP    [A,X]        ; [jump_table]
 B3EC: CC 29 88       LDD    #$0100
 B3EF: BD 6C B8       JSR    queue_event_4e9a
 B3F2: CC 80 2F       LDD    #$020D
@@ -14777,8 +14806,8 @@ B817: 97 E3          STA    $CB
 B819: BD 36 8F       JSR    $BE07
 B81C: 96 04          LDA    $2C
 B81E: 48             ASLA
-B81F: 10 8E D4 0E    LDY    #$F68C
-B823: 6E 94          JMP    [A,Y]
+B81F: 10 8E D4 0E    LDY   #table_f68c
+B823: 6E 94          JMP    [A,Y]        ; [jump_table]
 B825: 7A B6 C6       DEC    $3444
 B828: 26 0E          BNE    $B850
 B82A: B6 BC 6B       LDA    $3443
@@ -15394,9 +15423,9 @@ BD7D: 39             RTS
 BD7E: 8E BA 22       LDX    #$3200
 BD81: 0F AC          CLR    $2E
 BD83: CE 14 3E       LDU    #$361C
-BD86: 10 8E DF F1    LDY    #$F7D9
+BD86: 10 8E DF F1    LDY   #table_f7d9
 BD8A: 96 A6          LDA    $2E
-BD8C: AD 9E          JSR    [A,Y]
+BD8C: AD 9E          JSR    [A,Y]        ; [jump_table]
 BD8E: 30 00 32       LEAX   $10,X
 BD91: 96 AC          LDA    $2E
 BD93: 4C             INCA
@@ -15624,8 +15653,8 @@ BF8E: 39             RTS
 
 BF8F: B6 16 D6       LDA    $34F4
 BF92: 48             ASLA
-BF93: 10 8E DA 92    LDY    #$F810
-BF97: 6E 9E          JMP    [A,Y]
+BF93: 10 8E DA 92    LDY   #table_f810
+BF97: 6E 9E          JMP    [A,Y]        ; [jump_table]
 BF99: 8E 7E 1C       LDX    #$F694
 BF9C: BD 94 A3       JSR    $BC2B
 BF9F: 7E 9F 5C       JMP    $BD7E
@@ -15854,10 +15883,10 @@ C149: 3D             MUL
 C14A: D3 D8          ADDD   $50
 C14C: 39             RTS
 
-C14D: 8E 70 5D       LDX    #$F8D5
+C14D: 8E 70 5D       LDX   #table_f8d5
 C150: 96 08          LDA    $2A
 C152: 48             ASLA
-C153: 6E B4          JMP    [A,X]
+C153: 6E B4          JMP    [A,X]        ; [jump_table]
 C155: 96 83          LDA    $01
 C157: 27 32          BEQ    $C173
 C159: 8E BB 58       LDX    #$33D0
@@ -16072,10 +16101,10 @@ C314: 39             RTS
 C315: 0A AB          DEC    $29
 C317: 26 25          BNE    $C326
 C319: 7F BC 78       CLR    $34F0
-C31C: CE D0 55       LDU    #$F8DD
+C31C: CE D0 55       LDU   #table_f8dd
 C31F: 96 4B          LDA    $69
 C321: 48             ASLA
-C322: AD 54          JSR    [A,U]
+C322: AD 54          JSR    [A,U]        ; [jump_table]
 C324: 0C 0A          INC    $28
 C326: 39             RTS
 
@@ -16103,10 +16132,10 @@ C34C: 30 A3          LEAX   D,X
 C34E: A6 0C          LDA    ,X
 C350: 81 34          CMPA   #$16
 C352: 27 97          BEQ    $C369
-C354: CE DA 69       LDU    #$F8EB
+C354: CE DA 69       LDU   #table_f8eb
 C357: 96 41          LDA    $69
 C359: 48             ASLA
-C35A: 6E 5E          JMP    [A,U]
+C35A: 6E 5E          JMP    [A,U]        ; [jump_table]
 C35C: 86 8A          LDA    #$A2
 C35E: BD C6 91       JSR    $4EB3
 C361: 86 06          LDA    #$84
@@ -16282,8 +16311,8 @@ C4CF: A6 E7          LDA    B,U
 C4D1: 20 6F          BRA    $C4C0
 C4D3: 96 08          LDA    $2A
 C4D5: 48             ASLA
-C4D6: CE 7B 2B       LDU    #$F903
-C4D9: 6E 5E          JMP    [A,U]
+C4D6: CE 7B 2B       LDU   #table_f903
+C4D9: 6E 5E          JMP    [A,U]        ; [jump_table]
 C4DB: CC 28 28       LDD    #$0000
 C4DE: DD A4          STD    $2C
 C4E0: DD 0C          STD    $2E
@@ -16370,12 +16399,12 @@ C584: EC E3          LDD    ,U++
 C586: FD B6 05       STD    $342D
 C589: 39             RTS
 
-C58A: CE 71 25       LDU    #$F90D
+C58A: CE 71 25       LDU   #table_f90d
 C58D: 96 A3          LDA    $2B
 C58F: 84 21          ANDA   #$03
 C591: 48             ASLA
 C592: 0C A9          INC    $2B
-C594: 6E F4          JMP    [A,U]
+C594: 6E F4          JMP    [A,U]        ; [jump_table]
 C596: 0C A8          INC    $2A
 C598: 0F 03          CLR    $2B
 C59A: 8E 73 5F       LDX    #$FB77
@@ -16414,10 +16443,10 @@ C5E4: 26 2D          BNE    $C5F5
 C5E6: B6 B6 18       LDA    $3430
 C5E9: 97 A4          STA    $2C
 C5EB: 0C 02          INC    $2A
-C5ED: CE 71 9D       LDU    #$F915
+C5ED: CE 71 9D       LDU   #table_f915
 C5F0: 96 0E          LDA    $2C
 C5F2: 48             ASLA
-C5F3: 6E F4          JMP    [A,U]
+C5F3: 6E F4          JMP    [A,U]        ; [jump_table]
 C5F5: 0C A8          INC    $2A
 C5F7: 97 04          STA    $2C
 C5F9: 7E 4E 60       JMP    $C6E8
@@ -16426,10 +16455,10 @@ C5FF: BD 75 92       JSR    $57B0
 C602: BD 4E E3       JSR    $CCC1
 C605: B6 B6 A2       LDA    $3420
 C608: 10 26 89 AC    LBNE   $C730
-C60C: CE D1 B9       LDU    #$F931
+C60C: CE D1 B9       LDU   #table_f931
 C60F: 96 0E          LDA    $2C
 C611: 48             ASLA
-C612: AD 54          JSR    [A,U]
+C612: AD 54          JSR    [A,U]        ; [jump_table]
 C614: 7E 99 29       JMP    $BBAB
 C617: B6 1C 02       LDA    $342A
 C61A: 26 89          BNE    $C61D
@@ -16631,8 +16660,8 @@ C7BE: 39             RTS
 
 C7BF: 96 0C          LDA    $2E
 C7C1: 48             ASLA
-C7C2: CE 7B 19       LDU    #$F93B
-C7C5: 6E 54          JMP    [A,U]
+C7C2: CE 7B 19       LDU   #table_f93b
+C7C5: 6E 54          JMP    [A,U]        ; [jump_table]
 C7C7: B6 1C 08       LDA    $3420
 C7CA: BD 44 63       JSR    $CC4B
 C7CD: BE BC A9       LDX    $3421
@@ -16852,9 +16881,9 @@ C993: 96 0F          LDA    $2D
 C995: 10 26 82 B9    LBNE   $CA2A
 C999: 96 A4          LDA    $2C
 C99B: 80 2A          SUBA   #$02
-C99D: CE 71 C7       LDU    #$F94F
+C99D: CE 71 C7       LDU   #table_f94f
 C9A0: 48             ASLA
-C9A1: 6E 54          JMP    [A,U]
+C9A1: 6E 54          JMP    [A,U]        ; [jump_table]
 C9A3: 20 44          BRA    $CA0B
 C9A5: B6 B6 A6       LDA    $3424
 C9A8: 26 49          BNE    $CA0B
@@ -16918,8 +16947,8 @@ CA27: 7E E3 7D       JMP    $CB55
 CA2A: 96 A5          LDA    $2D
 CA2C: 4A             DECA
 CA2D: 48             ASLA
-CA2E: CE 71 7B       LDU    #$F959
-CA31: 6E 54          JMP    [A,U]
+CA2E: CE 71 7B       LDU   #table_f959
+CA31: 6E 54          JMP    [A,U]        ; [jump_table]
 CA33: B6 16 04       LDA    $3426
 CA36: 4C             INCA
 CA37: B7 1C 0E       STA    $3426
@@ -17251,10 +17280,10 @@ CCDA: 10 8E D4 E9    LDY    #$FCC1
 CCDE: BD 44 17       JSR    $CC35
 CCE1: 39             RTS
 
-CCE2: 8E 7C 51       LDX    #$FE73
+CCE2: 8E 7C 51       LDX   #table_fe73
 CCE5: 96 A0          LDA    $22
 CCE7: 48             ASLA
-CCE8: 6E BE          JMP    [A,X]
+CCE8: 6E BE          JMP    [A,X]        ; [jump_table]
 CCEA: 4F             CLRA
 CCEB: BD 66 B2       JSR    queue_event_4e9a
 CCEE: 0C AA          INC    $22
@@ -17526,3 +17555,1418 @@ CF0C: FD 17 D3       STD    $3F5B
 CF0F: FF 1D 7F       STU    $3F5D
 CF12: 39             RTS
 
+table_cf30:
+	dc.w	$41d0	; $cf30
+	dc.w	$420e	; $cf32
+	dc.w	$4211	; $cf34
+	dc.w	$4234	; $cf36
+	dc.w	$42a2	; $cf38
+	dc.w	$42c0	; $cf3a
+	dc.w	$4320	; $cf3c
+	dc.w	$4470	; $cf3e
+table_d33a:
+	dc.w	$45f7	; $d33a
+	dc.w	$4602	; $d33c
+	dc.w	$46c9	; $d33e
+	dc.w	$9276	; $d340
+	dc.w	$cce2	; $d342
+	dc.w	$9276	; $d344
+	dc.w	$7b96	; $d346
+	dc.w	$a091	; $d348
+	dc.w	$7b96	; $d34a
+	dc.w	$460a	; $d34c
+	dc.w	$4673	; $d34e
+	dc.w	$96f1	; $d350
+	dc.w	$4623	; $d352
+	dc.w	$4649	; $d354
+	dc.w	$4650	; $d356
+	dc.w	$46d1	; $d358
+	dc.w	$47d0	; $d35a
+	dc.w	$49f3	; $d35c
+	dc.w	$4a07	; $d35e
+	dc.w	$4cb0	; $d360
+	dc.w	$4d08	; $d362
+	dc.w	$4e36	; $d364
+	dc.w	$46d9	; $d366
+	dc.w	$470c	; $d368
+	dc.w	$4772	; $d36a
+	dc.w	$46e1	; $d36c
+	dc.w	$46fe	; $d36e
+table_d344:
+	dc.w	$9276	; $d344
+	dc.w	$7b96	; $d346
+	dc.w	$a091	; $d348
+	dc.w	$7b96	; $d34a
+	dc.w	$460a	; $d34c
+	dc.w	$4673	; $d34e
+	dc.w	$96f1	; $d350
+	dc.w	$4623	; $d352
+	dc.w	$4649	; $d354
+	dc.w	$4650	; $d356
+	dc.w	$46d1	; $d358
+	dc.w	$47d0	; $d35a
+	dc.w	$49f3	; $d35c
+	dc.w	$4a07	; $d35e
+	dc.w	$4cb0	; $d360
+	dc.w	$4d08	; $d362
+	dc.w	$4e36	; $d364
+	dc.w	$46d9	; $d366
+	dc.w	$470c	; $d368
+	dc.w	$4772	; $d36a
+	dc.w	$46e1	; $d36c
+	dc.w	$46fe	; $d36e
+table_d34c:
+	dc.w	$460a	; $d34c
+	dc.w	$4673	; $d34e
+	dc.w	$96f1	; $d350
+	dc.w	$4623	; $d352
+	dc.w	$4649	; $d354
+	dc.w	$4650	; $d356
+	dc.w	$46d1	; $d358
+	dc.w	$47d0	; $d35a
+	dc.w	$49f3	; $d35c
+	dc.w	$4a07	; $d35e
+	dc.w	$4cb0	; $d360
+	dc.w	$4d08	; $d362
+	dc.w	$4e36	; $d364
+	dc.w	$46d9	; $d366
+	dc.w	$470c	; $d368
+	dc.w	$4772	; $d36a
+	dc.w	$46e1	; $d36c
+	dc.w	$46fe	; $d36e
+table_d352:
+	dc.w	$4623	; $d352
+	dc.w	$4649	; $d354
+	dc.w	$4650	; $d356
+	dc.w	$46d1	; $d358
+	dc.w	$47d0	; $d35a
+	dc.w	$49f3	; $d35c
+	dc.w	$4a07	; $d35e
+	dc.w	$4cb0	; $d360
+	dc.w	$4d08	; $d362
+	dc.w	$4e36	; $d364
+	dc.w	$46d9	; $d366
+	dc.w	$470c	; $d368
+	dc.w	$4772	; $d36a
+	dc.w	$46e1	; $d36c
+	dc.w	$46fe	; $d36e
+table_d358:
+	dc.w	$46d1	; $d358
+	dc.w	$47d0	; $d35a
+	dc.w	$49f3	; $d35c
+	dc.w	$4a07	; $d35e
+	dc.w	$4cb0	; $d360
+	dc.w	$4d08	; $d362
+	dc.w	$4e36	; $d364
+	dc.w	$46d9	; $d366
+	dc.w	$470c	; $d368
+	dc.w	$4772	; $d36a
+	dc.w	$46e1	; $d36c
+	dc.w	$46fe	; $d36e
+table_d366:
+	dc.w	$46d9	; $d366
+	dc.w	$470c	; $d368
+	dc.w	$4772	; $d36a
+	dc.w	$46e1	; $d36c
+	dc.w	$46fe	; $d36e
+table_d36c:
+	dc.w	$46e1	; $d36c
+	dc.w	$46fe	; $d36e
+table_d377:
+	dc.w	$47e1	; $d377
+	dc.w	$486c	; $d379
+	dc.w	$488c	; $d37b
+	dc.w	$48c7	; $d37d
+	dc.w	$491f	; $d37f
+	dc.w	$4968	; $d381
+	dc.w	$499d	; $d383
+	dc.w	$49b3	; $d385
+	dc.w	$4874	; $d387
+	dc.w	$487f	; $d389
+table_d387:
+	dc.w	$4874	; $d387
+	dc.w	$487f	; $d389
+table_d39b:
+	dc.w	$489d	; $d39b
+	dc.w	$48a6	; $d39d
+	dc.w	$489d	; $d39f
+	dc.w	$48a3	; $d3a1
+	dc.w	$48a6	; $d3a3
+	dc.w	$48a6	; $d3a5
+	dc.w	$48a6	; $d3a7
+	dc.w	$48b8	; $d3a9
+	dc.w	$48c1	; $d3ab
+	dc.w	$48b8	; $d3ad
+	dc.w	$48c0	; $d3af
+	dc.w	$48c1	; $d3b1
+	dc.w	$48c1	; $d3b3
+	dc.w	$48c1	; $d3b5
+	dc.w	$609c	; $d3b7
+	dc.w	$8aaf	; $d3b9
+	dc.w	$a6d4	; $d3bb
+	dc.w	$65b8	; $d3bd
+	dc.w	$b3dc	; $d3bf
+	dc.w	$9a12	; $d3c1
+	dc.w	$6bcc	; $d3c3
+	dc.w	$4a18	; $d3c5
+	dc.w	$c315	; $d3c7
+	dc.w	$4a1f	; $d3c9
+	dc.w	$4c01	; $d3cb
+	dc.w	$4c70	; $d3cd
+	dc.w	$4c97	; $d3cf
+	dc.w	$f0e0	; $d3d1
+	dc.w	$6060	; $d3d3
+	dc.w	$60e0	; $d3d5
+	dc.w	$90f0	; $d3d7
+	dc.w	$e0a0	; $d3d9
+	dc.w	$f0a0	; $d3db
+	dc.w	$e090	; $d3dd
+	dc.w	$4d10	; $d3df
+	dc.w	$4d43	; $d3e1
+	dc.w	$4da4	; $d3e3
+	dc.w	$4dd1	; $d3e5
+	dc.w	$4de6	; $d3e7
+	dc.w	$4d43	; $d3e9
+	dc.w	$4e09	; $d3eb
+	dc.w	$4d4b	; $d3ed
+	dc.w	$4d98	; $d3ef
+	dc.w	$c14d	; $d3f1
+	dc.w	$c4d3	; $d3f3
+	dc.w	$4e3e	; $d3f5
+	dc.w	$4e53	; $d3f7
+table_d3a9:
+	dc.w	$48b8	; $d3a9
+	dc.w	$48c1	; $d3ab
+	dc.w	$48b8	; $d3ad
+	dc.w	$48c0	; $d3af
+	dc.w	$48c1	; $d3b1
+	dc.w	$48c1	; $d3b3
+	dc.w	$48c1	; $d3b5
+	dc.w	$609c	; $d3b7
+	dc.w	$8aaf	; $d3b9
+	dc.w	$a6d4	; $d3bb
+	dc.w	$65b8	; $d3bd
+	dc.w	$b3dc	; $d3bf
+	dc.w	$9a12	; $d3c1
+	dc.w	$6bcc	; $d3c3
+	dc.w	$4a18	; $d3c5
+	dc.w	$c315	; $d3c7
+	dc.w	$4a1f	; $d3c9
+	dc.w	$4c01	; $d3cb
+	dc.w	$4c70	; $d3cd
+	dc.w	$4c97	; $d3cf
+	dc.w	$f0e0	; $d3d1
+	dc.w	$6060	; $d3d3
+	dc.w	$60e0	; $d3d5
+	dc.w	$90f0	; $d3d7
+	dc.w	$e0a0	; $d3d9
+	dc.w	$f0a0	; $d3db
+	dc.w	$e090	; $d3dd
+	dc.w	$4d10	; $d3df
+	dc.w	$4d43	; $d3e1
+	dc.w	$4da4	; $d3e3
+	dc.w	$4dd1	; $d3e5
+	dc.w	$4de6	; $d3e7
+	dc.w	$4d43	; $d3e9
+	dc.w	$4e09	; $d3eb
+	dc.w	$4d4b	; $d3ed
+	dc.w	$4d98	; $d3ef
+	dc.w	$c14d	; $d3f1
+	dc.w	$c4d3	; $d3f3
+	dc.w	$4e3e	; $d3f5
+	dc.w	$4e53	; $d3f7
+table_d3b7:
+	dc.w	$609c	; $d3b7
+	dc.w	$8aaf	; $d3b9
+	dc.w	$a6d4	; $d3bb
+	dc.w	$65b8	; $d3bd
+	dc.w	$b3dc	; $d3bf
+	dc.w	$9a12	; $d3c1
+	dc.w	$6bcc	; $d3c3
+	dc.w	$4a18	; $d3c5
+	dc.w	$c315	; $d3c7
+	dc.w	$4a1f	; $d3c9
+	dc.w	$4c01	; $d3cb
+	dc.w	$4c70	; $d3cd
+	dc.w	$4c97	; $d3cf
+	dc.w	$f0e0	; $d3d1
+	dc.w	$6060	; $d3d3
+	dc.w	$60e0	; $d3d5
+	dc.w	$90f0	; $d3d7
+	dc.w	$e0a0	; $d3d9
+	dc.w	$f0a0	; $d3db
+	dc.w	$e090	; $d3dd
+	dc.w	$4d10	; $d3df
+	dc.w	$4d43	; $d3e1
+	dc.w	$4da4	; $d3e3
+	dc.w	$4dd1	; $d3e5
+	dc.w	$4de6	; $d3e7
+	dc.w	$4d43	; $d3e9
+	dc.w	$4e09	; $d3eb
+	dc.w	$4d4b	; $d3ed
+	dc.w	$4d98	; $d3ef
+	dc.w	$c14d	; $d3f1
+	dc.w	$c4d3	; $d3f3
+	dc.w	$4e3e	; $d3f5
+	dc.w	$4e53	; $d3f7
+table_d3c5:
+	dc.w	$4a18	; $d3c5
+	dc.w	$c315	; $d3c7
+	dc.w	$4a1f	; $d3c9
+	dc.w	$4c01	; $d3cb
+	dc.w	$4c70	; $d3cd
+	dc.w	$4c97	; $d3cf
+	dc.w	$f0e0	; $d3d1
+	dc.w	$6060	; $d3d3
+	dc.w	$60e0	; $d3d5
+	dc.w	$90f0	; $d3d7
+	dc.w	$e0a0	; $d3d9
+	dc.w	$f0a0	; $d3db
+	dc.w	$e090	; $d3dd
+	dc.w	$4d10	; $d3df
+	dc.w	$4d43	; $d3e1
+	dc.w	$4da4	; $d3e3
+	dc.w	$4dd1	; $d3e5
+	dc.w	$4de6	; $d3e7
+	dc.w	$4d43	; $d3e9
+	dc.w	$4e09	; $d3eb
+	dc.w	$4d4b	; $d3ed
+	dc.w	$4d98	; $d3ef
+	dc.w	$c14d	; $d3f1
+	dc.w	$c4d3	; $d3f3
+	dc.w	$4e3e	; $d3f5
+	dc.w	$4e53	; $d3f7
+table_d3df:
+	dc.w	$4d10	; $d3df
+	dc.w	$4d43	; $d3e1
+	dc.w	$4da4	; $d3e3
+	dc.w	$4dd1	; $d3e5
+	dc.w	$4de6	; $d3e7
+	dc.w	$4d43	; $d3e9
+	dc.w	$4e09	; $d3eb
+	dc.w	$4d4b	; $d3ed
+	dc.w	$4d98	; $d3ef
+	dc.w	$c14d	; $d3f1
+	dc.w	$c4d3	; $d3f3
+	dc.w	$4e3e	; $d3f5
+	dc.w	$4e53	; $d3f7
+table_d3ed:
+	dc.w	$4d4b	; $d3ed
+	dc.w	$4d98	; $d3ef
+	dc.w	$c14d	; $d3f1
+	dc.w	$c4d3	; $d3f3
+	dc.w	$4e3e	; $d3f5
+	dc.w	$4e53	; $d3f7
+table_d3f1:
+	dc.w	$c14d	; $d3f1
+	dc.w	$c4d3	; $d3f3
+	dc.w	$4e3e	; $d3f5
+	dc.w	$4e53	; $d3f7
+table_d405:
+	dc.w	$55bf	; $d405
+	dc.w	$913e	; $d407
+	dc.w	$b3ab	; $d409
+	dc.w	$55c2	; $d40b
+	dc.w	$bf99	; $d40d
+	dc.w	$9de1	; $d40f
+	dc.w	$55d5	; $d411
+table_d4df:
+	dc.w	$60a4	; $d4df
+	dc.w	$60ea	; $d4e1
+	dc.w	$6126	; $d4e3
+	dc.w	$6188	; $d4e5
+	dc.w	$623d	; $d4e7
+	dc.w	$62ab	; $d4e9
+	dc.w	$631b	; $d4eb
+	dc.w	$6376	; $d4ed
+	dc.w	$6455	; $d4ef
+	dc.w	$6536	; $d4f1
+	dc.w	$60ac	; $d4f3
+	dc.w	$60d1	; $d4f5
+	dc.w	$71c6	; $d4f7
+	dc.w	$6248	; $d4f9
+table_d4f3:
+	dc.w	$60ac	; $d4f3
+	dc.w	$60d1	; $d4f5
+	dc.w	$71c6	; $d4f7
+	dc.w	$6248	; $d4f9
+table_d4f7:
+	dc.w	$71c6	; $d4f7
+	dc.w	$6248	; $d4f9
+table_d507:
+	dc.w	$71c6	; $d507
+	dc.w	$62b6	; $d509
+	dc.w	$71c6	; $d50b
+	dc.w	$6326	; $d50d
+	dc.w	$6381	; $d50f
+	dc.w	$63a8	; $d511
+	dc.w	$6448	; $d513
+	dc.w	$6381	; $d515
+	dc.w	$6460	; $d517
+	dc.w	$64c4	; $d519
+	dc.w	$650d	; $d51b
+table_d50b:
+	dc.w	$71c6	; $d50b
+	dc.w	$6326	; $d50d
+	dc.w	$6381	; $d50f
+	dc.w	$63a8	; $d511
+	dc.w	$6448	; $d513
+	dc.w	$6381	; $d515
+	dc.w	$6460	; $d517
+	dc.w	$64c4	; $d519
+	dc.w	$650d	; $d51b
+table_d50f:
+	dc.w	$6381	; $d50f
+	dc.w	$63a8	; $d511
+	dc.w	$6448	; $d513
+	dc.w	$6381	; $d515
+	dc.w	$6460	; $d517
+	dc.w	$64c4	; $d519
+	dc.w	$650d	; $d51b
+table_d515:
+	dc.w	$6381	; $d515
+	dc.w	$6460	; $d517
+	dc.w	$64c4	; $d519
+	dc.w	$650d	; $d51b
+table_d523:
+	dc.w	$6541	; $d523
+	dc.w	$6555	; $d525
+	dc.w	$6592	; $d527
+	dc.w	$650d	; $d529
+	dc.w	$65c0	; $d52b
+	dc.w	$6620	; $d52d
+	dc.w	$6854	; $d52f
+	dc.w	$6ae0	; $d531
+	dc.w	$6b02	; $d533
+	dc.w	$65c8	; $d535
+	dc.w	$6617	; $d537
+	dc.w	$662d	; $d539
+	dc.w	$663e	; $d53b
+	dc.w	$6653	; $d53d
+	dc.w	$666e	; $d53f
+	dc.w	$66c8	; $d541
+	dc.w	$6706	; $d543
+	dc.w	$679e	; $d545
+	dc.w	$67d9	; $d547
+	dc.w	$680b	; $d549
+	dc.w	$6815	; $d54b
+	dc.w	$68b3	; $d54d
+	dc.w	$68e1	; $d54f
+	dc.w	$691e	; $d551
+	dc.w	$6953	; $d553
+	dc.w	$69c5	; $d555
+	dc.w	$69ed	; $d557
+	dc.w	$6a13	; $d559
+	dc.w	$6adc	; $d55b
+	dc.w	$79eb	; $d55d
+	dc.w	$7a10	; $d55f
+	dc.w	$7a44	; $d561
+	dc.w	$7a78	; $d563
+	dc.w	$6b0a	; $d565
+	dc.w	$6b4f	; $d567
+	dc.w	$46a0	; $d569
+	dc.w	$66a0	; $d56b
+	dc.w	$86a0	; $d56d
+	dc.w	$a6a0	; $d56f
+	dc.w	$6bd7	; $d571
+	dc.w	$6c0d	; $d573
+	dc.w	$6ca3	; $d575
+	dc.w	$6cdd	; $d577
+	dc.w	$6d38	; $d579
+	dc.w	$6e38	; $d57b
+	dc.w	$6f18	; $d57d
+	dc.w	$7006	; $d57f
+	dc.w	$7074	; $d581
+	dc.w	$70ba	; $d583
+	dc.w	$710b	; $d585
+	dc.w	$7168	; $d587
+	dc.w	$7181	; $d589
+	dc.w	$7199	; $d58b
+	dc.w	$6bdf	; $d58d
+	dc.w	$6bff	; $d58f
+	dc.w	$6c15	; $d591
+	dc.w	$6c76	; $d593
+	dc.w	$b4b5	; $d595
+	dc.w	$c4c5	; $d597
+	dc.w	$6d40	; $d599
+	dc.w	$6d65	; $d59b
+	dc.w	$6d9e	; $d59d
+	dc.w	$6161	; $d59f
+	dc.w	$605f	; $d5a1
+	dc.w	$5e5d	; $d5a3
+	dc.w	$5c00	; $d5a5
+	dc.w	$eced	; $d5a7
+	dc.w	$eeef	; $d5a9
+	dc.w	$d5fc	; $d5ab
+	dc.w	$fdfe	; $d5ad
+	dc.w	$ffe5	; $d5af
+	dc.w	$a0b8	; $d5b1
+	dc.w	$b9ba	; $d5b3
+	dc.w	$bb94	; $d5b5
+	dc.w	$c8c9	; $d5b7
+	dc.w	$cacb	; $d5b9
+	dc.w	$a446	; $d5bb
+	dc.w	$413c	; $d5bd
+table_d52b:
+	dc.w	$65c0	; $d52b
+	dc.w	$6620	; $d52d
+	dc.w	$6854	; $d52f
+	dc.w	$6ae0	; $d531
+	dc.w	$6b02	; $d533
+	dc.w	$65c8	; $d535
+	dc.w	$6617	; $d537
+	dc.w	$662d	; $d539
+	dc.w	$663e	; $d53b
+	dc.w	$6653	; $d53d
+	dc.w	$666e	; $d53f
+	dc.w	$66c8	; $d541
+	dc.w	$6706	; $d543
+	dc.w	$679e	; $d545
+	dc.w	$67d9	; $d547
+	dc.w	$680b	; $d549
+	dc.w	$6815	; $d54b
+	dc.w	$68b3	; $d54d
+	dc.w	$68e1	; $d54f
+	dc.w	$691e	; $d551
+	dc.w	$6953	; $d553
+	dc.w	$69c5	; $d555
+	dc.w	$69ed	; $d557
+	dc.w	$6a13	; $d559
+	dc.w	$6adc	; $d55b
+	dc.w	$79eb	; $d55d
+	dc.w	$7a10	; $d55f
+	dc.w	$7a44	; $d561
+	dc.w	$7a78	; $d563
+	dc.w	$6b0a	; $d565
+	dc.w	$6b4f	; $d567
+	dc.w	$46a0	; $d569
+	dc.w	$66a0	; $d56b
+	dc.w	$86a0	; $d56d
+	dc.w	$a6a0	; $d56f
+	dc.w	$6bd7	; $d571
+	dc.w	$6c0d	; $d573
+	dc.w	$6ca3	; $d575
+	dc.w	$6cdd	; $d577
+	dc.w	$6d38	; $d579
+	dc.w	$6e38	; $d57b
+	dc.w	$6f18	; $d57d
+	dc.w	$7006	; $d57f
+	dc.w	$7074	; $d581
+	dc.w	$70ba	; $d583
+	dc.w	$710b	; $d585
+	dc.w	$7168	; $d587
+	dc.w	$7181	; $d589
+	dc.w	$7199	; $d58b
+	dc.w	$6bdf	; $d58d
+	dc.w	$6bff	; $d58f
+	dc.w	$6c15	; $d591
+	dc.w	$6c76	; $d593
+	dc.w	$b4b5	; $d595
+	dc.w	$c4c5	; $d597
+	dc.w	$6d40	; $d599
+	dc.w	$6d65	; $d59b
+	dc.w	$6d9e	; $d59d
+	dc.w	$6161	; $d59f
+	dc.w	$605f	; $d5a1
+	dc.w	$5e5d	; $d5a3
+	dc.w	$5c00	; $d5a5
+	dc.w	$eced	; $d5a7
+	dc.w	$eeef	; $d5a9
+	dc.w	$d5fc	; $d5ab
+	dc.w	$fdfe	; $d5ad
+	dc.w	$ffe5	; $d5af
+	dc.w	$a0b8	; $d5b1
+	dc.w	$b9ba	; $d5b3
+	dc.w	$bb94	; $d5b5
+	dc.w	$c8c9	; $d5b7
+	dc.w	$cacb	; $d5b9
+	dc.w	$a446	; $d5bb
+	dc.w	$413c	; $d5bd
+table_d535:
+	dc.w	$65c8	; $d535
+	dc.w	$6617	; $d537
+	dc.w	$662d	; $d539
+	dc.w	$663e	; $d53b
+	dc.w	$6653	; $d53d
+	dc.w	$666e	; $d53f
+	dc.w	$66c8	; $d541
+	dc.w	$6706	; $d543
+	dc.w	$679e	; $d545
+	dc.w	$67d9	; $d547
+	dc.w	$680b	; $d549
+	dc.w	$6815	; $d54b
+	dc.w	$68b3	; $d54d
+	dc.w	$68e1	; $d54f
+	dc.w	$691e	; $d551
+	dc.w	$6953	; $d553
+	dc.w	$69c5	; $d555
+	dc.w	$69ed	; $d557
+	dc.w	$6a13	; $d559
+	dc.w	$6adc	; $d55b
+	dc.w	$79eb	; $d55d
+	dc.w	$7a10	; $d55f
+	dc.w	$7a44	; $d561
+	dc.w	$7a78	; $d563
+	dc.w	$6b0a	; $d565
+	dc.w	$6b4f	; $d567
+	dc.w	$46a0	; $d569
+	dc.w	$66a0	; $d56b
+	dc.w	$86a0	; $d56d
+	dc.w	$a6a0	; $d56f
+	dc.w	$6bd7	; $d571
+	dc.w	$6c0d	; $d573
+	dc.w	$6ca3	; $d575
+	dc.w	$6cdd	; $d577
+	dc.w	$6d38	; $d579
+	dc.w	$6e38	; $d57b
+	dc.w	$6f18	; $d57d
+	dc.w	$7006	; $d57f
+	dc.w	$7074	; $d581
+	dc.w	$70ba	; $d583
+	dc.w	$710b	; $d585
+	dc.w	$7168	; $d587
+	dc.w	$7181	; $d589
+	dc.w	$7199	; $d58b
+	dc.w	$6bdf	; $d58d
+	dc.w	$6bff	; $d58f
+	dc.w	$6c15	; $d591
+	dc.w	$6c76	; $d593
+	dc.w	$b4b5	; $d595
+	dc.w	$c4c5	; $d597
+	dc.w	$6d40	; $d599
+	dc.w	$6d65	; $d59b
+	dc.w	$6d9e	; $d59d
+	dc.w	$6161	; $d59f
+	dc.w	$605f	; $d5a1
+	dc.w	$5e5d	; $d5a3
+	dc.w	$5c00	; $d5a5
+	dc.w	$eced	; $d5a7
+	dc.w	$eeef	; $d5a9
+	dc.w	$d5fc	; $d5ab
+	dc.w	$fdfe	; $d5ad
+	dc.w	$ffe5	; $d5af
+	dc.w	$a0b8	; $d5b1
+	dc.w	$b9ba	; $d5b3
+	dc.w	$bb94	; $d5b5
+	dc.w	$c8c9	; $d5b7
+	dc.w	$cacb	; $d5b9
+	dc.w	$a446	; $d5bb
+	dc.w	$413c	; $d5bd
+table_d539:
+	dc.w	$662d	; $d539
+	dc.w	$663e	; $d53b
+	dc.w	$6653	; $d53d
+	dc.w	$666e	; $d53f
+	dc.w	$66c8	; $d541
+	dc.w	$6706	; $d543
+	dc.w	$679e	; $d545
+	dc.w	$67d9	; $d547
+	dc.w	$680b	; $d549
+	dc.w	$6815	; $d54b
+	dc.w	$68b3	; $d54d
+	dc.w	$68e1	; $d54f
+	dc.w	$691e	; $d551
+	dc.w	$6953	; $d553
+	dc.w	$69c5	; $d555
+	dc.w	$69ed	; $d557
+	dc.w	$6a13	; $d559
+	dc.w	$6adc	; $d55b
+	dc.w	$79eb	; $d55d
+	dc.w	$7a10	; $d55f
+	dc.w	$7a44	; $d561
+	dc.w	$7a78	; $d563
+	dc.w	$6b0a	; $d565
+	dc.w	$6b4f	; $d567
+	dc.w	$46a0	; $d569
+	dc.w	$66a0	; $d56b
+	dc.w	$86a0	; $d56d
+	dc.w	$a6a0	; $d56f
+	dc.w	$6bd7	; $d571
+	dc.w	$6c0d	; $d573
+	dc.w	$6ca3	; $d575
+	dc.w	$6cdd	; $d577
+	dc.w	$6d38	; $d579
+	dc.w	$6e38	; $d57b
+	dc.w	$6f18	; $d57d
+	dc.w	$7006	; $d57f
+	dc.w	$7074	; $d581
+	dc.w	$70ba	; $d583
+	dc.w	$710b	; $d585
+	dc.w	$7168	; $d587
+	dc.w	$7181	; $d589
+	dc.w	$7199	; $d58b
+	dc.w	$6bdf	; $d58d
+	dc.w	$6bff	; $d58f
+	dc.w	$6c15	; $d591
+	dc.w	$6c76	; $d593
+	dc.w	$b4b5	; $d595
+	dc.w	$c4c5	; $d597
+	dc.w	$6d40	; $d599
+	dc.w	$6d65	; $d59b
+	dc.w	$6d9e	; $d59d
+	dc.w	$6161	; $d59f
+	dc.w	$605f	; $d5a1
+	dc.w	$5e5d	; $d5a3
+	dc.w	$5c00	; $d5a5
+	dc.w	$eced	; $d5a7
+	dc.w	$eeef	; $d5a9
+	dc.w	$d5fc	; $d5ab
+	dc.w	$fdfe	; $d5ad
+	dc.w	$ffe5	; $d5af
+	dc.w	$a0b8	; $d5b1
+	dc.w	$b9ba	; $d5b3
+	dc.w	$bb94	; $d5b5
+	dc.w	$c8c9	; $d5b7
+	dc.w	$cacb	; $d5b9
+	dc.w	$a446	; $d5bb
+	dc.w	$413c	; $d5bd
+table_d54d:
+	dc.w	$68b3	; $d54d
+	dc.w	$68e1	; $d54f
+	dc.w	$691e	; $d551
+	dc.w	$6953	; $d553
+	dc.w	$69c5	; $d555
+	dc.w	$69ed	; $d557
+	dc.w	$6a13	; $d559
+	dc.w	$6adc	; $d55b
+	dc.w	$79eb	; $d55d
+	dc.w	$7a10	; $d55f
+	dc.w	$7a44	; $d561
+	dc.w	$7a78	; $d563
+	dc.w	$6b0a	; $d565
+	dc.w	$6b4f	; $d567
+	dc.w	$46a0	; $d569
+	dc.w	$66a0	; $d56b
+	dc.w	$86a0	; $d56d
+	dc.w	$a6a0	; $d56f
+	dc.w	$6bd7	; $d571
+	dc.w	$6c0d	; $d573
+	dc.w	$6ca3	; $d575
+	dc.w	$6cdd	; $d577
+	dc.w	$6d38	; $d579
+	dc.w	$6e38	; $d57b
+	dc.w	$6f18	; $d57d
+	dc.w	$7006	; $d57f
+	dc.w	$7074	; $d581
+	dc.w	$70ba	; $d583
+	dc.w	$710b	; $d585
+	dc.w	$7168	; $d587
+	dc.w	$7181	; $d589
+	dc.w	$7199	; $d58b
+	dc.w	$6bdf	; $d58d
+	dc.w	$6bff	; $d58f
+	dc.w	$6c15	; $d591
+	dc.w	$6c76	; $d593
+	dc.w	$b4b5	; $d595
+	dc.w	$c4c5	; $d597
+	dc.w	$6d40	; $d599
+	dc.w	$6d65	; $d59b
+	dc.w	$6d9e	; $d59d
+	dc.w	$6161	; $d59f
+	dc.w	$605f	; $d5a1
+	dc.w	$5e5d	; $d5a3
+	dc.w	$5c00	; $d5a5
+	dc.w	$eced	; $d5a7
+	dc.w	$eeef	; $d5a9
+	dc.w	$d5fc	; $d5ab
+	dc.w	$fdfe	; $d5ad
+	dc.w	$ffe5	; $d5af
+	dc.w	$a0b8	; $d5b1
+	dc.w	$b9ba	; $d5b3
+	dc.w	$bb94	; $d5b5
+	dc.w	$c8c9	; $d5b7
+	dc.w	$cacb	; $d5b9
+	dc.w	$a446	; $d5bb
+	dc.w	$413c	; $d5bd
+table_d55d:
+	dc.w	$79eb	; $d55d
+	dc.w	$7a10	; $d55f
+	dc.w	$7a44	; $d561
+	dc.w	$7a78	; $d563
+	dc.w	$6b0a	; $d565
+	dc.w	$6b4f	; $d567
+	dc.w	$46a0	; $d569
+	dc.w	$66a0	; $d56b
+	dc.w	$86a0	; $d56d
+	dc.w	$a6a0	; $d56f
+	dc.w	$6bd7	; $d571
+	dc.w	$6c0d	; $d573
+	dc.w	$6ca3	; $d575
+	dc.w	$6cdd	; $d577
+	dc.w	$6d38	; $d579
+	dc.w	$6e38	; $d57b
+	dc.w	$6f18	; $d57d
+	dc.w	$7006	; $d57f
+	dc.w	$7074	; $d581
+	dc.w	$70ba	; $d583
+	dc.w	$710b	; $d585
+	dc.w	$7168	; $d587
+	dc.w	$7181	; $d589
+	dc.w	$7199	; $d58b
+	dc.w	$6bdf	; $d58d
+	dc.w	$6bff	; $d58f
+	dc.w	$6c15	; $d591
+	dc.w	$6c76	; $d593
+	dc.w	$b4b5	; $d595
+	dc.w	$c4c5	; $d597
+	dc.w	$6d40	; $d599
+	dc.w	$6d65	; $d59b
+	dc.w	$6d9e	; $d59d
+	dc.w	$6161	; $d59f
+	dc.w	$605f	; $d5a1
+	dc.w	$5e5d	; $d5a3
+	dc.w	$5c00	; $d5a5
+	dc.w	$eced	; $d5a7
+	dc.w	$eeef	; $d5a9
+	dc.w	$d5fc	; $d5ab
+	dc.w	$fdfe	; $d5ad
+	dc.w	$ffe5	; $d5af
+	dc.w	$a0b8	; $d5b1
+	dc.w	$b9ba	; $d5b3
+	dc.w	$bb94	; $d5b5
+	dc.w	$c8c9	; $d5b7
+	dc.w	$cacb	; $d5b9
+	dc.w	$a446	; $d5bb
+	dc.w	$413c	; $d5bd
+table_d565:
+	dc.w	$6b0a	; $d565
+	dc.w	$6b4f	; $d567
+	dc.w	$46a0	; $d569
+	dc.w	$66a0	; $d56b
+	dc.w	$86a0	; $d56d
+	dc.w	$a6a0	; $d56f
+	dc.w	$6bd7	; $d571
+	dc.w	$6c0d	; $d573
+	dc.w	$6ca3	; $d575
+	dc.w	$6cdd	; $d577
+	dc.w	$6d38	; $d579
+	dc.w	$6e38	; $d57b
+	dc.w	$6f18	; $d57d
+	dc.w	$7006	; $d57f
+	dc.w	$7074	; $d581
+	dc.w	$70ba	; $d583
+	dc.w	$710b	; $d585
+	dc.w	$7168	; $d587
+	dc.w	$7181	; $d589
+	dc.w	$7199	; $d58b
+	dc.w	$6bdf	; $d58d
+	dc.w	$6bff	; $d58f
+	dc.w	$6c15	; $d591
+	dc.w	$6c76	; $d593
+	dc.w	$b4b5	; $d595
+	dc.w	$c4c5	; $d597
+	dc.w	$6d40	; $d599
+	dc.w	$6d65	; $d59b
+	dc.w	$6d9e	; $d59d
+	dc.w	$6161	; $d59f
+	dc.w	$605f	; $d5a1
+	dc.w	$5e5d	; $d5a3
+	dc.w	$5c00	; $d5a5
+	dc.w	$eced	; $d5a7
+	dc.w	$eeef	; $d5a9
+	dc.w	$d5fc	; $d5ab
+	dc.w	$fdfe	; $d5ad
+	dc.w	$ffe5	; $d5af
+	dc.w	$a0b8	; $d5b1
+	dc.w	$b9ba	; $d5b3
+	dc.w	$bb94	; $d5b5
+	dc.w	$c8c9	; $d5b7
+	dc.w	$cacb	; $d5b9
+	dc.w	$a446	; $d5bb
+	dc.w	$413c	; $d5bd
+table_d571:
+	dc.w	$6bd7	; $d571
+	dc.w	$6c0d	; $d573
+	dc.w	$6ca3	; $d575
+	dc.w	$6cdd	; $d577
+	dc.w	$6d38	; $d579
+	dc.w	$6e38	; $d57b
+	dc.w	$6f18	; $d57d
+	dc.w	$7006	; $d57f
+	dc.w	$7074	; $d581
+	dc.w	$70ba	; $d583
+	dc.w	$710b	; $d585
+	dc.w	$7168	; $d587
+	dc.w	$7181	; $d589
+	dc.w	$7199	; $d58b
+	dc.w	$6bdf	; $d58d
+	dc.w	$6bff	; $d58f
+	dc.w	$6c15	; $d591
+	dc.w	$6c76	; $d593
+	dc.w	$b4b5	; $d595
+	dc.w	$c4c5	; $d597
+	dc.w	$6d40	; $d599
+	dc.w	$6d65	; $d59b
+	dc.w	$6d9e	; $d59d
+	dc.w	$6161	; $d59f
+	dc.w	$605f	; $d5a1
+	dc.w	$5e5d	; $d5a3
+	dc.w	$5c00	; $d5a5
+	dc.w	$eced	; $d5a7
+	dc.w	$eeef	; $d5a9
+	dc.w	$d5fc	; $d5ab
+	dc.w	$fdfe	; $d5ad
+	dc.w	$ffe5	; $d5af
+	dc.w	$a0b8	; $d5b1
+	dc.w	$b9ba	; $d5b3
+	dc.w	$bb94	; $d5b5
+	dc.w	$c8c9	; $d5b7
+	dc.w	$cacb	; $d5b9
+	dc.w	$a446	; $d5bb
+	dc.w	$413c	; $d5bd
+table_d58d:
+	dc.w	$6bdf	; $d58d
+	dc.w	$6bff	; $d58f
+	dc.w	$6c15	; $d591
+	dc.w	$6c76	; $d593
+	dc.w	$b4b5	; $d595
+	dc.w	$c4c5	; $d597
+	dc.w	$6d40	; $d599
+	dc.w	$6d65	; $d59b
+	dc.w	$6d9e	; $d59d
+	dc.w	$6161	; $d59f
+	dc.w	$605f	; $d5a1
+	dc.w	$5e5d	; $d5a3
+	dc.w	$5c00	; $d5a5
+	dc.w	$eced	; $d5a7
+	dc.w	$eeef	; $d5a9
+	dc.w	$d5fc	; $d5ab
+	dc.w	$fdfe	; $d5ad
+	dc.w	$ffe5	; $d5af
+	dc.w	$a0b8	; $d5b1
+	dc.w	$b9ba	; $d5b3
+	dc.w	$bb94	; $d5b5
+	dc.w	$c8c9	; $d5b7
+	dc.w	$cacb	; $d5b9
+	dc.w	$a446	; $d5bb
+	dc.w	$413c	; $d5bd
+table_d591:
+	dc.w	$6c15	; $d591
+	dc.w	$6c76	; $d593
+	dc.w	$b4b5	; $d595
+	dc.w	$c4c5	; $d597
+	dc.w	$6d40	; $d599
+	dc.w	$6d65	; $d59b
+	dc.w	$6d9e	; $d59d
+	dc.w	$6161	; $d59f
+	dc.w	$605f	; $d5a1
+	dc.w	$5e5d	; $d5a3
+	dc.w	$5c00	; $d5a5
+	dc.w	$eced	; $d5a7
+	dc.w	$eeef	; $d5a9
+	dc.w	$d5fc	; $d5ab
+	dc.w	$fdfe	; $d5ad
+	dc.w	$ffe5	; $d5af
+	dc.w	$a0b8	; $d5b1
+	dc.w	$b9ba	; $d5b3
+	dc.w	$bb94	; $d5b5
+	dc.w	$c8c9	; $d5b7
+	dc.w	$cacb	; $d5b9
+	dc.w	$a446	; $d5bb
+	dc.w	$413c	; $d5bd
+table_d599:
+	dc.w	$6d40	; $d599
+	dc.w	$6d65	; $d59b
+	dc.w	$6d9e	; $d59d
+	dc.w	$6161	; $d59f
+	dc.w	$605f	; $d5a1
+	dc.w	$5e5d	; $d5a3
+	dc.w	$5c00	; $d5a5
+	dc.w	$eced	; $d5a7
+	dc.w	$eeef	; $d5a9
+	dc.w	$d5fc	; $d5ab
+	dc.w	$fdfe	; $d5ad
+	dc.w	$ffe5	; $d5af
+	dc.w	$a0b8	; $d5b1
+	dc.w	$b9ba	; $d5b3
+	dc.w	$bb94	; $d5b5
+	dc.w	$c8c9	; $d5b7
+	dc.w	$cacb	; $d5b9
+	dc.w	$a446	; $d5bb
+	dc.w	$413c	; $d5bd
+table_d5e8:
+	dc.w	$700e	; $d5e8
+	dc.w	$7041	; $d5ea
+	dc.w	$7082	; $d5ec
+	dc.w	$709c	; $d5ee
+	dc.w	$70b1	; $d5f0
+table_d5ec:
+	dc.w	$7082	; $d5ec
+	dc.w	$709c	; $d5ee
+	dc.w	$70b1	; $d5f0
+table_d605:
+	dc.w	$7113	; $d605
+	dc.w	$711f	; $d607
+	dc.w	$7189	; $d609
+	dc.w	$6541	; $d60b
+	dc.w	$6555	; $d60d
+	dc.w	$6592	; $d60f
+	dc.w	$7190	; $d611
+	dc.w	$71a1	; $d613
+	dc.w	$71a8	; $d615
+table_d609:
+	dc.w	$7189	; $d609
+	dc.w	$6541	; $d60b
+	dc.w	$6555	; $d60d
+	dc.w	$6592	; $d60f
+	dc.w	$7190	; $d611
+	dc.w	$71a1	; $d613
+	dc.w	$71a8	; $d615
+table_d613:
+	dc.w	$71a1	; $d613
+	dc.w	$71a8	; $d615
+table_d62a:
+	dc.w	$7443	; $d62a
+	dc.w	$7443	; $d62c
+	dc.w	$7431	; $d62e
+	dc.w	$84db	; $d630
+	dc.w	$84e0	; $d632
+	dc.w	$84e5	; $d634
+table_d630:
+	dc.w	$84db	; $d630
+	dc.w	$84e0	; $d632
+	dc.w	$84e5	; $d634
+table_d6a8:
+	dc.w	$7b9e	; $d6a8
+	dc.w	$7bdf	; $d6aa
+	dc.w	$7bfd	; $d6ac
+table_d6b1:
+	dc.w	$46d1	; $d6b1
+	dc.w	$47d0	; $d6b3
+	dc.w	$49f3	; $d6b5
+	dc.w	$4a07	; $d6b7
+	dc.w	$4cb0	; $d6b9
+table_d82e:
+	dc.w	$809d	; $d82e
+	dc.w	$8087	; $d830
+	dc.w	$809e	; $d832
+	dc.w	$60df	; $d834
+	dc.w	$de60	; $d836
+	dc.w	$d7d6	; $d838
+	dc.w	$60f6	; $d83a
+	dc.w	$60f7	; $d83c
+	dc.w	$40e9	; $d83e
+	dc.w	$40ea	; $d840
+	dc.w	$40eb	; $d842
+	dc.w	$80e9	; $d844
+	dc.w	$80ea	; $d846
+	dc.w	$80eb	; $d848
+	dc.w	$40ec	; $d84a
+	dc.w	$80ec	; $d84c
+	dc.w	$4028	; $d84e
+table_d89a:
+	dc.w	$8a35	; $d89a
+	dc.w	$8a41	; $d89c
+	dc.w	$8a72	; $d89e
+	dc.w	$8a7d	; $d8a0
+	dc.w	$8aae	; $d8a2
+table_ecea:
+	dc.w	$8ab7	; $ecea
+	dc.w	$8b61	; $ecec
+	dc.w	$8b79	; $ecee
+	dc.w	$8f7f	; $ecf0
+	dc.w	$8a9b	; $ecf2
+	dc.w	$8a89	; $ecf4
+table_ee85:
+	dc.w	$928f	; $ee85
+	dc.w	$929e	; $ee87
+	dc.w	$9431	; $ee89
+	dc.w	$95bf	; $ee8b
+	dc.w	$9648	; $ee8d
+	dc.w	$96d2	; $ee8f
+table_ef15:
+	dc.w	$96f9	; $ef15
+	dc.w	$973b	; $ef17
+	dc.w	$99d9	; $ef19
+	dc.w	$8a2d	; $ef1b
+table_efb8:
+	dc.w	$9a1a	; $efb8
+	dc.w	$9a9d	; $efba
+	dc.w	$9b2a	; $efbc
+	dc.w	$a054	; $efbe
+	dc.w	$a998	; $efc0
+	dc.w	$7765	; $efc2
+	dc.w	$5443	; $efc4
+table_f096:
+	dc.w	$a0ac	; $f096
+	dc.w	$a0cd	; $f098
+	dc.w	$a33a	; $f09a
+	dc.w	$a36c	; $f09c
+table_f263:
+	dc.w	$a39a	; $f263
+	dc.w	$a3ba	; $f265
+	dc.w	$a584	; $f267
+	dc.w	$a5cd	; $f269
+	dc.w	$a5fe	; $f26b
+table_f2ff:
+	dc.w	$a6dc	; $f2ff
+	dc.w	$a8d7	; $f301
+	dc.w	$a98b	; $f303
+	dc.w	$aa9e	; $f305
+	dc.w	$ad67	; $f307
+	dc.w	$ad98	; $f309
+	dc.w	$ae4f	; $f30b
+	dc.w	$a6e4	; $f30d
+	dc.w	$a882	; $f30f
+	dc.w	$a993	; $f311
+	dc.w	$a9dd	; $f313
+	dc.w	$aa8f	; $f315
+table_f30d:
+	dc.w	$a6e4	; $f30d
+	dc.w	$a882	; $f30f
+	dc.w	$a993	; $f311
+	dc.w	$a9dd	; $f313
+	dc.w	$aa8f	; $f315
+table_f311:
+	dc.w	$a993	; $f311
+	dc.w	$a9dd	; $f313
+	dc.w	$aa8f	; $f315
+table_f533:
+	dc.w	$b3e4	; $f533
+	dc.w	$b788	; $f535
+	dc.w	$ba9e	; $f537
+	dc.w	$bae6	; $f539
+	dc.w	$baf9	; $f53b
+	dc.w	$ba0e	; $f53d
+	dc.w	$b3ec	; $f53f
+	dc.w	$b46c	; $f541
+	dc.w	$b4e2	; $f543
+	dc.w	$b592	; $f545
+	dc.w	$b5f7	; $f547
+	dc.w	$b665	; $f549
+	dc.w	$b603	; $f54b
+	dc.w	$b76b	; $f54d
+table_f53f:
+	dc.w	$b3ec	; $f53f
+	dc.w	$b46c	; $f541
+	dc.w	$b4e2	; $f543
+	dc.w	$b592	; $f545
+	dc.w	$b5f7	; $f547
+	dc.w	$b665	; $f549
+	dc.w	$b603	; $f54b
+	dc.w	$b76b	; $f54d
+table_f68c:
+	dc.w	$b825	; $f68c
+	dc.w	$b963	; $f68e
+	dc.w	$ba45	; $f690
+	dc.w	$ba4c	; $f692
+	dc.w	$6870	; $f694
+table_f7d9:
+	dc.w	$bd9c	; $f7d9
+	dc.w	$bd9c	; $f7db
+	dc.w	$bdb7	; $f7dd
+	dc.w	$bd9c	; $f7df
+	dc.w	$bd9c	; $f7e1
+	dc.w	$bda5	; $f7e3
+	dc.w	$bdc0	; $f7e5
+	dc.w	$bdc0	; $f7e7
+	dc.w	$bda5	; $f7e9
+	dc.w	$bdc0	; $f7eb
+	dc.w	$bd9c	; $f7ed
+	dc.w	$bd9c	; $f7ef
+	dc.w	$bdae	; $f7f1
+table_f810:
+	dc.w	$bea1	; $f810
+	dc.w	$bf07	; $f812
+	dc.w	$bed4	; $f814
+	dc.w	$686f	; $f816
+table_f8d5:
+	dc.w	$c155	; $f8d5
+	dc.w	$c1a1	; $f8d7
+	dc.w	$c1c3	; $f8d9
+	dc.w	$c28b	; $f8db
+	dc.w	$c335	; $f8dd
+	dc.w	$c335	; $f8df
+	dc.w	$c327	; $f8e1
+	dc.w	$c39a	; $f8e3
+	dc.w	$c327	; $f8e5
+	dc.w	$c335	; $f8e7
+	dc.w	$c335	; $f8e9
+	dc.w	$c35c	; $f8eb
+	dc.w	$c418	; $f8ed
+	dc.w	$c465	; $f8ef
+	dc.w	$c39a	; $f8f1
+	dc.w	$c37f	; $f8f3
+	dc.w	$c418	; $f8f5
+	dc.w	$c465	; $f8f7
+	dc.w	$a18f	; $f8f9
+	dc.w	$8bcb	; $f8fb
+	dc.w	$cccd	; $f8fd
+	dc.w	$cecf	; $f8ff
+	dc.w	$d0d1	; $f901
+	dc.w	$c4db	; $f903
+	dc.w	$c58a	; $f905
+	dc.w	$c5a8	; $f907
+	dc.w	$c5fc	; $f909
+	dc.w	$c6d6	; $f90b
+	dc.w	$5d09	; $f90d
+	dc.w	$489a	; $f90f
+	dc.w	$48ae	; $f911
+	dc.w	$c596	; $f913
+	dc.w	$c712	; $f915
+	dc.w	$c72f	; $f917
+	dc.w	$c72f	; $f919
+	dc.w	$c72f	; $f91b
+	dc.w	$c72f	; $f91d
+	dc.w	$647c	; $f91f
+	dc.w	$5460	; $f921
+	dc.w	$4c9c	; $f923
+table_f8dd:
+	dc.w	$c335	; $f8dd
+	dc.w	$c335	; $f8df
+	dc.w	$c327	; $f8e1
+	dc.w	$c39a	; $f8e3
+	dc.w	$c327	; $f8e5
+	dc.w	$c335	; $f8e7
+	dc.w	$c335	; $f8e9
+	dc.w	$c35c	; $f8eb
+	dc.w	$c418	; $f8ed
+	dc.w	$c465	; $f8ef
+	dc.w	$c39a	; $f8f1
+	dc.w	$c37f	; $f8f3
+	dc.w	$c418	; $f8f5
+	dc.w	$c465	; $f8f7
+	dc.w	$a18f	; $f8f9
+	dc.w	$8bcb	; $f8fb
+	dc.w	$cccd	; $f8fd
+	dc.w	$cecf	; $f8ff
+	dc.w	$d0d1	; $f901
+	dc.w	$c4db	; $f903
+	dc.w	$c58a	; $f905
+	dc.w	$c5a8	; $f907
+	dc.w	$c5fc	; $f909
+	dc.w	$c6d6	; $f90b
+	dc.w	$5d09	; $f90d
+	dc.w	$489a	; $f90f
+	dc.w	$48ae	; $f911
+	dc.w	$c596	; $f913
+	dc.w	$c712	; $f915
+	dc.w	$c72f	; $f917
+	dc.w	$c72f	; $f919
+	dc.w	$c72f	; $f91b
+	dc.w	$c72f	; $f91d
+	dc.w	$647c	; $f91f
+	dc.w	$5460	; $f921
+	dc.w	$4c9c	; $f923
+table_f8eb:
+	dc.w	$c35c	; $f8eb
+	dc.w	$c418	; $f8ed
+	dc.w	$c465	; $f8ef
+	dc.w	$c39a	; $f8f1
+	dc.w	$c37f	; $f8f3
+	dc.w	$c418	; $f8f5
+	dc.w	$c465	; $f8f7
+	dc.w	$a18f	; $f8f9
+	dc.w	$8bcb	; $f8fb
+	dc.w	$cccd	; $f8fd
+	dc.w	$cecf	; $f8ff
+	dc.w	$d0d1	; $f901
+	dc.w	$c4db	; $f903
+	dc.w	$c58a	; $f905
+	dc.w	$c5a8	; $f907
+	dc.w	$c5fc	; $f909
+	dc.w	$c6d6	; $f90b
+	dc.w	$5d09	; $f90d
+	dc.w	$489a	; $f90f
+	dc.w	$48ae	; $f911
+	dc.w	$c596	; $f913
+	dc.w	$c712	; $f915
+	dc.w	$c72f	; $f917
+	dc.w	$c72f	; $f919
+	dc.w	$c72f	; $f91b
+	dc.w	$c72f	; $f91d
+	dc.w	$647c	; $f91f
+	dc.w	$5460	; $f921
+	dc.w	$4c9c	; $f923
+table_f903:
+	dc.w	$c4db	; $f903
+	dc.w	$c58a	; $f905
+	dc.w	$c5a8	; $f907
+	dc.w	$c5fc	; $f909
+	dc.w	$c6d6	; $f90b
+	dc.w	$5d09	; $f90d
+	dc.w	$489a	; $f90f
+	dc.w	$48ae	; $f911
+	dc.w	$c596	; $f913
+	dc.w	$c712	; $f915
+	dc.w	$c72f	; $f917
+	dc.w	$c72f	; $f919
+	dc.w	$c72f	; $f91b
+	dc.w	$c72f	; $f91d
+	dc.w	$647c	; $f91f
+	dc.w	$5460	; $f921
+	dc.w	$4c9c	; $f923
+table_f90d:
+	dc.w	$5d09	; $f90d
+	dc.w	$489a	; $f90f
+	dc.w	$48ae	; $f911
+	dc.w	$c596	; $f913
+	dc.w	$c712	; $f915
+	dc.w	$c72f	; $f917
+	dc.w	$c72f	; $f919
+	dc.w	$c72f	; $f91b
+	dc.w	$c72f	; $f91d
+	dc.w	$647c	; $f91f
+	dc.w	$5460	; $f921
+	dc.w	$4c9c	; $f923
+table_f915:
+	dc.w	$c712	; $f915
+	dc.w	$c72f	; $f917
+	dc.w	$c72f	; $f919
+	dc.w	$c72f	; $f91b
+	dc.w	$c72f	; $f91d
+	dc.w	$647c	; $f91f
+	dc.w	$5460	; $f921
+	dc.w	$4c9c	; $f923
+table_f931:
+	dc.w	$c761	; $f931
+	dc.w	$c7bf	; $f933
+	dc.w	$c7bf	; $f935
+	dc.w	$c7bf	; $f937
+	dc.w	$c7bf	; $f939
+	dc.w	$c7c7	; $f93b
+	dc.w	$c7fc	; $f93d
+	dc.w	$c87b	; $f93f
+	dc.w	$c87e	; $f941
+	dc.w	$c8e2	; $f943
+	dc.w	$c8ff	; $f945
+	dc.w	$c936	; $f947
+	dc.w	$c94d	; $f949
+	dc.w	$c98e	; $f94b
+	dc.w	$c993	; $f94d
+	dc.w	$c9a3	; $f94f
+	dc.w	$c9a5	; $f951
+	dc.w	$c9d6	; $f953
+	dc.w	$ca79	; $f955
+	dc.w	$ca98	; $f957
+	dc.w	$ca33	; $f959
+	dc.w	$ca68	; $f95b
+	dc.w	$ca79	; $f95d
+	dc.w	$ca98	; $f95f
+	dc.w	$f969	; $f961
+	dc.w	$f973	; $f963
+	dc.w	$f97d	; $f965
+	dc.w	$f97d	; $f967
+	dc.w	$f987	; $f969
+	dc.w	$f98d	; $f96b
+	dc.w	$f993	; $f96d
+	dc.w	$f999	; $f96f
+	dc.w	$f999	; $f971
+	dc.w	$f99f	; $f973
+	dc.w	$f9a5	; $f975
+	dc.w	$f9ab	; $f977
+	dc.w	$f9b1	; $f979
+	dc.w	$f9b1	; $f97b
+	dc.w	$f9b7	; $f97d
+	dc.w	$f9bd	; $f97f
+	dc.w	$f9c3	; $f981
+	dc.w	$f9c9	; $f983
+	dc.w	$f9cf	; $f985
+	dc.w	$4241	; $f987
+	dc.w	$4008	; $f989
+table_f93b:
+	dc.w	$c7c7	; $f93b
+	dc.w	$c7fc	; $f93d
+	dc.w	$c87b	; $f93f
+	dc.w	$c87e	; $f941
+	dc.w	$c8e2	; $f943
+	dc.w	$c8ff	; $f945
+	dc.w	$c936	; $f947
+	dc.w	$c94d	; $f949
+	dc.w	$c98e	; $f94b
+	dc.w	$c993	; $f94d
+	dc.w	$c9a3	; $f94f
+	dc.w	$c9a5	; $f951
+	dc.w	$c9d6	; $f953
+	dc.w	$ca79	; $f955
+	dc.w	$ca98	; $f957
+	dc.w	$ca33	; $f959
+	dc.w	$ca68	; $f95b
+	dc.w	$ca79	; $f95d
+	dc.w	$ca98	; $f95f
+	dc.w	$f969	; $f961
+	dc.w	$f973	; $f963
+	dc.w	$f97d	; $f965
+	dc.w	$f97d	; $f967
+	dc.w	$f987	; $f969
+	dc.w	$f98d	; $f96b
+	dc.w	$f993	; $f96d
+	dc.w	$f999	; $f96f
+	dc.w	$f999	; $f971
+	dc.w	$f99f	; $f973
+	dc.w	$f9a5	; $f975
+	dc.w	$f9ab	; $f977
+	dc.w	$f9b1	; $f979
+	dc.w	$f9b1	; $f97b
+	dc.w	$f9b7	; $f97d
+	dc.w	$f9bd	; $f97f
+	dc.w	$f9c3	; $f981
+	dc.w	$f9c9	; $f983
+	dc.w	$f9cf	; $f985
+	dc.w	$4241	; $f987
+	dc.w	$4008	; $f989
+table_f94f:
+	dc.w	$c9a3	; $f94f
+	dc.w	$c9a5	; $f951
+	dc.w	$c9d6	; $f953
+	dc.w	$ca79	; $f955
+	dc.w	$ca98	; $f957
+	dc.w	$ca33	; $f959
+	dc.w	$ca68	; $f95b
+	dc.w	$ca79	; $f95d
+	dc.w	$ca98	; $f95f
+	dc.w	$f969	; $f961
+	dc.w	$f973	; $f963
+	dc.w	$f97d	; $f965
+	dc.w	$f97d	; $f967
+	dc.w	$f987	; $f969
+	dc.w	$f98d	; $f96b
+	dc.w	$f993	; $f96d
+	dc.w	$f999	; $f96f
+	dc.w	$f999	; $f971
+	dc.w	$f99f	; $f973
+	dc.w	$f9a5	; $f975
+	dc.w	$f9ab	; $f977
+	dc.w	$f9b1	; $f979
+	dc.w	$f9b1	; $f97b
+	dc.w	$f9b7	; $f97d
+	dc.w	$f9bd	; $f97f
+	dc.w	$f9c3	; $f981
+	dc.w	$f9c9	; $f983
+	dc.w	$f9cf	; $f985
+	dc.w	$4241	; $f987
+	dc.w	$4008	; $f989
+table_f959:
+	dc.w	$ca33	; $f959
+	dc.w	$ca68	; $f95b
+	dc.w	$ca79	; $f95d
+	dc.w	$ca98	; $f95f
+	dc.w	$f969	; $f961
+	dc.w	$f973	; $f963
+	dc.w	$f97d	; $f965
+	dc.w	$f97d	; $f967
+	dc.w	$f987	; $f969
+	dc.w	$f98d	; $f96b
+	dc.w	$f993	; $f96d
+	dc.w	$f999	; $f96f
+	dc.w	$f999	; $f971
+	dc.w	$f99f	; $f973
+	dc.w	$f9a5	; $f975
+	dc.w	$f9ab	; $f977
+	dc.w	$f9b1	; $f979
+	dc.w	$f9b1	; $f97b
+	dc.w	$f9b7	; $f97d
+	dc.w	$f9bd	; $f97f
+	dc.w	$f9c3	; $f981
+	dc.w	$f9c9	; $f983
+	dc.w	$f9cf	; $f985
+	dc.w	$4241	; $f987
+	dc.w	$4008	; $f989
+table_fe73:
+	dc.w	$ccea	; $fe73
+	dc.w	$ccf1	; $fe75
+	dc.w	$ccfe	; $fe77
+	dc.w	$cd10	; $fe79
+	dc.w	$cd44	; $fe7b
+	dc.w	$cd6d	; $fe7d
+	dc.w	$cd8f	; $fe7f
