@@ -727,6 +727,8 @@ color_ram_2800 = $2800
 44EF: 26 F6          BNE    $44C5
 44F1: 4F             CLRA
 44F2: 7E C0 0F       JMP    $422D
+
+irq_44f5:
 44F5: 7F 96 05       CLR    $1487
 44F8: 86 29          LDA    #$01
 44FA: B7 9C 28       STA    watchdog_1400
@@ -743,6 +745,7 @@ color_ram_2800 = $2800
 4516: 86 83          LDA    #$01
 4518: B7 3C 0F       STA    $1487
 451B: 3B             RTI
+
 451C: 8E 18 98       LDX    #$3010
 451F: 86 21          LDA    #$03
 4521: 97 CA          STA    $48
@@ -15887,6 +15890,7 @@ C14D: 8E 70 5D       LDX   #table_f8d5
 C150: 96 08          LDA    $2A
 C152: 48             ASLA
 C153: 6E B4          JMP    [A,X]        ; [jump_table]
+
 C155: 96 83          LDA    $01
 C157: 27 32          BEQ    $C173
 C159: 8E BB 58       LDX    #$33D0

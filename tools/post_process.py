@@ -40,15 +40,14 @@ this_dir = pathlib.Path(__file__).absolute().parent
 
 source_dir = this_dir / "../src"
 
-input_dict = {"system_1280":"read_system_inputs",
-"in0_1281":"read_inputs_1",
-"in1_1282":"read_inputs_2",
-"audio_register_w_1100":"sound_start",
-"nmi_mask_w_1082":"",
-"sh_irqtrigger_w_1081":"",
+input_dict = {"system_1680":"read_system_inputs",
+"in0_1681":"read_inputs_1",
+"in1_1682":"read_inputs_2",
+"audio_register_w_1500":"sound_start",
+"sh_irqtrigger_w_1481":"",
 }
 
-store_to_video = re.compile("GET_ADDRESS\s+0x3")
+store_to_video = re.compile("GET_ADDRESS\s+0x2")
 
 # various dirty but at least automatic patches applying on the specific track and field code
 with open(source_dir / "conv.s") as f:
@@ -60,7 +59,7 @@ with open(source_dir / "conv.s") as f:
             line = ""
 
         # remove code for rom checks, watchdog, ...
-        for p in ("[rom_check_code]","watchdog_1000","coin_counter"):
+        for p in ("[rom_check_code]","watchdog_1400","coin_counter"):
             line = remove_code(p,lines,i)
 
         # pre-add video_address tag if we find a store instruction to an explicit 3000-3FFF address
@@ -82,26 +81,12 @@ with open(source_dir / "conv.s") as f:
                         lines[j] = next_line+"\tVIDEO_BYTE_DIRTY | [...]\n"
                     break
 
-# not really needed
-##        if "[scroll_address" in line:
-##            # give me the original instruction
-##            line = line.replace("_ADDRESS","_UNCHECKED_ADDRESS")
-##            # if it's a write, insert a "SCROLL_DIRTY" macro after the write
-##            for j in range(i+1,len(lines)):
-##                next_line = lines[j]
-##                if "[...]" not in next_line:
-##                    break
-##                if ",(a0)" in next_line or "clr" in next_line or "MOVE_W_FROM_REG" in next_line:
-##                    if any(x in next_line for x in ["address_word","MOVE_W_FROM_REG"]):
-##                        lines[j] = next_line+"\tSCROLL_WORD_DIRTY | [...]\n"
-##                    else:
-##                        lines[j] = next_line+"\tSCROLL_BYTE_DIRTY | [...]\n"
-##                    break
+
         line = re.sub(tablere,subt,line)
 
-        if "dsw1_1283" in line and "lda" in line:
+        if "dsw1_1683" in line and "lda" in line:
             line = change_instruction("jbsr\tosd_read_dsw_1",lines,i)
-        elif "dsw2_1200" in line and "lda" in line:
+        elif "dsw2_1600" in line and "lda" in line:
             line = change_instruction("jbsr\tosd_read_dsw_2",lines,i)
 
         if "multiply_ab" in line and "MAKE_D" in lines[i+1]:
@@ -115,39 +100,29 @@ with open(source_dir / "conv.s") as f:
             lines[i-3] = ""
             lines[i-1] = ""
 
-        if "[$6853" in line:
-            # insert level select cheat
-            line = line + "\tGET_DP_ADDRESS\tcurrent_level_84\n\tmove.b\tstart_level,(a0)\n"
-##        if "[$727d" in line:
-##            line = "\ttst.b\tinfinite_lives_flag\n\tjne\t0f\n" + line
+##        if "[$6853" in line:
+##            # insert level select cheat
+##            line = line + "\tGET_DP_ADDRESS\tcurrent_level_84\n\tmove.b\tstart_level,(a0)\n"
 
-        if "[$727f" in line:
-            line = "0:\n"+line
 
-##        if "[$7315" in line:
-##            # insert nb attempts trainer
-##            line = "\ttst.b\tinfinite_lives_flag\n\tjne\tl_732b\n" + line
-        if "[$83bd" in line or "[$9db1" in line or "[$d804" in line:
-            line = "\tPUSH_SR\n"+line
-            lines[i+1] = lines[i+1]+"\tPOP_SR\n"
-            lines[i+3] = ""
+##        if "[$83bd" in line or "[$9db1" in line or "[$d804" in line:
+##            line = "\tPUSH_SR\n"+line
+##            lines[i+1] = lines[i+1]+"\tPOP_SR\n"
+##            lines[i+3] = ""
 
-##        elif "[$877a" in line:
-##            line = "\ttst.b\tinfinite_lives_flag\n\tjne\tqualified_878f\n"
-        elif "[$605f" in line:
-            # don't do the init clear loop
-            line = remove_instruction(lines,i)
-##        elif "[$878f" in line:
-##            line = "qualified_878f:\n" + line
 
-        elif "[$83cc" in line:
-            line = change_instruction("subq.b\t#0x01,(a0)",lines,i)
-            lines[i-1] = ""
-            lines[i+1] = remove_instruction(lines,i+1)
-            lines[i+2] = ""
-            lines[i+4] = ""
+##        elif "[$605f" in line:
+##            # don't do the init clear loop
+##            line = remove_instruction(lines,i)
 
-        elif "flip_screen_set_1080" in line or "nmi_mask_1082" in line:
+##        elif "[$83cc" in line:
+##            line = change_instruction("subq.b\t#0x01,(a0)",lines,i)
+##            lines[i-1] = ""
+##            lines[i+1] = remove_instruction(lines,i+1)
+##            lines[i+2] = ""
+##            lines[i+4] = ""
+
+        elif "flip_screen_set_1080" in line:
             line = remove_instruction(lines,i)
             remove_continuing_lines(lines,i)
 
@@ -185,7 +160,7 @@ with open(source_dir / "conv.s") as f:
                 rest = re.sub(".*\"","",line)
                 line = f"\t{inst}_A_INDEXED\t{reg}{rest}"
         if "ERROR" in line:
-            print(line)
+            print(line,end="")
         lines[i] = line
 
 
@@ -194,10 +169,10 @@ with open(source_dir / "conv.s") as f:
 with open(source_dir / "data.inc","w") as fw:
     fw.writelines(equates)
 
-with open(source_dir / "track_and_field.68k","w") as fw:
-    fw.write("""\t.include "track_and_field.inc"
+with open(source_dir / "hyper_sports.68k","w") as fw:
+    fw.write("""\t.include "hyper_sports.inc"
 .include "data.inc"
-\t.global\tirq_6600
-\t.global\treset_6000
+\t.global\tirq_44f5
+\t.global\treset_4000
 """)
     fw.writelines(lines)
