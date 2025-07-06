@@ -163,6 +163,11 @@ get_address:
 	and.w	#0xFF,d0  | mask 8 bits
 	add.w	d0,d0    | *2 (16 -> 32 bits)
 	.endm
+	
+	* hyper sports game specific
+	.macro	JSR_0E_X
+	jbsr	do_jmp_0e_x
+	.endm
 
 	.ifdef	MC68020
 
@@ -296,8 +301,16 @@ get_address:
 	GET_ADDRESS_FUNC
 	.endm
 
+	.macro	GET_REG_REG_INDIRECT_ADDRESS reg1,reg2
+	BREAKPOINT	"debug GET_REG_REG_INDIRECT_ADDRESS!!!"
+	GET_INDIRECT_ADDRESS_REGS	\reg1,\reg2,d6
+	and.l	#0xFFFF,d6
+	move.l	d6,a0
+	GET_ADDRESS_FUNC
+	.endm
+	
 	.macro GET_REG_INDIRECT_ADDRESS	offset,reg
-	BREAKPOINT	"debug this!!!"
+	BREAKPOINT	"debug GET_REG_INDIRECT_ADDRESS!!!"
 	GET_REG_ADDRESS		\offset,\reg
 	READ_BE_WORD	a0
 	GET_ADDRESS_FUNC
@@ -354,6 +367,25 @@ get_address:
 	READ_BE_WORD	a0
 	GET_UNCHECKED_ADDRESS_FUNC
 	.endm
+
+	.macro JUMP_IF_KNOWN	addr
+	cmp.w	#0x\addr,d6
+	jne		0f
+	jmp		l_\addr
+0:
+	.endm
+	
+* game uses a ram table to jump at some locations
+* we cannot predict what those locations will be, we intercept them
+* and report the unknown ones	
+do_jmp_0e_x:
+	GET_REG_ADDRESS		0xE,d2
+	READ_BE_WORD	d6		| original address to jump to in d6
+	JUMP_IF_KNOWN	85a0
+	BREAKPOINT	"unknown dynamic jump address in D6"
+	illegal
+	rts
+	
 cpu_init:
 	moveq	#0,d0
 	moveq	#0,d1

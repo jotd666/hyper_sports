@@ -105,10 +105,17 @@ with open(source_dir / "conv.s") as f:
 ##            line = line + "\tGET_DP_ADDRESS\tcurrent_level_84\n\tmove.b\tstart_level,(a0)\n"
 
 
-##        if "[$83bd" in line or "[$9db1" in line or "[$d804" in line:
-##            line = "\tPUSH_SR\n"+line
-##            lines[i+1] = lines[i+1]+"\tPOP_SR\n"
-##            lines[i+3] = ""
+        for a in [0x6ec1,0x9ef4,0xa9f5,0xc005,0xccca,0xcd0b,0xce37]:
+            if f"[${a:04x}" in line:
+                line = "\tPUSH_SR\n"+line
+                lines[i+1] += "\tPOP_SR\n"
+                lines[i+3] = ""
+
+        # more complex register preserve
+        if "[$939c" in line and "GET_REG" in line:
+            line = "\tPUSH_SR\n"+line
+            lines[i+13] += "\tPOP_SR\n"
+            lines[i+15] = ""
 
 
 ##        elif "[$605f" in line:
@@ -159,6 +166,9 @@ with open(source_dir / "conv.s") as f:
                 reg = "A2" if m.group(2)=="x" else "A3"
                 rest = re.sub(".*\"","",line)
                 line = f"\t{inst}_A_INDEXED\t{reg}{rest}"
+        if "indirect jsr" in line:
+            # not supported by converter. 3 occurrences of JSR    [$0E,X], can be done easily
+            line = change_instruction("JSR_0E_X",lines,i)
         if "ERROR" in line:
             print(line,end="")
         lines[i] = line

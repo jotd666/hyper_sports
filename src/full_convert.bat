@@ -6,6 +6,6 @@ goto skip_instrum
 add_reg_log.py -s 6000 -e 615E -p 1 track_and_field.68k
 add_reg_log.py -s 617F -e FF00 -p 1 track_and_field.68k
 :skip_instrum
-m68k-amigaos-as --defsym MC68020=1 hyper_sports.68k 2>&1
+rem m68k-amigaos-as --defsym MC68020=1 hyper_sports.68k 2>&1
 build.bat
 

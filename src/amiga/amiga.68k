@@ -7,7 +7,7 @@
 	* first instruction (includes contain code)
 	jra		start
 
-	.include "../src/track_and_field.inc"
+	.include "../src/hyper_sports.inc"
 
 	.include "hardware/custom.i"
 	.include "exec/types2.i"
@@ -47,8 +47,8 @@ Y_MAX = 256
 _custom = 0xDFF000
 
 
-RAM_START = 0x1800
-ROM_START = 0x6000
+RAM_START = 0x1000
+ROM_START = 0x4000
 
 
 
@@ -146,12 +146,12 @@ BIT_LEFT_2P = 6
 .macro	GET_MEMORY_START_AND_DP
 	move.l	m6809_direct_page_pointer,a4
 	.ifdef	RELEASE
-	lea		ram_buffer-0x1800,a6
+	lea		ram_buffer-RAM_START,a6
 	.else
-	move.l		ram_start_1800,a6
+	move.l		ram_start_1000,a6
 	
 	* adjust offset to avoid subbing at run-time
-	sub.w	#0x1800,a6
+	sub.w	#RAM_START,a6
 	.endif
 	.endm
 	
@@ -752,15 +752,23 @@ demo_game:
 	move.l	a6,d0
 	clr.w	d0
 	move.l	d0,d1
-	add.l	#0x11800,d1
-	move.l	d1,ram_start_1800		| memory (0x1800-0xFFFF)
+	illegal
+	illegal
+	illegal
+	illegal
+	illegal
+	illegal
+	illegal
+	illegal
+	add.l	#0x10000+RAM_START,d1
+	move.l	d1,ram_start_1000		| memory (0x1000-0xFFFF)
 	
 	* relocate rom tables just after shared RAM
 	* memory is contiguous (only 1 segment of memory RAM+ROM)
 	* and 6809 memory access is way faster (no bank switching)
 	
 	* copy the ROM data
-	add.l	#ROM_START-0x1800,d1
+	add.l	#ROM_START-RAM_START,d1
 	move.l 	d1,a1
 	move.w	#(0x10000-ROM_START)/4-1,d0
 	lea		rom_base,a0
@@ -797,14 +805,14 @@ demo_game:
 	* patch record times to be very easy
 	move.l	a6,a0
 	lea		easy_values(pc),a1
-	add.l	#qualifying_values_aaf3,a0
+	**add.l	#qualifying_values_aaf3,a0
 	move.w	#5,d0
 0:
 	move.w	(a1)+,(a0)+
 	dbf	d0,0b
 	
 	move.l	a6,a0
-	add.l	#high_jump_attempted_heights_edea,a0
+	*add.l	#high_jump_attempted_heights_edea,a0
 	lea		easy_high_jump_values(pc),a1
 	move.w	#3,d0
 0:
@@ -815,7 +823,7 @@ demo_game:
 	
 	GET_MEMORY_START_AND_DP
 	jbsr	cpu_init
-	jmp			reset_6000					| pass control to the cpu core
+	jmp			reset_4000					| pass control to the cpu core
 
 easy_values:
 	.word	0x1600	| dash
@@ -836,7 +844,7 @@ do_irq:
 	* set base for RAM
 	jbsr	cpu_init
 	GET_MEMORY_START_AND_DP
-	jra			irq_6600					| pass control to the cpu core
+	jra			irq_44f5					| pass control to the cpu core
 	
 * just in case some hardware calls nmi
 _nmi:
@@ -1074,13 +1082,15 @@ osd_wait:
 
 * Z: set if not playing
 is_game_playing:
+
 	move.l	a4,-(a7)
 	move.l	m6809_direct_page_pointer,a4
-	*GET_MEMORY_START_AND_DP
-	cmp.b	#1,global_state_00(a4)
-	jeq		0f
-	cmp.b	#4,global_state_00(a4)
-0:
+*	*GET_MEMORY_START_AND_DP
+*	cmp.b	#1,global_state_00(a4)
+*	jeq		0f
+*	cmp.b	#4,global_state_00(a4)
+*0:
+	cmp.l	#0,a4
 	move.l	(a7)+,a4
 	rts
 	
@@ -1231,7 +1241,7 @@ update_bobs_and_hw_sprites:
     lea _custom,A5
 	lea		sprite_groups(pc),a2
 	GET_MEMORY_START_AND_DP
-	lea		(0x183E,a6),a0		| sprite start
+	lea		(0x103E,a6),a0		| sprite start
 	lea		bob_table,a4
 	move.w	#NB_TARGET_SPRITES/2-1,d7
 	move.l	bob_previous_drawn_sprites(pc),a6
@@ -1242,45 +1252,7 @@ update_bobs_and_hw_sprites:
 2:
 	rts
 	
-* * < A0: target sprite pointer
-* 
-* void trackfld_state::draw_sprites( bitmap_ind16 &bitmap, const rectangle &cliprect )
-* {
-* 	uint8_t *spriteram_1C00 = m_spriteram;
-* 	uint8_t *spriteram_1800 = m_spriteram2;
-* 	int offs;
-* 
-* 	for (offs = m_spriteram.bytes() - 2; offs >= 0; offs -= 2)
-* 	{
-* 		int attr = spriteram_1800[offs];
-* 		int code = spriteram_1C00[offs + 1];
-* 		int color = attr & 0x0f;
-* 		int flipx = ~attr & 0x40;
-* 		int flipy = attr & 0x80;
-* 		int sx = spriteram_1C00[offs] - 1;
-* 		int sy = 240 - spriteram_1800[offs + 1];
-* 
-* 
-* 		/* Note that this adjustement must be done AFTER handling flip screen, thus */
-* 		/* proving that this is a hardware related "feature" */
-* 		sy += 1;
-* 
-* 
-* 			m_gfxdecode->gfx(0)->transmask(bitmap,cliprect,
-* 			code + m_sprite_bank1 + m_sprite_bank2, color,
-* 			flipx, flipy,
-* 			sx, sy,
-* 			m_palette->transpen_mask(*m_gfxdecode->gfx(0), color, 0));
-* 
-* 		/* redraw with wraparound */
-* 
-* 			m_gfxdecode->gfx(0)->transmask(bitmap,cliprect,
-* 			code + m_sprite_bank1 + m_sprite_bank2, color,
-* 			flipx, flipy,
-* 			sx - 256, sy,
-* 			m_palette->transpen_mask(*m_gfxdecode->gfx(0), color, 0));
-* 	}
-* }
+
 
 * < A0: sprite array
 * < A2: sprite group table
@@ -1290,6 +1262,8 @@ update_bobs_and_hw_sprites:
 * must preserve all of those, plus D7
 
 update_one_bob:
+	rts
+	
 	* X = 0 and Y = 0: disabled
 	
 	moveq	#0,d0
@@ -1556,8 +1530,8 @@ osd_dump_logs:
 	jbsr	resload_SaveFile(a2)
 		
 	GET_MEMORY_START_AND_DP
-	lea		sprites_ram_name_1800(pc),a0
-	lea	(0x1800,a6),a1		| sprites
+	lea		sprites_ram_name_1000(pc),a0
+	lea	(RAM_START,a6),a1		| sprites
 	move.l	#0x440,d0
 	jbsr	resload_SaveFile(a2)
 
@@ -1585,8 +1559,8 @@ save_cpu_log:
 	rts
 	
 
-sprites_ram_name_1800:
-	.asciz	"sprite_ram_1800"
+sprites_ram_name_1000:
+	.asciz	"sprite_ram_1000"
 
 
 sprite_log_name:
@@ -2851,9 +2825,9 @@ osd_read_dsw_3:
 clear_all_faults:
 	move.l	a4,-(a7)
 	move.l	m6809_direct_page_pointer,a4
-	clr.b	(high_jump_fault_9f,a4)
-	clr.b	(jump_foul_c9,a4)
-	move.b	#5,(chrono_second_7f,a4)		| race: 5 seconds
+*	clr.b	(high_jump_fault_9f,a4)
+*	clr.b	(jump_foul_c9,a4)
+*	move.b	#5,(chrono_second_7f,a4)		| race: 5 seconds
 	move.l 	(a7)+,a4
 	rts
 

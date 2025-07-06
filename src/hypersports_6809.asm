@@ -113,7 +113,7 @@ color_ram_2800 = $2800
 
 
 
-
+reset_4000:
 4000: 7F 36 05       CLR    $1487
 4003: 10 CE 15 02    LDS    #$3780
 4007: 86 18          LDA    #$30
@@ -2210,6 +2210,7 @@ queue_sound_event_4ead:
 50AE: 44             LSRA
 50AF: 44             LSRA
 50B0: AB 60          ADDA   $2,U
+l_50b2:
 50B2: 19             DAA
 50B3: 97 68          STA    $4A
 50B5: 84 8D          ANDA   #$0F
@@ -2220,6 +2221,7 @@ queue_sound_event_4ead:
 50BD: 44             LSRA
 50BE: 44             LSRA
 50BF: AB 63          ADDA   $1,U
+l_50c1:
 50C1: 19             DAA
 50C2: 97 C8          STA    $4A
 50C4: 84 2D          ANDA   #$0F
@@ -2236,6 +2238,7 @@ queue_sound_event_4ead:
 50D7: A6 69          LDA    $1,U
 50D9: 9B C0          ADDA   $48
 50DB: 20 CC          BRA    $50C1
+
 50DD: A6 CB          LDA    $3,U
 50DF: 90 6A          SUBA   $48
 50E1: 25 81          BCS    $50E6
@@ -2706,6 +2709,7 @@ queue_sound_event_4ead:
 545F: 26 CC          BNE    $544F
 5461: C6 87          LDB    #$05
 5463: 7E 70 D7       JMP    $52F5
+
 5466: 8E B1 A8       LDX    #$3380
 5469: CE B8 13       LDU    #$309B
 546C: BD 7C F4       JSR    $547C
@@ -8050,19 +8054,8 @@ queue_sound_event_4ead:
 7FD9: 48             ASLA
 7FDA: 31 2E          LEAY   A,Y
 7FDC: 7E A1 C3       JMP    $894B
-7FDF: 77 DD DD       ASR    $FFFF
-7FE2: 7D 7D DD       TST    $FFFF
-7FE5: DD 7D          STD    $FF
-7FE7: 7D D7 D7       TST    $FFFF
-7FEA: 77 77 D7       ASR    $FFFF
-7FED: D7 77          STB    $FF
-7FEF: 77 DD DD       ASR    $FFFF
-7FF2: 7D 7D DD       TST    $FFFF
-7FF5: DD 7D          STD    $FF
-7FF7: 7D D7 D7       TST    $FFFF
-7FFA: 77 77 D7       ASR    $FFFF
-7FFD: D7 77          STB    $FF
-7FFF: 77 96 4B       ASR    $B469
+
+8000: 96 4B          LDA    $69
 8002: 81 82          CMPA   #$00
 8004: 26 31          BNE    $8019
 8006: 8E B0 48       LDX    #$3260
@@ -15694,15 +15687,8 @@ BFDC: 10 8E A2 28    LDY    #$2AA0
 BFE0: BD 8D 5A       JSR    $AFD8
 BFE3: 10 BE 16 B6    LDY    $3434
 BFE7: 7E 87 F0       JMP    $AFD8
-BFEA: 77 77 D7       ASR    $FFFF
-BFED: D7 77          STB    $FF
-BFEF: 77 DD DD       ASR    $FFFF
-BFF2: 7D 7D DD       TST    $FFFF
-BFF5: DD 7D          STD    $FF
-BFF7: 7D D7 D7       TST    $FFFF
-BFFA: 77 77 D7       ASR    $FFFF
-BFFD: D7 77          STB    $FF
-BFFF: 77 86 24       ASR    $A406
+
+C000: 86 24          LDA    #$06
 C002: 9B F0          ADDA   $72
 C004: 19             DAA
 C005: 97 F0          STA    $72
@@ -17558,7 +17544,6 @@ CF09: CE 88 88       LDU    #$0000
 CF0C: FD 17 D3       STD    $3F5B
 CF0F: FF 1D 7F       STU    $3F5D
 CF12: 39             RTS
-
 table_cf30:
 	dc.w	$41d0	; $cf30
 	dc.w	$420e	; $cf32
@@ -17574,86 +17559,23 @@ table_d33a:
 	dc.w	$46c9	; $d33e
 	dc.w	$9276	; $d340
 	dc.w	$cce2	; $d342
-	dc.w	$9276	; $d344
-	dc.w	$7b96	; $d346
-	dc.w	$a091	; $d348
-	dc.w	$7b96	; $d34a
-	dc.w	$460a	; $d34c
-	dc.w	$4673	; $d34e
-	dc.w	$96f1	; $d350
-	dc.w	$4623	; $d352
-	dc.w	$4649	; $d354
-	dc.w	$4650	; $d356
-	dc.w	$46d1	; $d358
-	dc.w	$47d0	; $d35a
-	dc.w	$49f3	; $d35c
-	dc.w	$4a07	; $d35e
-	dc.w	$4cb0	; $d360
-	dc.w	$4d08	; $d362
-	dc.w	$4e36	; $d364
-	dc.w	$46d9	; $d366
-	dc.w	$470c	; $d368
-	dc.w	$4772	; $d36a
-	dc.w	$46e1	; $d36c
-	dc.w	$46fe	; $d36e
+
 table_d344:
 	dc.w	$9276	; $d344
 	dc.w	$7b96	; $d346
 	dc.w	$a091	; $d348
 	dc.w	$7b96	; $d34a
-	dc.w	$460a	; $d34c
-	dc.w	$4673	; $d34e
-	dc.w	$96f1	; $d350
-	dc.w	$4623	; $d352
-	dc.w	$4649	; $d354
-	dc.w	$4650	; $d356
-	dc.w	$46d1	; $d358
-	dc.w	$47d0	; $d35a
-	dc.w	$49f3	; $d35c
-	dc.w	$4a07	; $d35e
-	dc.w	$4cb0	; $d360
-	dc.w	$4d08	; $d362
-	dc.w	$4e36	; $d364
-	dc.w	$46d9	; $d366
-	dc.w	$470c	; $d368
-	dc.w	$4772	; $d36a
-	dc.w	$46e1	; $d36c
-	dc.w	$46fe	; $d36e
+
 table_d34c:
 	dc.w	$460a	; $d34c
 	dc.w	$4673	; $d34e
 	dc.w	$96f1	; $d350
-	dc.w	$4623	; $d352
-	dc.w	$4649	; $d354
-	dc.w	$4650	; $d356
-	dc.w	$46d1	; $d358
-	dc.w	$47d0	; $d35a
-	dc.w	$49f3	; $d35c
-	dc.w	$4a07	; $d35e
-	dc.w	$4cb0	; $d360
-	dc.w	$4d08	; $d362
-	dc.w	$4e36	; $d364
-	dc.w	$46d9	; $d366
-	dc.w	$470c	; $d368
-	dc.w	$4772	; $d36a
-	dc.w	$46e1	; $d36c
-	dc.w	$46fe	; $d36e
+
 table_d352:
 	dc.w	$4623	; $d352
 	dc.w	$4649	; $d354
 	dc.w	$4650	; $d356
-	dc.w	$46d1	; $d358
-	dc.w	$47d0	; $d35a
-	dc.w	$49f3	; $d35c
-	dc.w	$4a07	; $d35e
-	dc.w	$4cb0	; $d360
-	dc.w	$4d08	; $d362
-	dc.w	$4e36	; $d364
-	dc.w	$46d9	; $d366
-	dc.w	$470c	; $d368
-	dc.w	$4772	; $d36a
-	dc.w	$46e1	; $d36c
-	dc.w	$46fe	; $d36e
+
 table_d358:
 	dc.w	$46d1	; $d358
 	dc.w	$47d0	; $d35a
@@ -17662,17 +17584,12 @@ table_d358:
 	dc.w	$4cb0	; $d360
 	dc.w	$4d08	; $d362
 	dc.w	$4e36	; $d364
-	dc.w	$46d9	; $d366
-	dc.w	$470c	; $d368
-	dc.w	$4772	; $d36a
-	dc.w	$46e1	; $d36c
-	dc.w	$46fe	; $d36e
+
 table_d366:
 	dc.w	$46d9	; $d366
 	dc.w	$470c	; $d368
 	dc.w	$4772	; $d36a
-	dc.w	$46e1	; $d36c
-	dc.w	$46fe	; $d36e
+
 table_d36c:
 	dc.w	$46e1	; $d36c
 	dc.w	$46fe	; $d36e
@@ -17685,8 +17602,7 @@ table_d377:
 	dc.w	$4968	; $d381
 	dc.w	$499d	; $d383
 	dc.w	$49b3	; $d385
-	dc.w	$4874	; $d387
-	dc.w	$487f	; $d389
+
 table_d387:
 	dc.w	$4874	; $d387
 	dc.w	$487f	; $d389
@@ -17698,46 +17614,7 @@ table_d39b:
 	dc.w	$48a6	; $d3a3
 	dc.w	$48a6	; $d3a5
 	dc.w	$48a6	; $d3a7
-	dc.w	$48b8	; $d3a9
-	dc.w	$48c1	; $d3ab
-	dc.w	$48b8	; $d3ad
-	dc.w	$48c0	; $d3af
-	dc.w	$48c1	; $d3b1
-	dc.w	$48c1	; $d3b3
-	dc.w	$48c1	; $d3b5
-	dc.w	$609c	; $d3b7
-	dc.w	$8aaf	; $d3b9
-	dc.w	$a6d4	; $d3bb
-	dc.w	$65b8	; $d3bd
-	dc.w	$b3dc	; $d3bf
-	dc.w	$9a12	; $d3c1
-	dc.w	$6bcc	; $d3c3
-	dc.w	$4a18	; $d3c5
-	dc.w	$c315	; $d3c7
-	dc.w	$4a1f	; $d3c9
-	dc.w	$4c01	; $d3cb
-	dc.w	$4c70	; $d3cd
-	dc.w	$4c97	; $d3cf
-	dc.w	$f0e0	; $d3d1
-	dc.w	$6060	; $d3d3
-	dc.w	$60e0	; $d3d5
-	dc.w	$90f0	; $d3d7
-	dc.w	$e0a0	; $d3d9
-	dc.w	$f0a0	; $d3db
-	dc.w	$e090	; $d3dd
-	dc.w	$4d10	; $d3df
-	dc.w	$4d43	; $d3e1
-	dc.w	$4da4	; $d3e3
-	dc.w	$4dd1	; $d3e5
-	dc.w	$4de6	; $d3e7
-	dc.w	$4d43	; $d3e9
-	dc.w	$4e09	; $d3eb
-	dc.w	$4d4b	; $d3ed
-	dc.w	$4d98	; $d3ef
-	dc.w	$c14d	; $d3f1
-	dc.w	$c4d3	; $d3f3
-	dc.w	$4e3e	; $d3f5
-	dc.w	$4e53	; $d3f7
+
 table_d3a9:
 	dc.w	$48b8	; $d3a9
 	dc.w	$48c1	; $d3ab
@@ -17746,39 +17623,7 @@ table_d3a9:
 	dc.w	$48c1	; $d3b1
 	dc.w	$48c1	; $d3b3
 	dc.w	$48c1	; $d3b5
-	dc.w	$609c	; $d3b7
-	dc.w	$8aaf	; $d3b9
-	dc.w	$a6d4	; $d3bb
-	dc.w	$65b8	; $d3bd
-	dc.w	$b3dc	; $d3bf
-	dc.w	$9a12	; $d3c1
-	dc.w	$6bcc	; $d3c3
-	dc.w	$4a18	; $d3c5
-	dc.w	$c315	; $d3c7
-	dc.w	$4a1f	; $d3c9
-	dc.w	$4c01	; $d3cb
-	dc.w	$4c70	; $d3cd
-	dc.w	$4c97	; $d3cf
-	dc.w	$f0e0	; $d3d1
-	dc.w	$6060	; $d3d3
-	dc.w	$60e0	; $d3d5
-	dc.w	$90f0	; $d3d7
-	dc.w	$e0a0	; $d3d9
-	dc.w	$f0a0	; $d3db
-	dc.w	$e090	; $d3dd
-	dc.w	$4d10	; $d3df
-	dc.w	$4d43	; $d3e1
-	dc.w	$4da4	; $d3e3
-	dc.w	$4dd1	; $d3e5
-	dc.w	$4de6	; $d3e7
-	dc.w	$4d43	; $d3e9
-	dc.w	$4e09	; $d3eb
-	dc.w	$4d4b	; $d3ed
-	dc.w	$4d98	; $d3ef
-	dc.w	$c14d	; $d3f1
-	dc.w	$c4d3	; $d3f3
-	dc.w	$4e3e	; $d3f5
-	dc.w	$4e53	; $d3f7
+
 table_d3b7:
 	dc.w	$609c	; $d3b7
 	dc.w	$8aaf	; $d3b9
@@ -17787,32 +17632,7 @@ table_d3b7:
 	dc.w	$b3dc	; $d3bf
 	dc.w	$9a12	; $d3c1
 	dc.w	$6bcc	; $d3c3
-	dc.w	$4a18	; $d3c5
-	dc.w	$c315	; $d3c7
-	dc.w	$4a1f	; $d3c9
-	dc.w	$4c01	; $d3cb
-	dc.w	$4c70	; $d3cd
-	dc.w	$4c97	; $d3cf
-	dc.w	$f0e0	; $d3d1
-	dc.w	$6060	; $d3d3
-	dc.w	$60e0	; $d3d5
-	dc.w	$90f0	; $d3d7
-	dc.w	$e0a0	; $d3d9
-	dc.w	$f0a0	; $d3db
-	dc.w	$e090	; $d3dd
-	dc.w	$4d10	; $d3df
-	dc.w	$4d43	; $d3e1
-	dc.w	$4da4	; $d3e3
-	dc.w	$4dd1	; $d3e5
-	dc.w	$4de6	; $d3e7
-	dc.w	$4d43	; $d3e9
-	dc.w	$4e09	; $d3eb
-	dc.w	$4d4b	; $d3ed
-	dc.w	$4d98	; $d3ef
-	dc.w	$c14d	; $d3f1
-	dc.w	$c4d3	; $d3f3
-	dc.w	$4e3e	; $d3f5
-	dc.w	$4e53	; $d3f7
+
 table_d3c5:
 	dc.w	$4a18	; $d3c5
 	dc.w	$c315	; $d3c7
@@ -17820,26 +17640,6 @@ table_d3c5:
 	dc.w	$4c01	; $d3cb
 	dc.w	$4c70	; $d3cd
 	dc.w	$4c97	; $d3cf
-	dc.w	$f0e0	; $d3d1
-	dc.w	$6060	; $d3d3
-	dc.w	$60e0	; $d3d5
-	dc.w	$90f0	; $d3d7
-	dc.w	$e0a0	; $d3d9
-	dc.w	$f0a0	; $d3db
-	dc.w	$e090	; $d3dd
-	dc.w	$4d10	; $d3df
-	dc.w	$4d43	; $d3e1
-	dc.w	$4da4	; $d3e3
-	dc.w	$4dd1	; $d3e5
-	dc.w	$4de6	; $d3e7
-	dc.w	$4d43	; $d3e9
-	dc.w	$4e09	; $d3eb
-	dc.w	$4d4b	; $d3ed
-	dc.w	$4d98	; $d3ef
-	dc.w	$c14d	; $d3f1
-	dc.w	$c4d3	; $d3f3
-	dc.w	$4e3e	; $d3f5
-	dc.w	$4e53	; $d3f7
 table_d3df:
 	dc.w	$4d10	; $d3df
 	dc.w	$4d43	; $d3e1
@@ -17848,12 +17648,7 @@ table_d3df:
 	dc.w	$4de6	; $d3e7
 	dc.w	$4d43	; $d3e9
 	dc.w	$4e09	; $d3eb
-	dc.w	$4d4b	; $d3ed
-	dc.w	$4d98	; $d3ef
-	dc.w	$c14d	; $d3f1
-	dc.w	$c4d3	; $d3f3
-	dc.w	$4e3e	; $d3f5
-	dc.w	$4e53	; $d3f7
+
 table_d3ed:
 	dc.w	$4d4b	; $d3ed
 	dc.w	$4d98	; $d3ef
@@ -17885,48 +17680,22 @@ table_d4df:
 	dc.w	$6376	; $d4ed
 	dc.w	$6455	; $d4ef
 	dc.w	$6536	; $d4f1
-	dc.w	$60ac	; $d4f3
-	dc.w	$60d1	; $d4f5
-	dc.w	$71c6	; $d4f7
-	dc.w	$6248	; $d4f9
 table_d4f3:
 	dc.w	$60ac	; $d4f3
 	dc.w	$60d1	; $d4f5
-	dc.w	$71c6	; $d4f7
-	dc.w	$6248	; $d4f9
 table_d4f7:
 	dc.w	$71c6	; $d4f7
 	dc.w	$6248	; $d4f9
 table_d507:
 	dc.w	$71c6	; $d507
 	dc.w	$62b6	; $d509
-	dc.w	$71c6	; $d50b
-	dc.w	$6326	; $d50d
-	dc.w	$6381	; $d50f
-	dc.w	$63a8	; $d511
-	dc.w	$6448	; $d513
-	dc.w	$6381	; $d515
-	dc.w	$6460	; $d517
-	dc.w	$64c4	; $d519
-	dc.w	$650d	; $d51b
 table_d50b:
 	dc.w	$71c6	; $d50b
 	dc.w	$6326	; $d50d
-	dc.w	$6381	; $d50f
-	dc.w	$63a8	; $d511
-	dc.w	$6448	; $d513
-	dc.w	$6381	; $d515
-	dc.w	$6460	; $d517
-	dc.w	$64c4	; $d519
-	dc.w	$650d	; $d51b
 table_d50f:
 	dc.w	$6381	; $d50f
 	dc.w	$63a8	; $d511
 	dc.w	$6448	; $d513
-	dc.w	$6381	; $d515
-	dc.w	$6460	; $d517
-	dc.w	$64c4	; $d519
-	dc.w	$650d	; $d51b
 table_d515:
 	dc.w	$6381	; $d515
 	dc.w	$6460	; $d517
@@ -17937,225 +17706,17 @@ table_d523:
 	dc.w	$6555	; $d525
 	dc.w	$6592	; $d527
 	dc.w	$650d	; $d529
-	dc.w	$65c0	; $d52b
-	dc.w	$6620	; $d52d
-	dc.w	$6854	; $d52f
-	dc.w	$6ae0	; $d531
-	dc.w	$6b02	; $d533
-	dc.w	$65c8	; $d535
-	dc.w	$6617	; $d537
-	dc.w	$662d	; $d539
-	dc.w	$663e	; $d53b
-	dc.w	$6653	; $d53d
-	dc.w	$666e	; $d53f
-	dc.w	$66c8	; $d541
-	dc.w	$6706	; $d543
-	dc.w	$679e	; $d545
-	dc.w	$67d9	; $d547
-	dc.w	$680b	; $d549
-	dc.w	$6815	; $d54b
-	dc.w	$68b3	; $d54d
-	dc.w	$68e1	; $d54f
-	dc.w	$691e	; $d551
-	dc.w	$6953	; $d553
-	dc.w	$69c5	; $d555
-	dc.w	$69ed	; $d557
-	dc.w	$6a13	; $d559
-	dc.w	$6adc	; $d55b
-	dc.w	$79eb	; $d55d
-	dc.w	$7a10	; $d55f
-	dc.w	$7a44	; $d561
-	dc.w	$7a78	; $d563
-	dc.w	$6b0a	; $d565
-	dc.w	$6b4f	; $d567
-	dc.w	$46a0	; $d569
-	dc.w	$66a0	; $d56b
-	dc.w	$86a0	; $d56d
-	dc.w	$a6a0	; $d56f
-	dc.w	$6bd7	; $d571
-	dc.w	$6c0d	; $d573
-	dc.w	$6ca3	; $d575
-	dc.w	$6cdd	; $d577
-	dc.w	$6d38	; $d579
-	dc.w	$6e38	; $d57b
-	dc.w	$6f18	; $d57d
-	dc.w	$7006	; $d57f
-	dc.w	$7074	; $d581
-	dc.w	$70ba	; $d583
-	dc.w	$710b	; $d585
-	dc.w	$7168	; $d587
-	dc.w	$7181	; $d589
-	dc.w	$7199	; $d58b
-	dc.w	$6bdf	; $d58d
-	dc.w	$6bff	; $d58f
-	dc.w	$6c15	; $d591
-	dc.w	$6c76	; $d593
-	dc.w	$b4b5	; $d595
-	dc.w	$c4c5	; $d597
-	dc.w	$6d40	; $d599
-	dc.w	$6d65	; $d59b
-	dc.w	$6d9e	; $d59d
-	dc.w	$6161	; $d59f
-	dc.w	$605f	; $d5a1
-	dc.w	$5e5d	; $d5a3
-	dc.w	$5c00	; $d5a5
-	dc.w	$eced	; $d5a7
-	dc.w	$eeef	; $d5a9
-	dc.w	$d5fc	; $d5ab
-	dc.w	$fdfe	; $d5ad
-	dc.w	$ffe5	; $d5af
-	dc.w	$a0b8	; $d5b1
-	dc.w	$b9ba	; $d5b3
-	dc.w	$bb94	; $d5b5
-	dc.w	$c8c9	; $d5b7
-	dc.w	$cacb	; $d5b9
-	dc.w	$a446	; $d5bb
-	dc.w	$413c	; $d5bd
 table_d52b:
 	dc.w	$65c0	; $d52b
 	dc.w	$6620	; $d52d
 	dc.w	$6854	; $d52f
 	dc.w	$6ae0	; $d531
 	dc.w	$6b02	; $d533
-	dc.w	$65c8	; $d535
-	dc.w	$6617	; $d537
-	dc.w	$662d	; $d539
-	dc.w	$663e	; $d53b
-	dc.w	$6653	; $d53d
-	dc.w	$666e	; $d53f
-	dc.w	$66c8	; $d541
-	dc.w	$6706	; $d543
-	dc.w	$679e	; $d545
-	dc.w	$67d9	; $d547
-	dc.w	$680b	; $d549
-	dc.w	$6815	; $d54b
-	dc.w	$68b3	; $d54d
-	dc.w	$68e1	; $d54f
-	dc.w	$691e	; $d551
-	dc.w	$6953	; $d553
-	dc.w	$69c5	; $d555
-	dc.w	$69ed	; $d557
-	dc.w	$6a13	; $d559
-	dc.w	$6adc	; $d55b
-	dc.w	$79eb	; $d55d
-	dc.w	$7a10	; $d55f
-	dc.w	$7a44	; $d561
-	dc.w	$7a78	; $d563
-	dc.w	$6b0a	; $d565
-	dc.w	$6b4f	; $d567
-	dc.w	$46a0	; $d569
-	dc.w	$66a0	; $d56b
-	dc.w	$86a0	; $d56d
-	dc.w	$a6a0	; $d56f
-	dc.w	$6bd7	; $d571
-	dc.w	$6c0d	; $d573
-	dc.w	$6ca3	; $d575
-	dc.w	$6cdd	; $d577
-	dc.w	$6d38	; $d579
-	dc.w	$6e38	; $d57b
-	dc.w	$6f18	; $d57d
-	dc.w	$7006	; $d57f
-	dc.w	$7074	; $d581
-	dc.w	$70ba	; $d583
-	dc.w	$710b	; $d585
-	dc.w	$7168	; $d587
-	dc.w	$7181	; $d589
-	dc.w	$7199	; $d58b
-	dc.w	$6bdf	; $d58d
-	dc.w	$6bff	; $d58f
-	dc.w	$6c15	; $d591
-	dc.w	$6c76	; $d593
-	dc.w	$b4b5	; $d595
-	dc.w	$c4c5	; $d597
-	dc.w	$6d40	; $d599
-	dc.w	$6d65	; $d59b
-	dc.w	$6d9e	; $d59d
-	dc.w	$6161	; $d59f
-	dc.w	$605f	; $d5a1
-	dc.w	$5e5d	; $d5a3
-	dc.w	$5c00	; $d5a5
-	dc.w	$eced	; $d5a7
-	dc.w	$eeef	; $d5a9
-	dc.w	$d5fc	; $d5ab
-	dc.w	$fdfe	; $d5ad
-	dc.w	$ffe5	; $d5af
-	dc.w	$a0b8	; $d5b1
-	dc.w	$b9ba	; $d5b3
-	dc.w	$bb94	; $d5b5
-	dc.w	$c8c9	; $d5b7
-	dc.w	$cacb	; $d5b9
-	dc.w	$a446	; $d5bb
-	dc.w	$413c	; $d5bd
+
 table_d535:
 	dc.w	$65c8	; $d535
 	dc.w	$6617	; $d537
-	dc.w	$662d	; $d539
-	dc.w	$663e	; $d53b
-	dc.w	$6653	; $d53d
-	dc.w	$666e	; $d53f
-	dc.w	$66c8	; $d541
-	dc.w	$6706	; $d543
-	dc.w	$679e	; $d545
-	dc.w	$67d9	; $d547
-	dc.w	$680b	; $d549
-	dc.w	$6815	; $d54b
-	dc.w	$68b3	; $d54d
-	dc.w	$68e1	; $d54f
-	dc.w	$691e	; $d551
-	dc.w	$6953	; $d553
-	dc.w	$69c5	; $d555
-	dc.w	$69ed	; $d557
-	dc.w	$6a13	; $d559
-	dc.w	$6adc	; $d55b
-	dc.w	$79eb	; $d55d
-	dc.w	$7a10	; $d55f
-	dc.w	$7a44	; $d561
-	dc.w	$7a78	; $d563
-	dc.w	$6b0a	; $d565
-	dc.w	$6b4f	; $d567
-	dc.w	$46a0	; $d569
-	dc.w	$66a0	; $d56b
-	dc.w	$86a0	; $d56d
-	dc.w	$a6a0	; $d56f
-	dc.w	$6bd7	; $d571
-	dc.w	$6c0d	; $d573
-	dc.w	$6ca3	; $d575
-	dc.w	$6cdd	; $d577
-	dc.w	$6d38	; $d579
-	dc.w	$6e38	; $d57b
-	dc.w	$6f18	; $d57d
-	dc.w	$7006	; $d57f
-	dc.w	$7074	; $d581
-	dc.w	$70ba	; $d583
-	dc.w	$710b	; $d585
-	dc.w	$7168	; $d587
-	dc.w	$7181	; $d589
-	dc.w	$7199	; $d58b
-	dc.w	$6bdf	; $d58d
-	dc.w	$6bff	; $d58f
-	dc.w	$6c15	; $d591
-	dc.w	$6c76	; $d593
-	dc.w	$b4b5	; $d595
-	dc.w	$c4c5	; $d597
-	dc.w	$6d40	; $d599
-	dc.w	$6d65	; $d59b
-	dc.w	$6d9e	; $d59d
-	dc.w	$6161	; $d59f
-	dc.w	$605f	; $d5a1
-	dc.w	$5e5d	; $d5a3
-	dc.w	$5c00	; $d5a5
-	dc.w	$eced	; $d5a7
-	dc.w	$eeef	; $d5a9
-	dc.w	$d5fc	; $d5ab
-	dc.w	$fdfe	; $d5ad
-	dc.w	$ffe5	; $d5af
-	dc.w	$a0b8	; $d5b1
-	dc.w	$b9ba	; $d5b3
-	dc.w	$bb94	; $d5b5
-	dc.w	$c8c9	; $d5b7
-	dc.w	$cacb	; $d5b9
-	dc.w	$a446	; $d5bb
-	dc.w	$413c	; $d5bd
+
 table_d539:
 	dc.w	$662d	; $d539
 	dc.w	$663e	; $d53b
@@ -18167,63 +17728,7 @@ table_d539:
 	dc.w	$67d9	; $d547
 	dc.w	$680b	; $d549
 	dc.w	$6815	; $d54b
-	dc.w	$68b3	; $d54d
-	dc.w	$68e1	; $d54f
-	dc.w	$691e	; $d551
-	dc.w	$6953	; $d553
-	dc.w	$69c5	; $d555
-	dc.w	$69ed	; $d557
-	dc.w	$6a13	; $d559
-	dc.w	$6adc	; $d55b
-	dc.w	$79eb	; $d55d
-	dc.w	$7a10	; $d55f
-	dc.w	$7a44	; $d561
-	dc.w	$7a78	; $d563
-	dc.w	$6b0a	; $d565
-	dc.w	$6b4f	; $d567
-	dc.w	$46a0	; $d569
-	dc.w	$66a0	; $d56b
-	dc.w	$86a0	; $d56d
-	dc.w	$a6a0	; $d56f
-	dc.w	$6bd7	; $d571
-	dc.w	$6c0d	; $d573
-	dc.w	$6ca3	; $d575
-	dc.w	$6cdd	; $d577
-	dc.w	$6d38	; $d579
-	dc.w	$6e38	; $d57b
-	dc.w	$6f18	; $d57d
-	dc.w	$7006	; $d57f
-	dc.w	$7074	; $d581
-	dc.w	$70ba	; $d583
-	dc.w	$710b	; $d585
-	dc.w	$7168	; $d587
-	dc.w	$7181	; $d589
-	dc.w	$7199	; $d58b
-	dc.w	$6bdf	; $d58d
-	dc.w	$6bff	; $d58f
-	dc.w	$6c15	; $d591
-	dc.w	$6c76	; $d593
-	dc.w	$b4b5	; $d595
-	dc.w	$c4c5	; $d597
-	dc.w	$6d40	; $d599
-	dc.w	$6d65	; $d59b
-	dc.w	$6d9e	; $d59d
-	dc.w	$6161	; $d59f
-	dc.w	$605f	; $d5a1
-	dc.w	$5e5d	; $d5a3
-	dc.w	$5c00	; $d5a5
-	dc.w	$eced	; $d5a7
-	dc.w	$eeef	; $d5a9
-	dc.w	$d5fc	; $d5ab
-	dc.w	$fdfe	; $d5ad
-	dc.w	$ffe5	; $d5af
-	dc.w	$a0b8	; $d5b1
-	dc.w	$b9ba	; $d5b3
-	dc.w	$bb94	; $d5b5
-	dc.w	$c8c9	; $d5b7
-	dc.w	$cacb	; $d5b9
-	dc.w	$a446	; $d5bb
-	dc.w	$413c	; $d5bd
+
 table_d54d:
 	dc.w	$68b3	; $d54d
 	dc.w	$68e1	; $d54f
@@ -18233,151 +17738,17 @@ table_d54d:
 	dc.w	$69ed	; $d557
 	dc.w	$6a13	; $d559
 	dc.w	$6adc	; $d55b
-	dc.w	$79eb	; $d55d
-	dc.w	$7a10	; $d55f
-	dc.w	$7a44	; $d561
-	dc.w	$7a78	; $d563
-	dc.w	$6b0a	; $d565
-	dc.w	$6b4f	; $d567
-	dc.w	$46a0	; $d569
-	dc.w	$66a0	; $d56b
-	dc.w	$86a0	; $d56d
-	dc.w	$a6a0	; $d56f
-	dc.w	$6bd7	; $d571
-	dc.w	$6c0d	; $d573
-	dc.w	$6ca3	; $d575
-	dc.w	$6cdd	; $d577
-	dc.w	$6d38	; $d579
-	dc.w	$6e38	; $d57b
-	dc.w	$6f18	; $d57d
-	dc.w	$7006	; $d57f
-	dc.w	$7074	; $d581
-	dc.w	$70ba	; $d583
-	dc.w	$710b	; $d585
-	dc.w	$7168	; $d587
-	dc.w	$7181	; $d589
-	dc.w	$7199	; $d58b
-	dc.w	$6bdf	; $d58d
-	dc.w	$6bff	; $d58f
-	dc.w	$6c15	; $d591
-	dc.w	$6c76	; $d593
-	dc.w	$b4b5	; $d595
-	dc.w	$c4c5	; $d597
-	dc.w	$6d40	; $d599
-	dc.w	$6d65	; $d59b
-	dc.w	$6d9e	; $d59d
-	dc.w	$6161	; $d59f
-	dc.w	$605f	; $d5a1
-	dc.w	$5e5d	; $d5a3
-	dc.w	$5c00	; $d5a5
-	dc.w	$eced	; $d5a7
-	dc.w	$eeef	; $d5a9
-	dc.w	$d5fc	; $d5ab
-	dc.w	$fdfe	; $d5ad
-	dc.w	$ffe5	; $d5af
-	dc.w	$a0b8	; $d5b1
-	dc.w	$b9ba	; $d5b3
-	dc.w	$bb94	; $d5b5
-	dc.w	$c8c9	; $d5b7
-	dc.w	$cacb	; $d5b9
-	dc.w	$a446	; $d5bb
-	dc.w	$413c	; $d5bd
+
 table_d55d:
 	dc.w	$79eb	; $d55d
 	dc.w	$7a10	; $d55f
 	dc.w	$7a44	; $d561
 	dc.w	$7a78	; $d563
-	dc.w	$6b0a	; $d565
-	dc.w	$6b4f	; $d567
-	dc.w	$46a0	; $d569
-	dc.w	$66a0	; $d56b
-	dc.w	$86a0	; $d56d
-	dc.w	$a6a0	; $d56f
-	dc.w	$6bd7	; $d571
-	dc.w	$6c0d	; $d573
-	dc.w	$6ca3	; $d575
-	dc.w	$6cdd	; $d577
-	dc.w	$6d38	; $d579
-	dc.w	$6e38	; $d57b
-	dc.w	$6f18	; $d57d
-	dc.w	$7006	; $d57f
-	dc.w	$7074	; $d581
-	dc.w	$70ba	; $d583
-	dc.w	$710b	; $d585
-	dc.w	$7168	; $d587
-	dc.w	$7181	; $d589
-	dc.w	$7199	; $d58b
-	dc.w	$6bdf	; $d58d
-	dc.w	$6bff	; $d58f
-	dc.w	$6c15	; $d591
-	dc.w	$6c76	; $d593
-	dc.w	$b4b5	; $d595
-	dc.w	$c4c5	; $d597
-	dc.w	$6d40	; $d599
-	dc.w	$6d65	; $d59b
-	dc.w	$6d9e	; $d59d
-	dc.w	$6161	; $d59f
-	dc.w	$605f	; $d5a1
-	dc.w	$5e5d	; $d5a3
-	dc.w	$5c00	; $d5a5
-	dc.w	$eced	; $d5a7
-	dc.w	$eeef	; $d5a9
-	dc.w	$d5fc	; $d5ab
-	dc.w	$fdfe	; $d5ad
-	dc.w	$ffe5	; $d5af
-	dc.w	$a0b8	; $d5b1
-	dc.w	$b9ba	; $d5b3
-	dc.w	$bb94	; $d5b5
-	dc.w	$c8c9	; $d5b7
-	dc.w	$cacb	; $d5b9
-	dc.w	$a446	; $d5bb
-	dc.w	$413c	; $d5bd
+
 table_d565:
 	dc.w	$6b0a	; $d565
 	dc.w	$6b4f	; $d567
-	dc.w	$46a0	; $d569
-	dc.w	$66a0	; $d56b
-	dc.w	$86a0	; $d56d
-	dc.w	$a6a0	; $d56f
-	dc.w	$6bd7	; $d571
-	dc.w	$6c0d	; $d573
-	dc.w	$6ca3	; $d575
-	dc.w	$6cdd	; $d577
-	dc.w	$6d38	; $d579
-	dc.w	$6e38	; $d57b
-	dc.w	$6f18	; $d57d
-	dc.w	$7006	; $d57f
-	dc.w	$7074	; $d581
-	dc.w	$70ba	; $d583
-	dc.w	$710b	; $d585
-	dc.w	$7168	; $d587
-	dc.w	$7181	; $d589
-	dc.w	$7199	; $d58b
-	dc.w	$6bdf	; $d58d
-	dc.w	$6bff	; $d58f
-	dc.w	$6c15	; $d591
-	dc.w	$6c76	; $d593
-	dc.w	$b4b5	; $d595
-	dc.w	$c4c5	; $d597
-	dc.w	$6d40	; $d599
-	dc.w	$6d65	; $d59b
-	dc.w	$6d9e	; $d59d
-	dc.w	$6161	; $d59f
-	dc.w	$605f	; $d5a1
-	dc.w	$5e5d	; $d5a3
-	dc.w	$5c00	; $d5a5
-	dc.w	$eced	; $d5a7
-	dc.w	$eeef	; $d5a9
-	dc.w	$d5fc	; $d5ab
-	dc.w	$fdfe	; $d5ad
-	dc.w	$ffe5	; $d5af
-	dc.w	$a0b8	; $d5b1
-	dc.w	$b9ba	; $d5b3
-	dc.w	$bb94	; $d5b5
-	dc.w	$c8c9	; $d5b7
-	dc.w	$cacb	; $d5b9
-	dc.w	$a446	; $d5bb
-	dc.w	$413c	; $d5bd
+
 table_d571:
 	dc.w	$6bd7	; $d571
 	dc.w	$6c0d	; $d573
@@ -18393,107 +17764,23 @@ table_d571:
 	dc.w	$7168	; $d587
 	dc.w	$7181	; $d589
 	dc.w	$7199	; $d58b
-	dc.w	$6bdf	; $d58d
-	dc.w	$6bff	; $d58f
-	dc.w	$6c15	; $d591
-	dc.w	$6c76	; $d593
-	dc.w	$b4b5	; $d595
-	dc.w	$c4c5	; $d597
-	dc.w	$6d40	; $d599
-	dc.w	$6d65	; $d59b
-	dc.w	$6d9e	; $d59d
-	dc.w	$6161	; $d59f
-	dc.w	$605f	; $d5a1
-	dc.w	$5e5d	; $d5a3
-	dc.w	$5c00	; $d5a5
-	dc.w	$eced	; $d5a7
-	dc.w	$eeef	; $d5a9
-	dc.w	$d5fc	; $d5ab
-	dc.w	$fdfe	; $d5ad
-	dc.w	$ffe5	; $d5af
-	dc.w	$a0b8	; $d5b1
-	dc.w	$b9ba	; $d5b3
-	dc.w	$bb94	; $d5b5
-	dc.w	$c8c9	; $d5b7
-	dc.w	$cacb	; $d5b9
-	dc.w	$a446	; $d5bb
-	dc.w	$413c	; $d5bd
+
 table_d58d:
 	dc.w	$6bdf	; $d58d
 	dc.w	$6bff	; $d58f
-	dc.w	$6c15	; $d591
-	dc.w	$6c76	; $d593
-	dc.w	$b4b5	; $d595
-	dc.w	$c4c5	; $d597
-	dc.w	$6d40	; $d599
-	dc.w	$6d65	; $d59b
-	dc.w	$6d9e	; $d59d
-	dc.w	$6161	; $d59f
-	dc.w	$605f	; $d5a1
-	dc.w	$5e5d	; $d5a3
-	dc.w	$5c00	; $d5a5
-	dc.w	$eced	; $d5a7
-	dc.w	$eeef	; $d5a9
-	dc.w	$d5fc	; $d5ab
-	dc.w	$fdfe	; $d5ad
-	dc.w	$ffe5	; $d5af
-	dc.w	$a0b8	; $d5b1
-	dc.w	$b9ba	; $d5b3
-	dc.w	$bb94	; $d5b5
-	dc.w	$c8c9	; $d5b7
-	dc.w	$cacb	; $d5b9
-	dc.w	$a446	; $d5bb
-	dc.w	$413c	; $d5bd
 table_d591:
 	dc.w	$6c15	; $d591
 	dc.w	$6c76	; $d593
-	dc.w	$b4b5	; $d595
-	dc.w	$c4c5	; $d597
-	dc.w	$6d40	; $d599
-	dc.w	$6d65	; $d59b
-	dc.w	$6d9e	; $d59d
-	dc.w	$6161	; $d59f
-	dc.w	$605f	; $d5a1
-	dc.w	$5e5d	; $d5a3
-	dc.w	$5c00	; $d5a5
-	dc.w	$eced	; $d5a7
-	dc.w	$eeef	; $d5a9
-	dc.w	$d5fc	; $d5ab
-	dc.w	$fdfe	; $d5ad
-	dc.w	$ffe5	; $d5af
-	dc.w	$a0b8	; $d5b1
-	dc.w	$b9ba	; $d5b3
-	dc.w	$bb94	; $d5b5
-	dc.w	$c8c9	; $d5b7
-	dc.w	$cacb	; $d5b9
-	dc.w	$a446	; $d5bb
-	dc.w	$413c	; $d5bd
+
 table_d599:
 	dc.w	$6d40	; $d599
 	dc.w	$6d65	; $d59b
 	dc.w	$6d9e	; $d59d
 	dc.w	$6161	; $d59f
-	dc.w	$605f	; $d5a1
-	dc.w	$5e5d	; $d5a3
-	dc.w	$5c00	; $d5a5
-	dc.w	$eced	; $d5a7
-	dc.w	$eeef	; $d5a9
-	dc.w	$d5fc	; $d5ab
-	dc.w	$fdfe	; $d5ad
-	dc.w	$ffe5	; $d5af
-	dc.w	$a0b8	; $d5b1
-	dc.w	$b9ba	; $d5b3
-	dc.w	$bb94	; $d5b5
-	dc.w	$c8c9	; $d5b7
-	dc.w	$cacb	; $d5b9
-	dc.w	$a446	; $d5bb
-	dc.w	$413c	; $d5bd
+
 table_d5e8:
 	dc.w	$700e	; $d5e8
 	dc.w	$7041	; $d5ea
-	dc.w	$7082	; $d5ec
-	dc.w	$709c	; $d5ee
-	dc.w	$70b1	; $d5f0
 table_d5ec:
 	dc.w	$7082	; $d5ec
 	dc.w	$709c	; $d5ee
@@ -18501,21 +17788,12 @@ table_d5ec:
 table_d605:
 	dc.w	$7113	; $d605
 	dc.w	$711f	; $d607
-	dc.w	$7189	; $d609
-	dc.w	$6541	; $d60b
-	dc.w	$6555	; $d60d
-	dc.w	$6592	; $d60f
-	dc.w	$7190	; $d611
-	dc.w	$71a1	; $d613
-	dc.w	$71a8	; $d615
 table_d609:
 	dc.w	$7189	; $d609
 	dc.w	$6541	; $d60b
 	dc.w	$6555	; $d60d
 	dc.w	$6592	; $d60f
 	dc.w	$7190	; $d611
-	dc.w	$71a1	; $d613
-	dc.w	$71a8	; $d615
 table_d613:
 	dc.w	$71a1	; $d613
 	dc.w	$71a8	; $d615
@@ -18544,20 +17822,7 @@ table_d82e:
 	dc.w	$809d	; $d82e
 	dc.w	$8087	; $d830
 	dc.w	$809e	; $d832
-	dc.w	$60df	; $d834
-	dc.w	$de60	; $d836
-	dc.w	$d7d6	; $d838
-	dc.w	$60f6	; $d83a
-	dc.w	$60f7	; $d83c
-	dc.w	$40e9	; $d83e
-	dc.w	$40ea	; $d840
-	dc.w	$40eb	; $d842
-	dc.w	$80e9	; $d844
-	dc.w	$80ea	; $d846
-	dc.w	$80eb	; $d848
-	dc.w	$40ec	; $d84a
-	dc.w	$80ec	; $d84c
-	dc.w	$4028	; $d84e
+
 table_d89a:
 	dc.w	$8a35	; $d89a
 	dc.w	$8a41	; $d89c
@@ -18569,8 +17834,7 @@ table_ecea:
 	dc.w	$8b61	; $ecec
 	dc.w	$8b79	; $ecee
 	dc.w	$8f7f	; $ecf0
-	dc.w	$8a9b	; $ecf2
-	dc.w	$8a89	; $ecf4
+
 table_ee85:
 	dc.w	$928f	; $ee85
 	dc.w	$929e	; $ee87
@@ -18610,11 +17874,6 @@ table_f2ff:
 	dc.w	$ad67	; $f307
 	dc.w	$ad98	; $f309
 	dc.w	$ae4f	; $f30b
-	dc.w	$a6e4	; $f30d
-	dc.w	$a882	; $f30f
-	dc.w	$a993	; $f311
-	dc.w	$a9dd	; $f313
-	dc.w	$aa8f	; $f315
 table_f30d:
 	dc.w	$a6e4	; $f30d
 	dc.w	$a882	; $f30f
@@ -18632,14 +17891,6 @@ table_f533:
 	dc.w	$bae6	; $f539
 	dc.w	$baf9	; $f53b
 	dc.w	$ba0e	; $f53d
-	dc.w	$b3ec	; $f53f
-	dc.w	$b46c	; $f541
-	dc.w	$b4e2	; $f543
-	dc.w	$b592	; $f545
-	dc.w	$b5f7	; $f547
-	dc.w	$b665	; $f549
-	dc.w	$b603	; $f54b
-	dc.w	$b76b	; $f54d
 table_f53f:
 	dc.w	$b3ec	; $f53f
 	dc.w	$b46c	; $f541
@@ -18654,7 +17905,7 @@ table_f68c:
 	dc.w	$b963	; $f68e
 	dc.w	$ba45	; $f690
 	dc.w	$ba4c	; $f692
-	dc.w	$6870	; $f694
+
 table_f7d9:
 	dc.w	$bd9c	; $f7d9
 	dc.w	$bd9c	; $f7db
@@ -18679,42 +17930,6 @@ table_f8d5:
 	dc.w	$c1a1	; $f8d7
 	dc.w	$c1c3	; $f8d9
 	dc.w	$c28b	; $f8db
-	dc.w	$c335	; $f8dd
-	dc.w	$c335	; $f8df
-	dc.w	$c327	; $f8e1
-	dc.w	$c39a	; $f8e3
-	dc.w	$c327	; $f8e5
-	dc.w	$c335	; $f8e7
-	dc.w	$c335	; $f8e9
-	dc.w	$c35c	; $f8eb
-	dc.w	$c418	; $f8ed
-	dc.w	$c465	; $f8ef
-	dc.w	$c39a	; $f8f1
-	dc.w	$c37f	; $f8f3
-	dc.w	$c418	; $f8f5
-	dc.w	$c465	; $f8f7
-	dc.w	$a18f	; $f8f9
-	dc.w	$8bcb	; $f8fb
-	dc.w	$cccd	; $f8fd
-	dc.w	$cecf	; $f8ff
-	dc.w	$d0d1	; $f901
-	dc.w	$c4db	; $f903
-	dc.w	$c58a	; $f905
-	dc.w	$c5a8	; $f907
-	dc.w	$c5fc	; $f909
-	dc.w	$c6d6	; $f90b
-	dc.w	$5d09	; $f90d
-	dc.w	$489a	; $f90f
-	dc.w	$48ae	; $f911
-	dc.w	$c596	; $f913
-	dc.w	$c712	; $f915
-	dc.w	$c72f	; $f917
-	dc.w	$c72f	; $f919
-	dc.w	$c72f	; $f91b
-	dc.w	$c72f	; $f91d
-	dc.w	$647c	; $f91f
-	dc.w	$5460	; $f921
-	dc.w	$4c9c	; $f923
 table_f8dd:
 	dc.w	$c335	; $f8dd
 	dc.w	$c335	; $f8df
@@ -18723,35 +17938,6 @@ table_f8dd:
 	dc.w	$c327	; $f8e5
 	dc.w	$c335	; $f8e7
 	dc.w	$c335	; $f8e9
-	dc.w	$c35c	; $f8eb
-	dc.w	$c418	; $f8ed
-	dc.w	$c465	; $f8ef
-	dc.w	$c39a	; $f8f1
-	dc.w	$c37f	; $f8f3
-	dc.w	$c418	; $f8f5
-	dc.w	$c465	; $f8f7
-	dc.w	$a18f	; $f8f9
-	dc.w	$8bcb	; $f8fb
-	dc.w	$cccd	; $f8fd
-	dc.w	$cecf	; $f8ff
-	dc.w	$d0d1	; $f901
-	dc.w	$c4db	; $f903
-	dc.w	$c58a	; $f905
-	dc.w	$c5a8	; $f907
-	dc.w	$c5fc	; $f909
-	dc.w	$c6d6	; $f90b
-	dc.w	$5d09	; $f90d
-	dc.w	$489a	; $f90f
-	dc.w	$48ae	; $f911
-	dc.w	$c596	; $f913
-	dc.w	$c712	; $f915
-	dc.w	$c72f	; $f917
-	dc.w	$c72f	; $f919
-	dc.w	$c72f	; $f91b
-	dc.w	$c72f	; $f91d
-	dc.w	$647c	; $f91f
-	dc.w	$5460	; $f921
-	dc.w	$4c9c	; $f923
 table_f8eb:
 	dc.w	$c35c	; $f8eb
 	dc.w	$c418	; $f8ed
@@ -18762,57 +17948,18 @@ table_f8eb:
 	dc.w	$c465	; $f8f7
 	dc.w	$a18f	; $f8f9
 	dc.w	$8bcb	; $f8fb
-	dc.w	$cccd	; $f8fd
-	dc.w	$cecf	; $f8ff
-	dc.w	$d0d1	; $f901
-	dc.w	$c4db	; $f903
-	dc.w	$c58a	; $f905
-	dc.w	$c5a8	; $f907
-	dc.w	$c5fc	; $f909
-	dc.w	$c6d6	; $f90b
-	dc.w	$5d09	; $f90d
-	dc.w	$489a	; $f90f
-	dc.w	$48ae	; $f911
-	dc.w	$c596	; $f913
-	dc.w	$c712	; $f915
-	dc.w	$c72f	; $f917
-	dc.w	$c72f	; $f919
-	dc.w	$c72f	; $f91b
-	dc.w	$c72f	; $f91d
-	dc.w	$647c	; $f91f
-	dc.w	$5460	; $f921
-	dc.w	$4c9c	; $f923
+
 table_f903:
 	dc.w	$c4db	; $f903
 	dc.w	$c58a	; $f905
 	dc.w	$c5a8	; $f907
 	dc.w	$c5fc	; $f909
 	dc.w	$c6d6	; $f90b
-	dc.w	$5d09	; $f90d
-	dc.w	$489a	; $f90f
-	dc.w	$48ae	; $f911
-	dc.w	$c596	; $f913
-	dc.w	$c712	; $f915
-	dc.w	$c72f	; $f917
-	dc.w	$c72f	; $f919
-	dc.w	$c72f	; $f91b
-	dc.w	$c72f	; $f91d
-	dc.w	$647c	; $f91f
-	dc.w	$5460	; $f921
-	dc.w	$4c9c	; $f923
 table_f90d:
 	dc.w	$5d09	; $f90d
 	dc.w	$489a	; $f90f
 	dc.w	$48ae	; $f911
 	dc.w	$c596	; $f913
-	dc.w	$c712	; $f915
-	dc.w	$c72f	; $f917
-	dc.w	$c72f	; $f919
-	dc.w	$c72f	; $f91b
-	dc.w	$c72f	; $f91d
-	dc.w	$647c	; $f91f
-	dc.w	$5460	; $f921
-	dc.w	$4c9c	; $f923
 table_f915:
 	dc.w	$c712	; $f915
 	dc.w	$c72f	; $f917
@@ -18820,54 +17967,12 @@ table_f915:
 	dc.w	$c72f	; $f91b
 	dc.w	$c72f	; $f91d
 	dc.w	$647c	; $f91f
-	dc.w	$5460	; $f921
-	dc.w	$4c9c	; $f923
 table_f931:
 	dc.w	$c761	; $f931
 	dc.w	$c7bf	; $f933
 	dc.w	$c7bf	; $f935
 	dc.w	$c7bf	; $f937
 	dc.w	$c7bf	; $f939
-	dc.w	$c7c7	; $f93b
-	dc.w	$c7fc	; $f93d
-	dc.w	$c87b	; $f93f
-	dc.w	$c87e	; $f941
-	dc.w	$c8e2	; $f943
-	dc.w	$c8ff	; $f945
-	dc.w	$c936	; $f947
-	dc.w	$c94d	; $f949
-	dc.w	$c98e	; $f94b
-	dc.w	$c993	; $f94d
-	dc.w	$c9a3	; $f94f
-	dc.w	$c9a5	; $f951
-	dc.w	$c9d6	; $f953
-	dc.w	$ca79	; $f955
-	dc.w	$ca98	; $f957
-	dc.w	$ca33	; $f959
-	dc.w	$ca68	; $f95b
-	dc.w	$ca79	; $f95d
-	dc.w	$ca98	; $f95f
-	dc.w	$f969	; $f961
-	dc.w	$f973	; $f963
-	dc.w	$f97d	; $f965
-	dc.w	$f97d	; $f967
-	dc.w	$f987	; $f969
-	dc.w	$f98d	; $f96b
-	dc.w	$f993	; $f96d
-	dc.w	$f999	; $f96f
-	dc.w	$f999	; $f971
-	dc.w	$f99f	; $f973
-	dc.w	$f9a5	; $f975
-	dc.w	$f9ab	; $f977
-	dc.w	$f9b1	; $f979
-	dc.w	$f9b1	; $f97b
-	dc.w	$f9b7	; $f97d
-	dc.w	$f9bd	; $f97f
-	dc.w	$f9c3	; $f981
-	dc.w	$f9c9	; $f983
-	dc.w	$f9cf	; $f985
-	dc.w	$4241	; $f987
-	dc.w	$4008	; $f989
 table_f93b:
 	dc.w	$c7c7	; $f93b
 	dc.w	$c7fc	; $f93d
@@ -18879,93 +17984,17 @@ table_f93b:
 	dc.w	$c94d	; $f949
 	dc.w	$c98e	; $f94b
 	dc.w	$c993	; $f94d
-	dc.w	$c9a3	; $f94f
-	dc.w	$c9a5	; $f951
-	dc.w	$c9d6	; $f953
-	dc.w	$ca79	; $f955
-	dc.w	$ca98	; $f957
-	dc.w	$ca33	; $f959
-	dc.w	$ca68	; $f95b
-	dc.w	$ca79	; $f95d
-	dc.w	$ca98	; $f95f
-	dc.w	$f969	; $f961
-	dc.w	$f973	; $f963
-	dc.w	$f97d	; $f965
-	dc.w	$f97d	; $f967
-	dc.w	$f987	; $f969
-	dc.w	$f98d	; $f96b
-	dc.w	$f993	; $f96d
-	dc.w	$f999	; $f96f
-	dc.w	$f999	; $f971
-	dc.w	$f99f	; $f973
-	dc.w	$f9a5	; $f975
-	dc.w	$f9ab	; $f977
-	dc.w	$f9b1	; $f979
-	dc.w	$f9b1	; $f97b
-	dc.w	$f9b7	; $f97d
-	dc.w	$f9bd	; $f97f
-	dc.w	$f9c3	; $f981
-	dc.w	$f9c9	; $f983
-	dc.w	$f9cf	; $f985
-	dc.w	$4241	; $f987
-	dc.w	$4008	; $f989
 table_f94f:
 	dc.w	$c9a3	; $f94f
 	dc.w	$c9a5	; $f951
 	dc.w	$c9d6	; $f953
 	dc.w	$ca79	; $f955
 	dc.w	$ca98	; $f957
-	dc.w	$ca33	; $f959
-	dc.w	$ca68	; $f95b
-	dc.w	$ca79	; $f95d
-	dc.w	$ca98	; $f95f
-	dc.w	$f969	; $f961
-	dc.w	$f973	; $f963
-	dc.w	$f97d	; $f965
-	dc.w	$f97d	; $f967
-	dc.w	$f987	; $f969
-	dc.w	$f98d	; $f96b
-	dc.w	$f993	; $f96d
-	dc.w	$f999	; $f96f
-	dc.w	$f999	; $f971
-	dc.w	$f99f	; $f973
-	dc.w	$f9a5	; $f975
-	dc.w	$f9ab	; $f977
-	dc.w	$f9b1	; $f979
-	dc.w	$f9b1	; $f97b
-	dc.w	$f9b7	; $f97d
-	dc.w	$f9bd	; $f97f
-	dc.w	$f9c3	; $f981
-	dc.w	$f9c9	; $f983
-	dc.w	$f9cf	; $f985
-	dc.w	$4241	; $f987
-	dc.w	$4008	; $f989
 table_f959:
 	dc.w	$ca33	; $f959
 	dc.w	$ca68	; $f95b
 	dc.w	$ca79	; $f95d
 	dc.w	$ca98	; $f95f
-	dc.w	$f969	; $f961
-	dc.w	$f973	; $f963
-	dc.w	$f97d	; $f965
-	dc.w	$f97d	; $f967
-	dc.w	$f987	; $f969
-	dc.w	$f98d	; $f96b
-	dc.w	$f993	; $f96d
-	dc.w	$f999	; $f96f
-	dc.w	$f999	; $f971
-	dc.w	$f99f	; $f973
-	dc.w	$f9a5	; $f975
-	dc.w	$f9ab	; $f977
-	dc.w	$f9b1	; $f979
-	dc.w	$f9b1	; $f97b
-	dc.w	$f9b7	; $f97d
-	dc.w	$f9bd	; $f97f
-	dc.w	$f9c3	; $f981
-	dc.w	$f9c9	; $f983
-	dc.w	$f9cf	; $f985
-	dc.w	$4241	; $f987
-	dc.w	$4008	; $f989
 table_fe73:
 	dc.w	$ccea	; $fe73
 	dc.w	$ccf1	; $fe75

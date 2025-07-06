@@ -32,6 +32,9 @@ for i,line in enumerate(asm_lines):
 
                 break
         if dest:
+            if "table_" in dest:
+                # already processed, re-process
+                dest = dest.replace("table_","")
             table_address = int(dest.strip('#$'),16)
             block = rom[table_address-offset:table_address-offset+size]
             label = f"table_{table_address:04x}"
@@ -40,7 +43,7 @@ for i,line in enumerate(asm_lines):
             asm_lines.append(f"{label}:\n")
             for i in range(0,len(block),2):
                 a = block[i]*256 + block[i+1]
-                if offset > a:
+                if offset > a or a > 0xCEEE:
                     break
                 asm_lines.append(f"\tdc.w\t${a:04x}\t; ${table_address:04x}\n")
                 table_address += 2

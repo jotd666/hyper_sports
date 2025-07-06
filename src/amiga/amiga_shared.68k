@@ -12,7 +12,7 @@
 * sound engine and also highscore management, common to all versions
 	
 	.include "lvo/dos_lvos.i"
-	.include "track_and_field.inc"
+	.include "hyper_sports.inc"
 	.include "sounds.inc"
 
 SCORE_FILE_SIZE = 3+30*3
@@ -20,12 +20,12 @@ SCORE_FILE_SIZE = 3+30*3
 .macro	GET_MEMORY_START_IN_A6
 	move.l	m6809_direct_page_pointer,a4
 	.ifdef	RELEASE
-	lea		ram_buffer-0x1800,a6
+	lea		ram_buffer-0x1000,a6
 	.else
-	move.l		ram_start_1800,a6
+	move.l		ram_start_1000,a6
 	
 	* adjust offset to avoid subbing at run-time
-	sub.w	#0x1800,a6
+	sub.w	#0x1000,a6
 	.endif
 	.endm
 		
