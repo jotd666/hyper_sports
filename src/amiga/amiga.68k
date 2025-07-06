@@ -23,8 +23,8 @@ AFB_68020 = 1
 AFB_68030 = 2
 
 
-NB_POSSIBLE_SPRITES = 256
-NB_POSSIBLE_TILES = 768
+NB_POSSIBLE_SPRITES = 0x200
+NB_POSSIBLE_TILES = 0x400
 
 NB_SCROLL_ROWS = 28
 
@@ -94,6 +94,8 @@ FG_SCREEN_PLANE_SIZE = FG_NB_BYTES_PER_ROW*NB_PLAYFIELD_LINES
 BG_SCREEN_SIZE = BG_SCREEN_PLANE_SIZE*NB_TILE_PLANES
 FG_SCREEN_SIZE = FG_SCREEN_PLANE_SIZE*NB_BOB_PLANES
 
+VIDEO_ADDRESS = 0x2000
+
 NB_HOST_SPRITES = 8
 
 NB_TARGET_SPRITES = 0x40  
@@ -109,7 +111,7 @@ TARGET_SPRITE_SIZEOF = 4
 	UWORD	PREV_Y
 	UWORD	PREV_HEIGHT			
 	UWORD	PREV_WIDTH			
-	UBYTE	PREV_STAR			
+	UBYTE	PREV_STAR		| not used	
 	UBYTE	PREV_ACTIVE_PLANES	
 	LABEL		PREVIOUS_SPRITE_SIZEOF
 
@@ -1154,7 +1156,7 @@ really_update_tiles:
 	lea		_custom,a5
 	*WAIT_BLIT  | no need in AGA: dual playfield
 	GET_MEMORY_START_AND_DP
-	lea		(0x3000,a6),a6
+	lea		(VIDEO_ADDRESS,a6),a6
 	lea		(0x800,a6),a5
 	lea		tiles_row_flags(pc),a1
 	moveq	#0,d3
@@ -2188,7 +2190,7 @@ video_byte_dirty:
 	.endif
 
 	* remove 0x8000 offset (ram starts at 0x8000)
-	sub.w	#0x3000,d7
+	sub.w	#VIDEO_ADDRESS,d7
 	* in this game (around 892B) the code is used with either
 	* a video address or a RAM address, so ignore if too low
 	jmi		osd_video_dirty_out
@@ -2197,7 +2199,7 @@ video_byte_dirty:
 	jpl	1f
 
 	* should not happen
-	add.w	#0x3000,d7
+	add.w	#VIDEO_ADDRESS,d7
 	jbsr	osd_get_last_known_pc
 	BREAKPOINT	"write videoram out of range (D7 < $3000), PC in D6"
 	jra		osd_video_dirty_out
@@ -2260,22 +2262,19 @@ compute_tile_xy_portrait:
 	.endif
 
 
-* TILE_GET_INFO_MEMBER(trackfld_state::get_bg_tile_info)
-* {
-* 	int attr = m_colorram[tile_index];
-* 	int code = m_videoram[tile_index] + 4 * (attr & 0xc0);
-* 	int color = attr & 0x0f;
-* 	int flags = ((attr & 0x10) ? TILE_FLIPX : 0) | ((attr & 0x20) ? TILE_FLIPY : 0);
-* 
-* 	if (m_bg_bank)
-* 		code |= 0x400;
-* 
-* 	tileinfo.set(1, code, color, flags);
-* }
 
 
-* addresses 0x3000->0x307F don't map to visible tiles (2 first rows)
-* addresses 0x3780->0x37FF don't map to visible tiles (2 last rows)
+*{
+*	int const code = m_videoram[tile_index] + ((m_colorram[tile_index] & 0x80) << 1) + ((m_colorram[tile_index] & 0x60) << 4);
+*	int const color = m_colorram[tile_index] & 0x0f;
+*	int const flags = (m_colorram[tile_index] & 0x10) ? TILE_FLIPX : 0;
+*
+*	tileinfo.set(1, code, color, flags);
+
+
+
+* addresses 0x2000->0x207F don't map to visible tiles (2 first rows)
+* addresses 0x2780->0x27FF don't map to visible tiles (2 last rows)
 * each column has 0x20*8 = 256 pixels
 * each visible row has 28*8 = 244 pixels
 
@@ -2288,13 +2287,13 @@ update_bg_tile:
 	move.b	d0,d2			| tile code
 	moveq	#0,d3
 	move.b	d1,d3			| CLUT & tile code & flags
-	bclr	#6,d3
+	bclr	#7,d3
 	jeq		0f
 	bset	#8,d2			| add 0x100
 0:
-	bclr	#7,d3
+	bclr	#6,d3
 	jeq		0f
-	bset	#9,d2			| add 0x200
+	add.w	#0x200,d2		| add 0x200
 0:
 	.ifne	OPT_ENABLE_LOGGING
 	lea		character_log_table,a0
@@ -2339,7 +2338,7 @@ update_bg_tile:
 	jeq		11f					| clear tile, no error (release)
 	.else
 	jne		12f
-	add.w	#0x3000,d7
+	add.w	#VIDEO_ADDRESS,d7
 	lsr.w	#2,d2
 	move.w	#0xF0F,_custom+color
 	jra		11f
@@ -2360,7 +2359,7 @@ update_bg_tile:
 	jeq		11f						| not necessarily a problem
 	.else
 	jne		12f
-	add.w	#0x3000,d7
+	add.w	#VIDEO_ADDRESS,d7
 	lsr.w	#2,d2
 	lsr.w	#2,d3
 	move.w	#0xF0F,_custom+color
@@ -2371,6 +2370,7 @@ update_bg_tile:
 	lea		mirror_jump_table(pc),a4
 	ror.b	#4,d1			        | modifiers on first bits
 	and.w	#3,d1
+	moveq	#0,d1			| TEMP no mirror
 	.ifdef	NO68020
 	add.w	d1,d1
 	add.w	d1,d1	
@@ -3195,14 +3195,13 @@ scroll_table:
 	.section	.bss
 
 sprite_log_table:
-	* 16 cluts, 256 tiles
+	* 16 cluts, 512 tiles
 	* a lot of combinations aren't used (fortunately!)
 	.skip	16*NB_POSSIBLE_SPRITES
 character_log_table:
-	* 16 cluts, 768 tiles
+	* 16 cluts, 1024 tiles
 	* a lot of combinations aren't used (fortunately!)
 	.skip	16*NB_POSSIBLE_TILES
-	.skip	16*(1024-NB_POSSIBLE_TILES)  | just in case of a bug
 	.endif
 	.endif
 

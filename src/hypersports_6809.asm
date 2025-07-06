@@ -26,6 +26,9 @@
 game_playing_00 = $00
 dsw2_copy_0d = $0d
 event_pointer_1c = $1c
+event_pointer_1e = $1e
+chrono_hundredth_second_71 = $71
+chrono_second_72 = $72
 watchdog_1400 = $1400
 sound_queue_3340 = $3340
 
@@ -165,7 +168,7 @@ reset_4000:
 4060: 26 DB          BNE    $405B
 4062: 8E B1 22       LDX    #$3300
 4065: 9F 9E          STX    event_pointer_1c
-4067: 9F 36          STX    $1E
+4067: 9F 36          STX    event_pointer_1e
 4069: 8E BB C8       LDX    #sound_queue_3340
 406C: 9F 14          STX    $3C
 406E: 9F B6          STX    $3E
@@ -301,7 +304,7 @@ reset_4000:
 4185: A6 02          LDA    ,X+
 4187: 80 18          SUBA   #$30
 4189: B7 9C 88       STA    watchdog_1400
-418C: BD 6A A4       JSR    $422C
+418C: BD 6A A4       JSR    write_char_and_move_cursor_422c
 418F: 0A 6A          DEC    $48
 4191: 26 70          BNE    $4185
 4193: 4F             CLRA
@@ -326,20 +329,22 @@ reset_4000:
 41AA: 86 89          LDA    #$01
 41AC: B7 3C 0F       STA    irq_mask_w_1487
 41AF: 1C CD          ANDCC  #$EF
-41B1: 9E 9C          LDX    $1E
+master_mainloop_41b1:
+41B1: 9E 9C          LDX    event_pointer_1e
 41B3: EC A6          LDD    ,X
 41B5: 48             ASLA
-41B6: 25 7B          BCS    $41B1
+41B6: 25 7B          BCS    master_mainloop_41b1
 41B8: 10 8E 77 77    LDY    #$FFFF
 41BC: 10 AF 09       STY    ,X++
 41BF: 8C 11 62       CMPX   #sound_queue_3340
 41C2: 26 81          BNE    $41C7
 41C4: 8E 11 82       LDX    #$3300
-41C7: 9F 36          STX    $1E
-41C9: 8E 47 B8       LDX   #table_cf30
+41C7: 9F 36          STX    event_pointer_1e
+41C9: 8E 47 B8       LDX    #event_table_cf30
 41CC: AD BE          JSR    [A,X]		; [jump_table]
-41CE: 20 69          BRA    $41B1
+41CE: 20 69          BRA    master_mainloop_41b1
 
+reset_display_41d0:
 41D0: 7F 36 05       CLR    irq_mask_w_1487
 41D3: 8E 14 22       LDX    #$3600
 41D6: CC 82 D0       LDD    #$00F8
@@ -385,6 +390,7 @@ reset_4000:
 4229: 20 66          BRA    $4219
 422B: 39             RTS
 
+write_char_and_move_cursor_422c:
 422C: 5F             CLRB
 422D: E7 41 80 22    STB    $0800,U					;  [video_address]
 4231: A7 42          STA    ,U+					;  [video_address]
@@ -434,13 +440,13 @@ reset_4000:
 428E: 26 7E          BNE    $4286
 4290: 33 63          LEAU   $1,U
 4292: 96 32          LDA    $B0
-4294: 8D B4          BSR    $422C
+4294: 8D B4          BSR    write_char_and_move_cursor_422c
 4296: 96 33          LDA    $B1
-4298: 8D BA          BSR    $422C
+4298: 8D BA          BSR    write_char_and_move_cursor_422c
 429A: 96 3A          LDA    $B2
-429C: 8D A6          BSR    $422C
+429C: 8D A6          BSR    write_char_and_move_cursor_422c
 429E: 96 3B          LDA    $B3
-42A0: 20 A8          BRA    $422C
+42A0: 20 A8          BRA    write_char_and_move_cursor_422c
 42A2: DE 61          LDU    $E3
 42A4: 96 E6          LDA    $C4
 42A6: C6 8E          LDB    #$0C
@@ -454,58 +460,60 @@ reset_4000:
 42B8: BD 6A A5       JSR    $422D
 42BB: 86 D3          LDA    #$FB
 42BD: 7E CA A5       JMP    $422D
+
+draw_chrono_42c0:
 42C0: C6 02          LDB    #$20
 42C2: B6 94 A2       LDA    system_1680
 42C5: 84 A2          ANDA   #$20
 42C7: 27 2A          BEQ    $42CB
 42C9: C6 C8          LDB    #$40
-42CB: 8E 06 FD       LDX    #$2ED5
-42CE: E7 09          STB    ,X++
-42D0: E7 A2          STB    ,X+
-42D2: E7 03          STB    ,X++
-42D4: E7 A2          STB    ,X+
-42D6: E7 06          STB    ,X
+42CB: 8E 06 FD       LDX    #$2ED5	
+42CE: E7 09          STB    ,X++		; [video_address]
+42D0: E7 A2          STB    ,X+			; [video_address]
+42D2: E7 03          STB    ,X++		; [video_address]
+42D4: E7 A2          STB    ,X+			; [video_address]
+42D6: E7 06          STB    ,X			; [video_address]
 42D8: 8E 07 9D       LDX    #$2F15
-42DB: E7 A9          STB    ,X++
-42DD: E7 08          STB    ,X+
-42DF: E7 A3          STB    ,X++
-42E1: E7 02          STB    ,X+
-42E3: E7 A6          STB    ,X
+42DB: E7 A9          STB    ,X++		; [video_address]
+42DD: E7 08          STB    ,X+         ; [video_address]
+42DF: E7 A3          STB    ,X++        ; [video_address]
+42E1: E7 02          STB    ,X+         ; [video_address]
+42E3: E7 A6          STB    ,X          ; [video_address]
 42E5: 8E A4 57       LDX    #$26D5
 42E8: CE 0F 9D       LDU    #$2715
 42EB: 96 58          LDA    $70
 42ED: 48             ASLA
-42EE: A7 09          STA    ,X++
+42EE: A7 09          STA    ,X++		; [video_address]
 42F0: 4C             INCA
-42F1: A7 43          STA    ,U++
-42F3: 96 53          LDA    $71
+42F1: A7 43          STA    ,U++		; [video_address]
+42F3: 96 53          LDA    chrono_hundredth_second_71
 42F5: 84 72          ANDA   #$F0
 42F7: 44             LSRA
 42F8: 44             LSRA
 42F9: 44             LSRA
-42FA: A7 08          STA    ,X+
+42FA: A7 08          STA    ,X+		; [video_address]
 42FC: 4C             INCA
-42FD: A7 48          STA    ,U+
-42FF: 96 53          LDA    $71
+42FD: A7 48          STA    ,U+		; [video_address]
+42FF: 96 53          LDA    chrono_hundredth_second_71
 4301: 84 8D          ANDA   #$0F
 4303: 48             ASLA
-4304: A7 A3          STA    ,X++
+4304: A7 A3          STA    ,X++	; [video_address]
 4306: 4C             INCA
-4307: A7 E9          STA    ,U++
-4309: 96 FA          LDA    $72
+4307: A7 E9          STA    ,U++	; [video_address]
+4309: 96 FA          LDA    chrono_second_72
 430B: 84 D8          ANDA   #$F0
 430D: 44             LSRA
 430E: 44             LSRA
 430F: 44             LSRA
-4310: A7 A2          STA    ,X+
+4310: A7 A2          STA    ,X+		; [video_address]
 4312: 4C             INCA
-4313: A7 E2          STA    ,U+
-4315: 96 F0          LDA    $72
+4313: A7 E2          STA    ,U+		; [video_address]
+4315: 96 F0          LDA    chrono_second_72
 4317: 84 27          ANDA   #$0F
 4319: 48             ASLA
-431A: A7 0C          STA    ,X
+431A: A7 0C          STA    ,X		; [video_address]
 431C: 4C             INCA
-431D: A7 4C          STA    ,U
+431D: A7 4C          STA    ,U		; [video_address]
 431F: 39             RTS
 
 4320: 96 22          LDA    game_playing_00
@@ -577,16 +585,16 @@ reset_4000:
 43B6: 39             RTS
 
 43B7: 84 27          ANDA   #$0F
-43B9: BD CA A4       JSR    $422C
+43B9: BD CA A4       JSR    write_char_and_move_cursor_422c
 43BC: 86 08          LDA    #$20
-43BE: BD CA 0E       JSR    $422C
+43BE: BD CA 0E       JSR    write_char_and_move_cursor_422c
 43C1: 33 C3          LEAU   $1,U
 43C3: 86 31          LDA    #$13
-43C5: BD C0 AE       JSR    $422C
+43C5: BD C0 AE       JSR    write_char_and_move_cursor_422c
 43C8: 86 08          LDA    #$20
-43CA: BD CA 04       JSR    $422C
+43CA: BD CA 04       JSR    write_char_and_move_cursor_422c
 43CD: 86 AD          LDA    #$25
-43CF: BD 60 0E       JSR    $422C
+43CF: BD 60 0E       JSR    write_char_and_move_cursor_422c
 43D2: 33 C4          LEAU   $6,U
 43D4: 30 23          LEAX   $1,X
 43D6: 20 48          BRA    $43A2
@@ -599,7 +607,7 @@ reset_4000:
 43E5: 96 E9          LDA    $6B
 43E7: 27 39          BEQ    $43FA
 43E9: 86 05          LDA    #$8D
-43EB: BD 6A 04       JSR    $422C
+43EB: BD 6A 04       JSR    write_char_and_move_cursor_422c
 43EE: D6 FD          LDB    $75
 43F0: 20 2A          BRA    $43FA
 43F2: 33 C3          LEAU   $1,U
@@ -649,7 +657,7 @@ reset_4000:
 444E: C1 8E          CMPB   #$06
 4450: 26 20          BNE    $4454
 4452: 86 A9          LDA    #$2B
-4454: BD 60 AE       JSR    $422C
+4454: BD 60 AE       JSR    write_char_and_move_cursor_422c
 4457: D6 5D          LDB    $75
 4459: A6 8B          LDA    $3,X
 445B: BD 6A 05       JSR    $422D
@@ -657,7 +665,7 @@ reset_4000:
 4460: 81 26          CMPA   #$04
 4462: 26 85          BNE    $446B
 4464: 86 AE          LDA    #$8C
-4466: BD C0 04       JSR    $422C
+4466: BD C0 04       JSR    write_char_and_move_cursor_422c
 4469: D6 FD          LDB    $75
 446B: A6 2C          LDA    $4,X
 446D: 7E CA A5       JMP    $422D
@@ -733,7 +741,7 @@ irq_44f5:
 44F5: 7F 96 05       CLR    irq_mask_w_1487
 44F8: 86 29          LDA    #$01
 44FA: B7 9C 28       STA    watchdog_1400
-44FD: BD CD 94       JSR    $451C
+44FD: BD CD 94       JSR    read_inputs_451c
 4500: BD 67 C6       JSR    $4544
 4503: BD 67 F6       JSR    $45D4
 4506: 0C 8D          INC    $0F
@@ -747,6 +755,7 @@ irq_44f5:
 4518: B7 3C 0F       STA    irq_mask_w_1487
 451B: 3B             RTI
 
+read_inputs_451c:
 451C: 8E 18 98       LDX    #$3010
 451F: 86 21          LDA    #$03
 4521: 97 CA          STA    $48
@@ -1070,7 +1079,7 @@ irq_44f5:
 4797: 97 60          STA    $48
 4799: A6 08          LDA    ,X+
 479B: A0 88          SUBA   ,Y+
-479D: BD CA A4       JSR    $422C
+479D: BD CA A4       JSR    write_char_and_move_cursor_422c
 47A0: 0A 6A          DEC    $48
 47A2: 26 77          BNE    $4799
 47A4: 7F 16 67       CLR    $34E5
@@ -2117,7 +2126,7 @@ queue_sound_event_4ead:
 4FF6: 97 CA          STA    $48
 4FF8: EC A9          LDD    ,X++
 4FFA: ED 4C          STD    ,U
-4FFC: A7 E0 94       STA    event_pointer_1c,U
+4FFC: A7 E0 94       STA    $1c,U
 4FFF: 33 EA 42       LEAU   $60,U
 5002: 0A CA          DEC    $48
 5004: 26 D0          BNE    $4FF8
@@ -2652,7 +2661,7 @@ l_50c1:
 53E6: 26 86          BNE    $53EC
 53E8: 0C 61          INC    $49
 53EA: 86 98          LDA    #$10
-53EC: BD 6A A4       JSR    $422C
+53EC: BD 6A A4       JSR    write_char_and_move_cursor_422c
 53EF: A6 A2          LDA    ,X+
 53F1: 26 88          BNE    $53FD
 53F3: 0D 68          TST    $4A
@@ -2660,7 +2669,7 @@ l_50c1:
 53F7: 0D 61          TST    $49
 53F9: 27 8A          BEQ    $53FD
 53FB: 86 38          LDA    #$10
-53FD: BD CA A4       JSR    $422C
+53FD: BD CA A4       JSR    write_char_and_move_cursor_422c
 5400: 96 6A          LDA    $48
 5402: 26 88          BNE    $540E
 5404: 96 4B          LDA    $69
@@ -2673,7 +2682,7 @@ l_50c1:
 5412: 86 08          LDA    #$8A
 5414: 20 20          BRA    $5418
 5416: 86 A9          LDA    #$2B
-5418: BD 6A A4       JSR    $422C
+5418: BD 6A A4       JSR    write_char_and_move_cursor_422c
 541B: 86 A4          LDA    #$8C
 541D: 0D C0          TST    $48
 541F: 26 24          BNE    $5427
@@ -2681,9 +2690,9 @@ l_50c1:
 5423: C1 26          CMPB   #$04
 5425: 27 80          BEQ    $5429
 5427: A6 A8          LDA    ,X+
-5429: BD CA A4       JSR    $422C
+5429: BD CA A4       JSR    write_char_and_move_cursor_422c
 542C: A6 A8          LDA    ,X+
-542E: 7E CA 0E       JMP    $422C
+542E: 7E CA 0E       JMP    write_char_and_move_cursor_422c
 5431: 96 EB          LDA    $69
 5433: 81 20          CMPA   #$02
 5435: 27 86          BEQ    $543B
@@ -4671,11 +4680,11 @@ l_50c1:
 642F: 44             LSRA
 6430: 44             LSRA
 6431: A7 22          STA    ,Y+
-6433: BD 60 0E       JSR    $422C
+6433: BD 60 0E       JSR    write_char_and_move_cursor_422c
 6436: A6 02          LDA    ,X+
 6438: 84 27          ANDA   #$0F
 643A: A7 28          STA    ,Y+
-643C: BD 6A A4       JSR    $422C
+643C: BD 6A A4       JSR    write_char_and_move_cursor_422c
 643F: 0A 6A          DEC    $48
 6441: 26 83          BNE    $6444
 6443: 39             RTS
@@ -4789,7 +4798,7 @@ l_50c1:
 6528: 97 60          STA    $48
 652A: A6 08          LDA    ,X+
 652C: A7 88          STA    ,Y+
-652E: BD CA 0E       JSR    $422C
+652E: BD CA 0E       JSR    write_char_and_move_cursor_422c
 6531: 0A CA          DEC    $48
 6533: 26 D7          BNE    $652A
 6535: 39             RTS
@@ -5213,7 +5222,7 @@ l_50c1:
 688D: 0C A0          INC    $28
 688F: 39             RTS
 
-6890: 0F 50          CLR    $72
+6890: 0F 50          CLR    chrono_second_72
 6892: 8E B2 82       LDX    #$30A0
 6895: 86 86          LDA    #$04
 6897: 97 4D          STA    $65
@@ -5261,8 +5270,8 @@ l_50c1:
 68EE: 27 8B          BEQ    $68F3
 68F0: 6C AA D9       INC    $5B,X
 68F3: 6F AA 02       CLR    $20,X
-68F6: 6C 0A 34       INC    event_pointer_1c,X
-68F9: A6 00 94       LDA    event_pointer_1c,X
+68F6: 6C 0A 34       INC    $1c,X
+68F9: A6 00 94       LDA    $1c,X
 68FC: 81 3A          CMPA   #$12
 68FE: 26 95          BNE    $691D
 6900: 6C AA C9       INC    $4B,X
@@ -5290,8 +5299,8 @@ l_50c1:
 692F: 84 20          ANDA   #$02
 6931: 27 81          BEQ    $6936
 6933: 6C AA 79       INC    $5B,X
-6936: 6C 0A 34       INC    event_pointer_1c,X
-6939: A6 00 94       LDA    event_pointer_1c,X
+6936: 6C 0A 34       INC    $1c,X
+6939: A6 00 94       LDA    $1c,X
 693C: 81 78          CMPA   #$50
 693E: 27 85          BEQ    $694D
 6940: 81 3C          CMPA   #$1E
@@ -5302,7 +5311,7 @@ l_50c1:
 694C: 39             RTS
 
 694D: 6C 0C          INC    ,X
-694F: 6F AA 3E       CLR    event_pointer_1c,X
+694F: 6F AA 3E       CLR    $1c,X
 6952: 39             RTS
 
 6953: BD 7B A0       JSR    $5982
@@ -5372,11 +5381,11 @@ l_50c1:
 69E8: A7 2A          STA    $2,X
 69EA: 7E F0 16       JMP    $783E
 69ED: BD FC DD       JSR    $7455
-69F0: A6 AA 9E       LDA    event_pointer_1c,X
+69F0: A6 AA 9E       LDA    $1c,X
 69F3: 81 3C          CMPA   #$1E
 69F5: 27 85          BEQ    $69FE
 69F7: BD AC C7       JSR    $84EF
-69FA: 6C 00 34       INC    event_pointer_1c,X
+69FA: 6C 00 34       INC    $1c,X
 69FD: 39             RTS
 
 69FE: 6C 0C          INC    ,X
@@ -6080,9 +6089,9 @@ l_50c1:
 6FC1: 96 CB          LDA    $49
 6FC3: 26 20          BNE    $6FC7
 6FC5: 86 92          LDA    #$10
-6FC7: BD 6A 04       JSR    $422C
+6FC7: BD 6A 04       JSR    write_char_and_move_cursor_422c
 6FCA: 96 C0          LDA    $48
-6FCC: 7E 6A A4       JMP    $422C
+6FCC: 7E 6A A4       JMP    write_char_and_move_cursor_422c
 6FCF: 4F             CLRA
 6FD0: BD 6C 2F       JSR    queue_sound_event_4ead
 6FD3: 0D C5          TST    $E7
@@ -7796,7 +7805,7 @@ l_50c1:
 7DC8: 86 2A          LDA    #$02
 7DCA: D6 93          LDB    $1B
 7DCC: 27 2D          BEQ    $7DD3
-7DCE: 30 00 3C       LEAX   $1E,X
+7DCE: 30 00 3C       LEAX   event_pointer_1e,X
 7DD1: 97 9B          STA    $19
 7DD3: 97 47          STA    $65
 7DD5: BD FC 64       JSR    $7EE6
@@ -8645,7 +8654,7 @@ l_50c1:
 84E8: 20 CC          BRA    $84CE
 84EA: CE 54 63       LDU    #$DC4B
 84ED: 20 57          BRA    $84CE
-84EF: A6 AA 3E       LDA    event_pointer_1c,X
+84EF: A6 AA 3E       LDA    $1c,X
 84F2: C6 88          LDB    #$0A
 84F4: BD 84 84       JSR    $A606
 84F7: C1 2B          CMPB   #$03
@@ -9316,13 +9325,13 @@ l_50c1:
 8A35: 4F             CLRA
 8A36: 5F             CLRB
 8A37: DD 58          STD    $70
-8A39: DD FA          STD    $72
+8A39: DD FA          STD    chrono_second_72
 8A3B: FD 1C D9       STD    $34F1
 8A3E: 0C AE          INC    $26
 8A40: 39             RTS
 
 8A41: BD 42 82       JSR    $C000
-8A44: 96 53          LDA    $71
+8A44: 96 53          LDA    chrono_hundredth_second_71
 8A46: 81 90          CMPA   #$12
 8A48: 27 33          BEQ    $8A65
 8A4A: 96 9B          LDA    $13
@@ -9365,7 +9374,7 @@ l_50c1:
 8A89: 97 C0          STA    $48
 8A8B: A6 A8          LDA    ,X+
 8A8D: 80 83          SUBA   #$0B
-8A8F: BD 60 0E       JSR    $422C
+8A8F: BD 60 0E       JSR    write_char_and_move_cursor_422c
 8A92: 0A CA          DEC    $48
 8A94: 26 D7          BNE    $8A8B
 8A96: 8E 5A EE       LDX    #$D8C6
@@ -9374,7 +9383,7 @@ l_50c1:
 8A9E: 97 C0          STA    $48
 8AA0: A6 A2          LDA    ,X+
 8AA2: 80 94          SUBA   #$16
-8AA4: BD 60 AE       JSR    $422C
+8AA4: BD 60 AE       JSR    write_char_and_move_cursor_422c
 8AA7: 0A 60          DEC    $48
 8AA9: 26 7D          BNE    $8AA0
 8AAB: 0C 0E          INC    $26
@@ -9912,24 +9921,24 @@ l_50c1:
 8F1F: 2A 0A          BPL    $8F49
 8F21: 86 87          LDA    #$05
 8F23: 97 51          STA    $73
-8F25: 0A F0          DEC    $72
+8F25: 0A F0          DEC    chrono_second_72
 8F27: 2A 08          BPL    $8F49
-8F29: 0D F9          TST    $71
+8F29: 0D F9          TST    chrono_hundredth_second_71
 8F2B: 27 20          BEQ    $8F35
-8F2D: 0A F9          DEC    $71
+8F2D: 0A F9          DEC    chrono_hundredth_second_71
 8F2F: 86 2B          LDA    #$09
-8F31: 97 F0          STA    $72
+8F31: 97 F0          STA    chrono_second_72
 8F33: 20 36          BRA    $8F49
 8F35: 0D F2          TST    $70
 8F37: 26 20          BNE    $8F41
-8F39: 0F FA          CLR    $72
+8F39: 0F FA          CLR    chrono_second_72
 8F3B: 0F 5B          CLR    $73
 8F3D: 0C 79          INC    $F1
 8F3F: 20 2A          BRA    $8F49
 8F41: 0A F2          DEC    $70
 8F43: 86 2B          LDA    #$09
-8F45: 97 F3          STA    $71
-8F47: 97 5A          STA    $72
+8F45: 97 F3          STA    chrono_hundredth_second_71
+8F47: 97 5A          STA    chrono_second_72
 8F49: 0D 79          TST    $F1
 8F4B: 27 27          BEQ    $8F5C
 8F4D: B6 B9 88       LDA    $3100
@@ -10790,7 +10799,7 @@ l_50c1:
 964A: 84 8B          ANDA   #$03
 964C: 26 2B          BNE    $9651
 964E: BD 1D D1       JSR    $95F3
-9651: 0A F3          DEC    $71
+9651: 0A F3          DEC    chrono_hundredth_second_71
 9653: 26 1F          BNE    $9692
 9655: 0A F2          DEC    $70
 9657: 26 11          BNE    $9692
@@ -10845,13 +10854,13 @@ l_50c1:
 96C1: 8D 83          BSR    $96C4
 96C3: 39             RTS
 
-96C4: E7 A2          STB    ,X+
+96C4: E7 A2          STB    ,X+		; [video_address]
 96C6: 4A             DECA
 96C7: 26 D3          BNE    $96C4
 96C9: 39             RTS
 
 96CA: E6 48          LDB    ,U+
-96CC: E7 A8          STB    ,X+
+96CC: E7 A8          STB    ,X+		; [video_address]
 96CE: 4A             DECA
 96CF: 26 DB          BNE    $96CA
 96D1: 39             RTS
@@ -10897,7 +10906,7 @@ l_50c1:
 9723: CC 20 37       LDD    #$0215
 9726: DD F2          STD    $70
 9728: CC 2A 08       LDD    #$0280
-972B: DD 5A          STD    $72
+972B: DD 5A          STD    chrono_second_72
 972D: 0C AC          INC    $24
 972F: CE CC 80       LDU    #$EEA2
 9732: FF B6 32       STU    $3410
@@ -10947,14 +10956,14 @@ l_50c1:
 9797: 0D 01          TST    $29
 9799: 26 8A          BNE    $979D
 979B: C6 72          LDB    #$5A
-979D: DD FA          STD    $72
+979D: DD FA          STD    chrono_second_72
 979F: 20 16          BRA    $97D5
 97A1: 0A F1          DEC    $73
 97A3: 26 12          BNE    $97D5
-97A5: 0A F0          DEC    $72
+97A5: 0A F0          DEC    chrono_second_72
 97A7: 26 04          BNE    $97D5
 97A9: CC 8A C8       LDD    #$0240
-97AC: DD 5A          STD    $72
+97AC: DD 5A          STD    chrono_second_72
 97AE: 0D A1          TST    $29
 97B0: 10 27 82 2F    LBEQ   $9861
 97B4: 8E 16 D2       LDX    #$3450
@@ -11031,7 +11040,7 @@ l_50c1:
 9851: 0F AB          CLR    $29
 9853: 26 11          BNE    $9888
 9855: CC 83 B2       LDD    #$0130
-9858: DD 5A          STD    $72
+9858: DD 5A          STD    chrono_second_72
 985A: 86 A6          LDA    #$2E
 985C: B7 1C A8       STA    $3420
 985F: 20 05          BRA    $9888
@@ -11047,7 +11056,7 @@ l_50c1:
 9874: 0C 06          INC    $24
 9876: 0A 9B          DEC    $19
 9878: 86 3C          LDA    #$14
-987A: 97 FA          STA    $72
+987A: 97 FA          STA    chrono_second_72
 987C: 20 22          BRA    $9888
 987E: 4F             CLRA
 987F: BD 6C B8       JSR    queue_event_4e9a
@@ -11197,7 +11206,7 @@ l_50c1:
 99C2: 86 93          LDA    #$11
 99C4: 39             RTS
 
-99C5: 0A F3          DEC    $71
+99C5: 0A F3          DEC    chrono_hundredth_second_71
 99C7: 26 27          BNE    $99D8
 99C9: 0D F8          TST    $70
 99CB: 27 23          BEQ    $99D8
@@ -11209,9 +11218,9 @@ l_50c1:
 99D8: 39             RTS
 
 99D9: BD 10 00       JSR    $9888
-99DC: 0D 5A          TST    $72
+99DC: 0D 5A          TST    chrono_second_72
 99DE: 27 8C          BEQ    $99E4
-99E0: 0A 50          DEC    $72
+99E0: 0A 50          DEC    chrono_second_72
 99E2: 26 AF          BNE    $9A11
 99E4: 0D 05          TST    $27
 99E6: 27 AB          BEQ    $9A11
@@ -11289,7 +11298,7 @@ l_50c1:
 9A85: 84 8D          ANDA   #$0F
 9A87: 26 29          BNE    $9A8A
 9A89: 4C             INCA
-9A8A: 97 FA          STA    $72
+9A8A: 97 FA          STA    chrono_second_72
 9A8C: BD B5 2D       JSR    $9DA5
 9A8F: 86 25          LDA    #$07
 9A91: 97 36          STA    $B4
@@ -11302,10 +11311,10 @@ l_50c1:
 9A9D: 96 87          LDA    $0F
 9A9F: 84 23          ANDA   #$01
 9AA1: 26 8B          BNE    $9AAC
-9AA3: 96 50          LDA    $72
+9AA3: 96 50          LDA    chrono_second_72
 9AA5: 4C             INCA
 9AA6: 84 8D          ANDA   #$0F
-9AA8: 97 5A          STA    $72
+9AA8: 97 5A          STA    chrono_second_72
 9AAA: 27 79          BEQ    $9A9D
 9AAC: 0A 58          DEC    $70
 9AAE: 27 93          BEQ    $9ACB
@@ -11319,7 +11328,7 @@ l_50c1:
 9ABF: C1 24          CMPB   #$06
 9AC1: 26 86          BNE    $9AC7
 9AC3: C6 2A          LDB    #$08
-9AC5: D7 F0          STB    $72
+9AC5: D7 F0          STB    chrono_second_72
 9AC7: 84 2D          ANDA   #$05
 9AC9: 27 91          BEQ    $9AE4
 9ACB: 0C 00          INC    $28
@@ -11330,7 +11339,7 @@ l_50c1:
 9AD5: 8E B7 AA       LDX    #$3528
 9AD8: D6 31          LDB    $19
 9ADA: 3A             ABX
-9ADB: 96 5A          LDA    $72
+9ADB: 96 5A          LDA    chrono_second_72
 9ADD: A7 0C          STA    ,X
 9ADF: 86 06          LDA    #$24
 9AE1: BD CC 31       JSR    $4EB3
@@ -11341,7 +11350,7 @@ l_50c1:
 9AED: 3A             ABX
 9AEE: E6 0C          LDB    ,X
 9AF0: 20 20          BRA    $9AF4
-9AF2: D6 F0          LDB    $72
+9AF2: D6 F0          LDB    chrono_second_72
 9AF4: 8E D2 E1       LDX    #$F063
 9AF7: 3A             ABX
 9AF8: A6 AC          LDA    ,X
@@ -11481,9 +11490,9 @@ l_50c1:
 9C18: A6 E8          LDA    ,U+
 9C1A: 6F 01 20 28    CLR    $0800,X					;  [video_address]
 9C1E: A7 0C          STA    ,X					;  [video_address]
-9C20: 0D 53          TST    $71
+9C20: 0D 53          TST    chrono_hundredth_second_71
 9C22: 27 90          BEQ    $9C36
-9C24: 0A 53          DEC    $71
+9C24: 0A 53          DEC    chrono_hundredth_second_71
 9C26: 26 8C          BNE    $9C36
 9C28: C6 1F          LDB    #$37
 9C2A: D7 3E          STB    $B6
@@ -11811,7 +11820,7 @@ l_50c1:
 9ECC: 81 22          CMPA   #$0A
 9ECE: 2D 8C          BLT    $9ED4
 9ED0: C6 36          LDB    #$14
-9ED2: D7 F3          STB    $71
+9ED2: D7 F3          STB    chrono_hundredth_second_71
 9ED4: 96 0F          LDA    $2D
 9ED6: 8E 72 A0       LDX    #$F088
 9ED9: A6 0E          LDA    A,X
@@ -12361,7 +12370,7 @@ A368: BD BE 4C       JSR    $96C4
 A36B: 39             RTS
 
 A36C: 8D C8          BSR    $A34E
-A36E: 0A F9          DEC    $71
+A36E: 0A F9          DEC    chrono_hundredth_second_71
 A370: 26 2E          BNE    $A37E
 A372: 0A F2          DEC    $70
 A374: 26 2A          BNE    $A37E
@@ -12428,7 +12437,7 @@ A3F6: 10 8E DA E8    LDY    #$F2C0
 A3FA: 0F C0          CLR    $48
 A3FC: 8E 0B 8A       LDX    #$2302
 A3FF: 86 25          LDA    #$07
-A401: A7 06          STA    ,X
+A401: A7 06          STA    ,X		; [video_address]
 A403: 30 AA E2       LEAX   -$40,X
 A406: 4A             DECA
 A407: 26 D0          BNE    $A401
@@ -12442,7 +12451,7 @@ A416: 96 CA          LDA    $48
 A418: C6 68          LDB    #$40
 A41A: 3D             MUL
 A41B: 30 A3          LEAX   D,X
-A41D: E6 8A          LDB    $2,X
+A41D: E6 8A          LDB    $2,X		; [video_address]
 A41F: C1 32          CMPB   #$10
 A421: 27 9B          BEQ    $A43C
 A423: 33 63          LEAU   $1,U
@@ -12450,7 +12459,7 @@ A425: C6 80          LDB    #$02
 A427: 0F 78          CLR    $50
 A429: A6 48          LDA    ,U+
 A42B: BD BD 44       JSR    $956C
-A42E: A7 08          STA    ,X+
+A42E: A7 08          STA    ,X+		; [video_address]
 A430: 5A             DECB
 A431: 26 74          BNE    $A429
 A433: 30 23          LEAX   $1,X
@@ -12461,7 +12470,7 @@ A43C: C6 2D          LDB    #$05
 A43E: 0F D8          CLR    $50
 A440: A6 E2          LDA    ,U+
 A442: BD 17 4E       JSR    $956C
-A445: A7 02          STA    ,X+
+A445: A7 02          STA    ,X+		; [video_address]
 A447: 5A             DECB
 A448: 26 DE          BNE    $A440
 A44A: 30 9E          LEAX   -$A,X
@@ -12487,9 +12496,9 @@ A476: 8E A6 CA       LDX    #$24E2
 A479: CC 88 8D       LDD    #$0005
 A47C: D7 78          STB    $50
 A47E: 4C             INCA
-A47F: A7 A6          STA    ,X
+A47F: A7 A6          STA    ,X		; [video_address]
 A481: 4C             INCA
-A482: A7 0A 73       STA    $51,X
+A482: A7 0A 73       STA    $51,X		; [video_address]
 A485: 30 0B 82 A8    LEAX   $0080,X
 A489: 0A D8          DEC    $50
 A48B: 26 D9          BNE    $A47E
@@ -12568,14 +12577,14 @@ A52A: 44             LSRA
 A52B: 44             LSRA
 A52C: 44             LSRA
 A52D: BD 1D E4       JSR    $956C
-A530: A7 A2          STA    ,X+
+A530: A7 A2          STA    ,X+		;  [video_address]
 A532: A6 42          LDA    ,U+
 A534: BD B7 EE       JSR    $956C
-A537: A7 A8          STA    ,X+
+A537: A7 A8          STA    ,X+		;  [video_address]
 A539: 5A             DECB
 A53A: 26 63          BNE    $A527
 A53C: 4F             CLRA
-A53D: A7 0C          STA    ,X
+A53D: A7 0C          STA    ,X		;  [video_address]
 A53F: 30 34          LEAX   -$A,X
 A541: 86 81          LDA    #$03
 A543: BD B4 E8       JSR    $96CA
@@ -15279,7 +15288,7 @@ BC2B: 10 8E 1A A8    LDY    #$3220
 BC2F: EC A3          LDD    ,X++
 BC31: ED 2A D3       STD    $51,Y
 BC34: CB 27          ADDB   #$05
-BC36: ED 2A 59       STD    $71,Y
+BC36: ED 2A 59       STD    chrono_hundredth_second_71,Y
 BC39: A6 08          LDA    ,X+
 BC3B: CE F5 9D       LDU    #$DDB5
 BC3E: 48             ASLA
@@ -15359,7 +15368,7 @@ BCEB: 3D             MUL
 BCEC: 33 ED          LEAU   B,U
 BCEE: EF 20 11       STU    $33,Y
 BCF1: EC 03          LDD    ,X++
-BCF3: ED 8A 53       STD    $71,Y
+BCF3: ED 8A 53       STD    chrono_hundredth_second_71,Y
 BCF6: A6 02          LDA    ,X+
 BCF8: CE F5 3D       LDU    #$DDB5
 BCFB: 48             ASLA
@@ -15691,20 +15700,20 @@ BFE3: 10 BE 16 B6    LDY    $3434
 BFE7: 7E 87 F0       JMP    $AFD8
 
 C000: 86 24          LDA    #$06
-C002: 9B F0          ADDA   $72
+C002: 9B F0          ADDA   chrono_second_72
 C004: 19             DAA
-C005: 97 F0          STA    $72
+C005: 97 F0          STA    chrono_second_72
 C007: 24 3C          BCC    $C01D
 C009: 8B 89          ADDA   #$01
 C00B: 19             DAA
-C00C: 97 5A          STA    $72
-C00E: 96 F9          LDA    $71
+C00C: 97 5A          STA    chrono_second_72
+C00E: 96 F9          LDA    chrono_hundredth_second_71
 C010: 8B 23          ADDA   #$01
 C012: 19             DAA
-C013: 97 53          STA    $71
+C013: 97 53          STA    chrono_hundredth_second_71
 C015: 81 E2          CMPA   #$60
 C017: 26 2C          BNE    $C01D
-C019: 0F F9          CLR    $71
+C019: 0F F9          CLR    chrono_hundredth_second_71
 C01B: 0C 58          INC    $70
 C01D: D6 FB          LDB    $73
 C01F: 27 27          BEQ    $C026
@@ -17546,13 +17555,13 @@ CF09: CE 88 88       LDU    #$0000
 CF0C: FD 17 D3       STD    $3F5B
 CF0F: FF 1D 7F       STU    $3F5D
 CF12: 39             RTS
-table_cf30:
-	dc.w	$41d0	; $cf30
+event_table_cf30:
+	dc.w	reset_display_41d0	; $cf30
 	dc.w	$420e	; $cf32
 	dc.w	$4211	; $cf34
 	dc.w	$4234	; $cf36
 	dc.w	$42a2	; $cf38
-	dc.w	$42c0	; $cf3a
+	dc.w	draw_chrono_42c0	; $cf3a
 	dc.w	$4320	; $cf3c
 	dc.w	$4470	; $cf3e
 table_d33a:

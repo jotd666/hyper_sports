@@ -133,7 +133,7 @@ with open(source_dir / "conv.s") as f:
             line = remove_instruction(lines,i)
             remove_continuing_lines(lines,i)
 
-        elif "irq_mask_w_1087" in line:
+        elif "irq_mask_w_1487" in line:
             # check next line
             next_line = lines[i+1]
             if "clr" in next_line:
