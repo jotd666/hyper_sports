@@ -55,15 +55,17 @@ get_address:
 	cmp.w	#0x1000,a0
 	jcc		0f
 	jbsr	osd_get_last_known_pc
-	BREAKPOINT	"unsupported address range 0-0x1800, PC in D6"
+	BREAKPOINT	"unsupported address range 0-0x1000, PC in D6"
 	illegal
 0:
 * no need to treat that as special memory, just check what scroll
 * address has changed at each vblank
 	
-	* 0X2000 <= range < 0x4000, ram, video ram & special ram/scroll
+	* 0X2000 <= range < 0x3000, ram, video ram & special ram/scroll
 	cmp.w	#0x2080,a0		| 2000->2080 is not visible anyway!
 	jcs		0f
+	cmp.w	#0x3000,a0		| 3000-> ok
+	jcc		0f
 	* video/attribute: must be done without "get_address"
 	jbsr	osd_get_last_known_pc
 	BREAKPOINT	"unsupported address range 0x2000-0x2FFF, PC in D6"
