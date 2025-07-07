@@ -146,7 +146,7 @@ BIT_LEFT_2P = 6
 
 
 .macro	GET_MEMORY_START_AND_DP
-	move.l	m6809_direct_page_pointer,a4
+	move.l	m6809_direct_page_pointer,a5
 	.ifdef	RELEASE
 	lea		ram_buffer-RAM_START,a6
 	.else
@@ -1077,23 +1077,23 @@ osd_wait:
 * Z: set if not playing
 is_game_playing:
 
-	move.l	a4,-(a7)
-	move.l	m6809_direct_page_pointer,a4
+	move.l	a5,-(a7)
+	move.l	m6809_direct_page_pointer,a5
 *	*GET_MEMORY_START_AND_DP
-*	cmp.b	#1,global_state_00(a4)
+*	cmp.b	#1,global_state_00(a5)
 *	jeq		0f
-*	cmp.b	#4,global_state_00(a4)
+*	cmp.b	#4,global_state_00(a5)
 *0:
-	cmp.l	#0,a4
-	move.l	(a7)+,a4
+	cmp.l	#0,a5
+	move.l	(a7)+,a5
 	rts
 	
 lose_all_lives:
-	movem.l	a6/a4,-(a7)
+	movem.l	a6/a5,-(a7)
 	GET_MEMORY_START_AND_DP
 	*move.b	#1,lives_9600(a6)					| no more lives
 	*move.b	#0xf0,level_playing_flag_9000(a6)	| kill player
-	movem.l	(a7)+,a6/a4
+	movem.l	(a7)+,a6/a5
 	rts
 
 add_10000_points:
@@ -1112,7 +1112,7 @@ add_10000_points:
 * to avoid to update copperlist if values don't change
 really_update_scroll:
 	GET_MEMORY_START_AND_DP
-	lea	(0x1840,a6),a6
+	lea	(0x10C0,a6),a6
 	move.w	#NB_SCROLL_ROWS+1,d7
 	lea		scroll_table,a2
 	lea		scroll_row_copper_address_table,a1
@@ -1121,10 +1121,11 @@ really_update_scroll:
 0:
 
 	* get LSB+MSB scroll value
-	move.b	(0x400,a6),d5
+	move.b	(1,a6),d5
 	and.b	#1,d5		| consider only bit 0 for MSB
 	rol.w	#8,d5
-	move.b	(a6)+,d5
+	move.b	(a6),d5
+	addq	#2,a6
 	move.w	(a3)+,d6
 	cmp.w	d5,d6
 	jeq		1f
@@ -2815,12 +2816,12 @@ osd_read_dsw_3:
 
 
 clear_all_faults:
-	move.l	a4,-(a7)
-	move.l	m6809_direct_page_pointer,a4
-*	clr.b	(high_jump_fault_9f,a4)
-*	clr.b	(jump_foul_c9,a4)
-*	move.b	#5,(chrono_second_7f,a4)		| race: 5 seconds
-	move.l 	(a7)+,a4
+	move.l	a5,-(a7)
+	move.l	m6809_direct_page_pointer,a5
+*	clr.b	(high_jump_fault_9f,a5)
+*	clr.b	(jump_foul_c9,a5)
+	move.b	#5,(chrono_second_72,a5)		| race: 5 seconds
+	move.l 	(a7)+,a5
 	rts
 
 	

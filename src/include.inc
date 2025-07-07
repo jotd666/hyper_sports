@@ -270,7 +270,7 @@ get_address:
 
 
 	.macro GET_DP_ADDRESS	offset
-	lea	(a4,\offset\().W),a0
+	lea	(a5,\offset\().W),a0
 	.endm
 
 
@@ -279,8 +279,8 @@ get_address:
 	lsl.w    #8,d0
 	move.l    d0,a0
 	GET_ADDRESS_FUNC
-	move.l	a0,a4
-	move.l	a4,m6809_direct_page_pointer
+	move.l	a0,a5
+	move.l	a5,m6809_direct_page_pointer
 	lsr.w    #8,d0
 	.endm
 
@@ -381,6 +381,7 @@ get_address:
 * we cannot predict what those locations will be, we intercept them
 * and report the unknown ones	
 do_jmp_0e_x:
+	BREAKPOINT 	"jmp_0E_X"
 	GET_REG_ADDRESS		0xE,d2
 	READ_BE_WORD	d6		| original address to jump to in d6
 	JUMP_IF_KNOWN	85a0
@@ -401,7 +402,7 @@ cpu_init:
 
 | direct page pointer needs to be reloaded in case of irq
 m6809_direct_page_pointer:
-	.long	0xA4A4A4A4
+	.long	0xA5A5A5A5
 
 
 multiply_ab:

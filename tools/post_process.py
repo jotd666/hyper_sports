@@ -163,7 +163,7 @@ with open(source_dir / "conv.s") as f:
             m = jmpre.search(line)
             if m:
                 inst = m.group(1).upper()
-                reg = "A2" if m.group(2)=="x" else "A3"
+                reg = {"x":"A2","y":"A3","u":"A4"}[m.group(2)]
                 rest = re.sub(".*\"","",line)
                 line = f"\t{inst}_A_INDEXED\t{reg}{rest}"
         if "indirect jsr" in line:

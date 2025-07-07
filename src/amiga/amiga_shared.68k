@@ -226,7 +226,7 @@ osd_sound_start:
 	move.w	d0,d1
 	lsr.w	#3,d1
 
-	BREAKPOINT	"unknown sound (index in D1)"
+	**BREAKPOINT	"unknown sound (index in D1)"
 	jra		10b
 	
 	* music
