@@ -11,6 +11,7 @@ def merge(used_name,nb_items):
 
     # merge sprites with existing file + moves from level 1
     used_dump = data_dir / used_name
+
     with open(used_dump,"rb") as f:
         new_contents = f.read()
 
@@ -34,5 +35,5 @@ def merge(used_name,nb_items):
         with open(merged_path_file / used_name,"wb") as f:
             f.write(contents)
 
-merge("used_sprites",256)
-merge("used_tiles",512+256)
+merge("used_sprites",512)
+merge("used_tiles",512+512)

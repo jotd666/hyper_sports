@@ -100,9 +100,9 @@ NB_HOST_SPRITES = 8
 
 NB_TARGET_SPRITES = 0x40  
 	
-TARGET_SPRITE_X = 0x400
+TARGET_SPRITE_X = 3
 TARGET_SPRITE_Y = 1 
-TARGET_SPRITE_CODE = 0x401 
+TARGET_SPRITE_CODE = 2
 TARGET_SPRITE_ATTR = 0
 TARGET_SPRITE_SIZEOF = 4
 
@@ -1097,7 +1097,7 @@ lose_all_lives:
 	rts
 
 add_10000_points:
-	move.l	a6,-(a7)
+	movem.l	a5/a6,-(a7)
 	GET_MEMORY_START_AND_DP
 	movem.w	d0/d7,-(a7)
 	*move.b	player_1_score_9663+2(a6),d0
@@ -1105,7 +1105,7 @@ add_10000_points:
 	abcd	d7,d0
 	*move.b	d0,player_1_score_9663+2(a6)
 	movem.w	(a7)+,d0/d7
-	move.l	(a7)+,a6
+	movem.l	(a7)+,a5/a6
 	rts
 
 * we're going to scan for scroll values with some optimization
@@ -1233,21 +1233,42 @@ update_bobs_and_hw_sprites:
 	*********************************************
 
 
-    lea _custom,A5
 	lea		sprite_groups(pc),a2
 	GET_MEMORY_START_AND_DP
-	lea		(0x103E,a6),a0		| sprite start
+    lea _custom,A5
+	lea		(0x10BC,a6),a0		| sprite start
 	lea		bob_table,a4
-	move.w	#NB_TARGET_SPRITES/2-1,d7
+	move.w	#NB_TARGET_SPRITES-1,d7
 	move.l	bob_previous_drawn_sprites(pc),a6
 1:
 	jbsr	update_one_bob
-	subq.w	#2,a0
+	subq.w	#TARGET_SPRITE_SIZEOF,a0
 	dbf		d7,1b
 2:
 	rts
 	
 
+*void base_state::draw_sprites( bitmap_ind16 &bitmap, const rectangle &cliprect )
+*{
+*	for (int offs = m_spriteram.bytes() - 4; offs >= 0; offs -= 4)
+*	{
+*		int sx = m_spriteram[offs + 3];
+*		int sy = 240 - m_spriteram[offs + 1];
+*		int const code = m_spriteram[offs + 2] + 8 * (m_spriteram[offs] & 0x20);
+*		int const color = m_spriteram[offs] & 0x0f;
+*		int const flipx = ~m_spriteram[offs] & 0x40;
+*		int flipy = m_spriteram[offs] & 0x80;
+*
+*		if (flip_screen())
+*		{
+*			sy = 240 - sy;
+*			flipy = !flipy;
+*		}
+*
+*		/* Note that this adjustment must be done AFTER handling flip_screen(), thus
+*		   proving that this is a hardware related "feature" */
+*
+*		sy += 1;
 
 * < A0: sprite array
 * < A2: sprite group table
@@ -1257,8 +1278,7 @@ update_bobs_and_hw_sprites:
 * must preserve all of those, plus D7
 
 update_one_bob:
-	rts
-	
+
 	* X = 0 and Y = 0: disabled
 	
 	moveq	#0,d0
@@ -1272,10 +1292,6 @@ update_one_bob:
 	tst.b	d0
 	jeq	2f
 0:
-	* get code immediately. A lot of sprites won't be displayed
-	* as they are grouped with others
-	moveq	#0,d3
-	move.b	(TARGET_SPRITE_CODE,a0),d3
 
 	.ifne	SPRITE_Y_CORRECTION
 	add.w	#SPRITE_Y_CORRECTION,d1
@@ -1287,11 +1303,22 @@ update_one_bob:
 	neg.w	d1
 	add.w	#241,d1
 	jmi		2f		| negative after correction => skip
+
+	* get code immediately. A lot of sprites won't be displayed
+	* as they are grouped with others
+	moveq	#0,d3
+	move.b	(TARGET_SPRITE_CODE,a0),d3
 	moveq	#0,d2
 	move.b	(TARGET_SPRITE_ATTR,a0),d2
+	btst.b	#5,d2
+	jeq		111f
+	bset	#8,d3		| add 256
+111:
 	and.b	#0xF,d2		| CLUT
 
 	* check if it is a grouped sprite in the table with 0x100 pre-computed entries
+	jra		10f		| no grouping right now
+	
 	tst.b	(a2,d3.w)
 	jeq		10f
 	jpl		50f
