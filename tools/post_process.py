@@ -100,9 +100,9 @@ with open(source_dir / "conv.s") as f:
             lines[i-3] = ""
             lines[i-1] = ""
 
-##        if "[$6853" in line:
-##            # insert level select cheat
-##            line = line + "\tGET_DP_ADDRESS\tcurrent_level_84\n\tmove.b\tstart_level,(a0)\n"
+        if "[$469f" in line:
+            # insert level select cheat
+            line = line + "\tGET_DP_ADDRESS\tcurrent_level_68\n\tmove.b\tstart_level,(a0)\n"
 
 
         for a in [0x6ec1,0x9ef4,0xa9f5,0xc005,0xccca,0xcd0b,0xce37]:

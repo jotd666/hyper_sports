@@ -46,8 +46,8 @@ _config
 	IFD		CHIP_ONLY
 	dc.b	"C2:X:break at startup:31;"
 	ENDC
-	dc.b	"C3:L:start level:100m dash,long jump,javelin throw,"
-	dc.b	"110m hurdles,hammer throw,high jump;"
+	dc.b	"C3:L:start level:Free Style,Skeet Shooting,Long Horse,"
+	dc.b	"Archery,Triple Jump,Weightlifting,Pole Vault;"
 ;	dc.b	"C5:L:difficulty level:1 (easiest),2,3,4,5 (average),6,7,8 (hardest);"
 	dc.b	0
 

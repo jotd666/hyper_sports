@@ -27,10 +27,12 @@ game_playing_00 = $00
 dsw2_copy_0d = $0d
 event_pointer_1c = $1c
 event_pointer_1e = $1e
+current_level_68 = $68
 chrono_hundredth_second_71 = $71
 chrono_second_72 = $72
 watchdog_1400 = $1400
 sound_queue_3340 = $3340
+current_level_3068 = $3068
 
 dsw2_1600 = $1600
 system_1680 = $1680
@@ -936,6 +938,8 @@ read_inputs_451c:
 466C: CB 3C          ADDB   #$14
 466E: 86 8A          LDA    #$02
 4670: 7E 6C 18       JMP    queue_event_4e9a
+
+start_game_4673:
 4673: 0C 22          INC    game_playing_00
 4675: 0F 9B          CLR    $19
 4677: 0F 33          CLR    $1B
@@ -994,7 +998,7 @@ read_inputs_451c:
 46E1: 0D 82          TST    game_playing_00
 46E3: 27 2C          BEQ    $46F3
 46E5: CE 51 F2       LDU    #$D370
-46E8: 96 40          LDA    $68
+46E8: 96 40          LDA    current_level_68
 46EA: C6 8F          LDB    #$07
 46EC: BD 8E 8E       JSR    $A606
 46EF: A6 E4          LDA    A,U
@@ -1921,8 +1925,8 @@ read_inputs_451c:
 
 4E73: 96 6A          LDA    $48
 4E75: 97 9B          STA    $19
-4E77: 0C 40          INC    $68
-4E79: 96 E0          LDA    $68
+4E77: 0C 40          INC    current_level_68
+4E79: 96 E0          LDA    current_level_68
 4E7B: 81 2F          CMPA   #$07
 4E7D: 27 8F          BEQ    $4E86
 4E7F: 0F 04          CLR    $26
@@ -2789,7 +2793,7 @@ l_50c1:
 54DC: C6 2B          LDB    #$03
 54DE: D7 C0          STB    $48
 54E0: C6 2E          LDB    #$0C
-54E2: A7 42          STA    ,U+
+54E2: A7 42          STA    ,U+		; [video_address]
 54E4: 5A             DECB
 54E5: 26 79          BNE    $54E2
 54E7: 33 E0 1C       LEAU   $34,U
@@ -2802,9 +2806,9 @@ l_50c1:
 54F8: 96 31          LDA    $19
 54FA: A6 2E          LDA    A,Y
 54FC: CE 02 DB       LDU    #$2A53
-54FF: A7 E2          STA    ,U+
-5501: A7 42          STA    ,U+
-5503: A7 E2          STA    ,U+
+54FF: A7 E2          STA    ,U+		; [video_address]
+5501: A7 42          STA    ,U+		; [video_address]
+5503: A7 E2          STA    ,U+		; [video_address]
 5505: 39             RTS
 
 5506: CE A9 6A       LDU    #$2B42
@@ -3641,7 +3645,7 @@ l_50c1:
 5B93: CE F6 B1       LDU    #$D493
 5B96: 96 EB          LDA    $69
 5B98: A6 EE          LDA    A,U
-5B9A: A1 10 2B       CMPA   [$03,X]
+5B9A: A1 10 2B       CMPA   [$03,X]		; [video_address]
 5B9D: 26 8D          BNE    $5BA4
 5B9F: 6C A6          INC    ,X
 5BA1: BD 01 05       JSR    $8387
@@ -5712,7 +5716,7 @@ l_50c1:
 6CA2: 39             RTS
 
 6CA3: CE F7 E0       LDU    #$D5C2
-6CA6: 96 EA          LDA    $68
+6CA6: 96 EA          LDA    current_level_68
 6CA8: C6 2F          LDB    #$07
 6CAA: BD 2E 2E       JSR    $A606
 6CAD: C1 8D          CMPB   #$05
@@ -5943,7 +5947,7 @@ l_50c1:
 6E8F: A6 E7          LDA    B,U
 6E91: 97 46          STA    $C4
 6E93: CE F7 EC       LDU    #$D5CE
-6E96: 96 EA          LDA    $68
+6E96: 96 EA          LDA    current_level_68
 6E98: C6 2F          LDB    #$07
 6E9A: BD 2E 2E       JSR    $A606
 6E9D: C1 8D          CMPB   #$05
@@ -7543,7 +7547,7 @@ l_50c1:
 
 7BB4: 4F             CLRA
 7BB5: 5F             CLRB
-7BB6: 8E B2 40       LDX    #$3068
+7BB6: 8E B2 40       LDX    #current_level_3068
 7BB9: ED 09          STD    ,X++
 7BBB: 8C 18 58       CMPX   #$3070
 7BBE: 26 71          BNE    $7BB9
@@ -7978,7 +7982,7 @@ l_50c1:
 7F34: A7 A6          STA    ,X
 7F36: 39             RTS
 
-7F37: 96 40          LDA    $68
+7F37: 96 40          LDA    current_level_68
 7F39: C6 8F          LDB    #$07
 7F3B: BD 8E 2E       JSR    $A606
 7F3E: D7 C0          STB    $48
@@ -9416,7 +9420,7 @@ l_50c1:
 8AE0: BD B2 F4       JSR    $9076
 8AE3: 0C 0A          INC    $28
 8AE5: 86 7D          LDA    #$FF
-8AE7: D6 40          LDB    $68
+8AE7: D6 40          LDB    current_level_68
 8AE9: 5A             DECB
 8AEA: 4C             INCA
 8AEB: C0 2F          SUBB   #$07
@@ -9428,7 +9432,7 @@ l_50c1:
 8AF7: CE 0A 28       LDU    #$2200
 8AFA: 1F 01          TFR    A,B
 8AFC: 5C             INCB
-8AFD: E7 C9          STB    $1,U
+8AFD: E7 C9          STB    $1,U		; [video_address]
 8AFF: 4D             TSTA
 8B00: 27 21          BEQ    $8B05
 8B02: 4C             INCA
@@ -9449,14 +9453,14 @@ l_50c1:
 8B1F: 80 24          SUBA   #$06
 8B21: 1F 0B          TFR    A,B
 8B23: CB 33          ADDB   #$11
-8B25: E7 46          STB    ,U
+8B25: E7 46          STB    ,U		; [video_address]
 8B27: C6 27          LDB    #$0F
 8B29: 3D             MUL
 8B2A: 8E 64 DA       LDX    #$ECF2
 8B2D: 30 03          LEAX   D,X
 8B2F: 9F DE          STX    $FC
 8B31: CC 87 87       LDD    #$0505
-8B34: ED EB 8A 82    STD    $0800,U
+8B34: ED EB 8A 82    STD    $0800,U		; [video_address_word]
 8B38: 8E 19 59       LDX    #$31D1
 8B3B: 86 2A          LDA    #$02
 8B3D: A7 08          STA    ,X+
@@ -11372,7 +11376,7 @@ l_50c1:
 9B1A: 0D 23          TST    $AB
 9B1C: 2B 29          BMI    $9B1F
 9B1E: 4C             INCA
-9B1F: A7 A3          STA    ,X++
+9B1F: A7 A3          STA    ,X++		;  [video_address_word]
 9B21: 96 DF          LDA    $5D
 9B23: 6F AB 2A 82    CLR    $0800,X					;  [video_address]
 9B27: A7 AC          STA    ,X					;  [video_address]
@@ -11596,7 +11600,7 @@ l_50c1:
 9D08: 9F DB          STX    $F3
 9D0A: 8E A5 B0       LDX    #$2D98
 9D0D: C6 8C          LDB    #$04
-9D0F: A7 A2          STA    ,X+
+9D0F: A7 A2          STA    ,X+		; [video_address]
 9D11: 5A             DECB
 9D12: 26 79          BNE    $9D0F
 9D14: B6 13 82       LDA    $3100
@@ -11953,7 +11957,7 @@ l_50c1:
 9FD8: A7 A8          STA    ,X+					;  [video_address]
 9FDA: 5A             DECB
 9FDB: 26 DA          BNE    $9FCF
-9FDD: 6F 97          CLR    -$1,X
+9FDD: 6F 97          CLR    -$1,X		;  [video_address]
 9FDF: 39             RTS
 
 9FE0: 8E 13 82       LDX    #$3100
@@ -12919,11 +12923,11 @@ A7B4: FD 10 F1       STD    $3273
 A7B7: 10 8E 0E 52    LDY    #$26DA
 A7BB: B6 1C 05       LDA    $342D
 A7BE: C6 02          LDB    #$8A
-A7C0: ED 83          STD    ,Y++
+A7C0: ED 83          STD    ,Y++		;  [video_address_word]
 A7C2: FC B6 0C       LDD    $342E
-A7C5: ED 26          STD    ,Y
+A7C5: ED 26          STD    ,Y			;  [video_address]
 A7C7: CC 28 28       LDD    #$0000
-A7CA: ED 21 2F D6    STD    $07FE,Y;  [video_address_word]
+A7CA: ED 21 2F D6    STD    $07FE,Y  ;  [video_address_word]
 A7CE: ED 21 2A 22    STD    $0800,Y	;  [video_address_word]
 A7D2: 10 8E 16 0F    LDY    #$342D
 A7D6: E6 22          LDB    ,Y+
@@ -12980,12 +12984,12 @@ A849: 86 82          LDA    #$0A
 A84B: B7 1C 64       STA    $344C
 A84E: 10 8E 05 3A    LDY    #$2718
 A852: CC 60 C0       LDD    #$E2E2
-A855: ED 23          STD    ,Y++
-A857: A7 8C          STA    ,Y
+A855: ED 23          STD    ,Y++		; [video_address_word]
+A857: A7 8C          STA    ,Y		; [video_address]
 A859: 31 21 8F D6    LEAY   $07FE,Y
 A85D: CC 08 08       LDD    #$8080
-A860: ED 86          STD    ,Y
-A862: A7 A0          STA    $2,Y
+A860: ED 86          STD    ,Y			; [video_address_word]
+A862: A7 A0          STA    $2,Y		; [video_address]
 A864: 96 48          LDA    $6A
 A866: 4C             INCA
 A867: C6 AB          LDB    #$83
@@ -13048,7 +13052,7 @@ A8DD: 81 D8          CMPA   #$50
 A8DF: 27 44          BEQ    $A947
 A8E1: 8E B2 22       LDX    #$30A0
 A8E4: 10 8E 71 95    LDY    #$F317
-A8E8: 96 40          LDA    $68
+A8E8: 96 40          LDA    current_level_68
 A8EA: C6 8F          LDB    #$07
 A8EC: BD 8E 8E       JSR    $A606
 A8EF: C1 21          CMPB   #$03
@@ -14065,7 +14069,7 @@ B17D: 86 C9          LDA    #$41
 B17F: 8C 10 62       CMPX   #$3240
 B182: 27 80          BEQ    $B186
 B184: 86 51          LDA    #$73
-B186: A1 1A 2B       CMPA   [$03,X]
+B186: A1 1A 2B       CMPA   [$03,X]		; [video_address]
 B189: 27 89          BEQ    $B18C
 B18B: 39             RTS
 
@@ -14293,7 +14297,7 @@ B368: ED 29          STD    $1,X
 B36A: BD D8 1D       JSR    $5035
 B36D: 4F             CLRA
 B36E: C6 DB          LDB    #$53
-B370: E1 BA 81       CMPB   [$03,X]
+B370: E1 BA 81       CMPB   [$03,X]		; [video_address]
 B373: 26 20          BNE    $B377
 B375: 86 83          LDA    #$01
 B377: 39             RTS
@@ -14352,7 +14356,7 @@ B3EC: CC 29 88       LDD    #$0100
 B3EF: BD 6C B8       JSR    queue_event_4e9a
 B3F2: CC 80 2F       LDD    #$020D
 B3F5: BD CC 18       JSR    queue_event_4e9a
-B3F8: 96 40          LDA    $68
+B3F8: 96 40          LDA    current_level_68
 B3FA: C6 8F          LDB    #$07
 B3FC: BD 8E 8E       JSR    $A606
 B3FF: C1 24          CMPB   #$06
@@ -16317,7 +16321,7 @@ C4D9: 6E 5E          JMP    [A,U]        ; [jump_table]
 C4DB: CC 28 28       LDD    #$0000
 C4DE: DD A4          STD    $2C
 C4E0: DD 0C          STD    $2E
-C4E2: D6 EA          LDB    $68
+C4E2: D6 EA          LDB    current_level_68
 C4E4: C1 20          CMPB   #$02
 C4E6: 27 8C          BEQ    $C4F6
 C4E8: 4F             CLRA
@@ -16373,7 +16377,7 @@ C54F: 4A             DECA
 C550: 48             ASLA
 C551: EE 44          LDU    A,U
 C553: 4F             CLRA
-C554: D6 4A          LDB    $68
+C554: D6 4A          LDB    current_level_68
 C556: C1 80          CMPB   #$02
 C558: 27 39          BEQ    $C56B
 C55A: 86 8C          LDA    #$04
@@ -16382,7 +16386,7 @@ C55E: C4 89          ANDB   #$01
 C560: 27 2B          BEQ    $C56B
 C562: 8E 7B 07       LDX    #$F925
 C565: EC 03          LDD    ,X++
-C567: D1 40          CMPB   $68
+C567: D1 40          CMPB   current_level_68
 C569: 25 72          BCS    $C565
 C56B: B7 1C 18       STA    $3430
 C56E: 48             ASLA
@@ -17579,7 +17583,7 @@ table_d344:
 
 table_d34c:
 	dc.w	$460a	; $d34c
-	dc.w	$4673	; $d34e
+	dc.w	start_game_4673	; $d34e
 	dc.w	$96f1	; $d350
 
 table_d352:
