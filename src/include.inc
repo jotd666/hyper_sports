@@ -204,6 +204,13 @@ get_address:
 	jmp	([\reg,d0.W])
 	.endm
 
+	.macro READ_BE_WORD	srcreg
+	moveq	#0,d6
+	move.w	(\srcreg),d6
+	move.l	d6,\srcreg
+	.endm
+
+
 	.else
 
 * 68000 compliant
@@ -247,6 +254,13 @@ get_address:
 	jmp	(\reg)
 	.endm
 
+	.macro READ_BE_WORD	srcreg
+	moveq	#0,d6
+	move.b	(\srcreg),d6
+	lsl.w	#8,d6
+	move.b	(1,\srcreg),d6
+	move.l	d6,\srcreg
+	.endm
 
 	.endif
 
@@ -259,13 +273,6 @@ get_address:
 	.endm
 
 
-	.macro READ_BE_WORD	srcreg
-	moveq	#0,d6
-	move.b	(\srcreg),d6
-	lsl.w	#8,d6
-	move.b	(1,\srcreg),d6
-	move.l	d6,\srcreg
-	.endm
 
 
 
@@ -312,7 +319,6 @@ get_address:
 	.endm
 	
 	.macro GET_REG_INDIRECT_ADDRESS	offset,reg
-	BREAKPOINT	"debug GET_REG_INDIRECT_ADDRESS!!!"
 	GET_REG_ADDRESS		\offset,\reg
 	READ_BE_WORD	a0
 	GET_ADDRESS_FUNC
@@ -381,10 +387,17 @@ get_address:
 * we cannot predict what those locations will be, we intercept them
 * and report the unknown ones	
 do_jmp_0e_x:
-	BREAKPOINT 	"jmp_0E_X"
 	GET_REG_ADDRESS		0xE,d2
-	READ_BE_WORD	d6		| original address to jump to in d6
+	.ifdef	MC68020
+	move.w	(a0),d6
+	.else
+	move.b	(a0),d6
+	lsl.w	#8,d6
+	move.b	(1,a0),d6
+	.endif
 	JUMP_IF_KNOWN	85a0
+	JUMP_IF_KNOWN	8387
+	JUMP_IF_KNOWN	b1a0
 	BREAKPOINT	"unknown dynamic jump address in D6"
 	illegal
 	rts
