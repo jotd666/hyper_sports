@@ -33,8 +33,13 @@ def ensure_exists(d):
 
 sr2 = lambda a,b : set(range(a,b,2))
 
-player_sprite_pairs = set()
-group_sprite_pairs = player_sprite_pairs | set()
+player_sprite_pairs = (sr2(0x0,0x16) | {0x18,0x195,0x10A,0x10D} | sr2(0X110,0x120) | sr2(0x106,0x10C) |
+sr2(0x1E0,0x1E6) | sr2(0x1E8,0x1EE) | # shoot
+sr2(0x1AC,0x1B0) |
+sr2(0x182,0x186) | sr2(0X18A,0x18E)
+)
+
+group_sprite_pairs = player_sprite_pairs | {0x168,0x170,0x160,0x146,0x14E,0x1A8}
 
 def get_sprite_names():
 

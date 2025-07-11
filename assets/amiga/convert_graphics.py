@@ -350,7 +350,7 @@ sprite_table = read_tileset(sprite_set_list,full_palette[16:],[True,False,True,F
 with open(os.path.join(src_dir,"palette.68k"),"w") as f:
     bitplanelib.palette_dump(full_palette,f,bitplanelib.PALETTE_FORMAT_ASMGNU)
 
-gs_array = [0]*0x100
+gs_array = [0]*NB_SPRITES
 for i in group_sprite_pairs:
     gs_array[i] = 1
     gs_array[i+1] = 0xFF
