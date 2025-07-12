@@ -124,6 +124,18 @@ with open(source_dir / "conv.s") as f:
             lines[i+15] = ""
 
 
+        # fix the stray DAAs which result in incorrect speed/power in many events
+        #if "[$50b0" in line or "[$50d9" in line:
+        else if "[$50d3" in line or "[$50d9" in line or "[$50b0" in line:
+            # remove add, will be done at the start of loop
+            lines[i+1] = "\t* add is done at start of loop"+remove_instruction(lines,i+1)
+        else if "[$50bf" in line:
+            # insert missing label
+            lines[i+1] = "l_50c1:\n"+lines[i+1]
+
+        else if "review stray daa" in line:
+            FUCK
+
 ##        elif "[$605f" in line:
 ##            # don't do the init clear loop
 ##            line = remove_instruction(lines,i)

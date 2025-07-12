@@ -33,6 +33,8 @@ current_level_68 = $68
 current_event_69 = $69
 chrono_hundredth_second_71 = $71
 chrono_second_72 = $72
+speed_msb_b0 = $b0
+nb_long_horse_turns_ef = $ef
 watchdog_1400 = $1400
 sound_queue_3340 = $3340
 current_level_3068 = $3068
@@ -403,7 +405,7 @@ write_char_and_move_cursor_422c:
 
 4234: CE 07 47       LDU    #$25C5
 4237: 0F 6B          CLR    $43
-4239: 96 38          LDA    $B0
+4239: 96 38          LDA    speed_msb_b0
 423B: C6 22          LDB    #$0A
 423D: 3D             MUL
 423E: DB 39          ADDB   $B1
@@ -444,7 +446,7 @@ write_char_and_move_cursor_422c:
 428C: 0A 6A          DEC    $42
 428E: 26 7E          BNE    $4286
 4290: 33 63          LEAU   $1,U
-4292: 96 32          LDA    $B0
+4292: 96 32          LDA    speed_msb_b0
 4294: 8D B4          BSR    write_char_and_move_cursor_422c
 4296: 96 33          LDA    $B1
 4298: 8D BA          BSR    write_char_and_move_cursor_422c
@@ -2230,7 +2232,6 @@ queue_sound_event_4ead:
 50AE: 44             LSRA
 50AF: 44             LSRA
 50B0: AB 60          ADDA   $2,U
-l_50b2:
 50B2: 19             DAA
 50B3: 97 68          STA    $4A
 50B5: 84 8D          ANDA   #$0F
@@ -2241,7 +2242,6 @@ l_50b2:
 50BD: 44             LSRA
 50BE: 44             LSRA
 50BF: AB 63          ADDA   $1,U
-l_50c1:
 50C1: 19             DAA
 50C2: 97 C8          STA    $4A
 50C4: 84 2D          ANDA   #$0F
@@ -2257,7 +2257,7 @@ l_50c1:
 50D5: 20 59          BRA    $50B2
 50D7: A6 69          LDA    $1,U
 50D9: 9B C0          ADDA   $48
-50DB: 20 CC          BRA    $50C1
+50DB: 20 CC          BRA    l_50C1
 
 50DD: A6 CB          LDA    $3,U
 50DF: 90 6A          SUBA   $48
@@ -4404,7 +4404,7 @@ triple_jump_609c:
 61DB: 81 2D          CMPA   #$05
 61DD: 24 8B          BCC    $61E2
 61DF: 7C 16 C5       INC    $34E7
-61E2: DC 32          LDD    $B0
+61E2: DC 32          LDD    speed_msb_b0
 61E4: 83 23 81       SUBD   #$0103
 61E7: 25 08          BCS    $6209
 61E9: C1 8A          CMPB   #$02
@@ -4414,7 +4414,7 @@ triple_jump_609c:
 61F1: 96 30          LDA    $B2
 61F3: 97 6B          STA    $49
 61F5: CC 83 81       LDD    #$0103
-61F8: DD 98          STD    $B0
+61F8: DD 98          STD    speed_msb_b0
 61FA: 96 C0          LDA    $48
 61FC: 48             ASLA
 61FD: 48             ASLA
@@ -4424,19 +4424,19 @@ triple_jump_609c:
 6204: 4C             INCA
 6205: 97 30          STA    $B2
 6207: 0F 9B          CLR    $B3
-6209: DC 38          LDD    $B0
+6209: DC 38          LDD    speed_msb_b0
 620B: DD D8          STD    $F0
 620D: DC 3A          LDD    $B2
 620F: DD D0          STD    $F2
-6211: DC 32          LDD    $B0
+6211: DC 32          LDD    speed_msb_b0
 6213: 10 83 23 80    CMPD   #$0102
 6217: 25 23          BCS    $6224
 6219: CC 89 8A       LDD    #$0102
-621C: DD 98          STD    $B0
+621C: DD 98          STD    speed_msb_b0
 621E: 96 3A          LDA    $B2
 6220: 97 91          STA    $B3
 6222: 0F 30          CLR    $B2
-6224: DC 92          LDD    $B0
+6224: DC 92          LDD    speed_msb_b0
 6226: DD 5E          STD    $DC
 6228: DC 9A          LDD    $B2
 622A: DD 56          STD    $DE
@@ -4594,7 +4594,7 @@ triple_jump_609c:
 6368: 0C 00          INC    event_sub_state_28
 636A: 39             RTS
 
-636B: 0C C7          INC    $EF
+636B: 0C C7          INC    nb_long_horse_turns_ef
 636D: 86 89          LDA    #$01
 636F: 97 E9          STA    $CB
 6371: 86 8A          LDA    #$08
@@ -4718,7 +4718,7 @@ triple_jump_609c:
 645E: 6E 5E          JMP    [A,U]		; [jump_table]
 6460: 86 24          LDA    #$06
 6462: A7 06          STA    ,X
-6464: 96 CD          LDA    $EF
+6464: 96 CD          LDA    nb_long_horse_turns_ef
 6466: 27 D3          BEQ    $64B9
 6468: 7F 1A E8       CLR    $3260
 646B: CC 78 78       LDD    #$5050
@@ -4760,7 +4760,7 @@ triple_jump_609c:
 64BD: A7 8A          STA    $2,X
 64BF: BD A0 85       JSR    $82A7
 64C2: 20 70          BRA    $64B6
-64C4: 96 CD          LDA    $EF
+64C4: 96 CD          LDA    nb_long_horse_turns_ef
 64C6: 27 B6          BEQ    $64FC
 64C8: 96 92          LDA    $BA
 64CA: 81 0F          CMPA   #$87
@@ -5851,12 +5851,12 @@ long_horse_6bcc:
 6D9B: 26 C1          BNE    $6D86
 6D9D: 39             RTS
 
-6D9E: DC 38          LDD    $B0
+6D9E: DC 38          LDD    speed_msb_b0
 6DA0: DD D2          STD    $F0
 6DA2: DC 30          LDD    $B2
 6DA4: DD D0          STD    $F2
 6DA6: CC 83 29       LDD    #$0101
-6DA9: DD 38          STD    $B0
+6DA9: DD 38          STD    speed_msb_b0
 6DAB: 0F 9A          CLR    $B2
 6DAD: 0F 3B          CLR    $B3
 6DAF: CE 13 62       LDU    #$3140
@@ -5869,7 +5869,7 @@ long_horse_6bcc:
 6DC2: 10 8E 13 62    LDY    #$3140
 6DC6: 8D E1          BSR    $6E2B
 6DC8: DC D8          LDD    $F0
-6DCA: DD 38          STD    $B0
+6DCA: DD 38          STD    speed_msb_b0
 6DCC: DC DA          LDD    $F2
 6DCE: DD 3A          STD    $B2
 6DD0: 0A 9E          DEC    $BC
@@ -5973,7 +5973,7 @@ long_horse_6bcc:
 6EA5: 3D             MUL
 6EA6: 33 49          LEAU   D,U
 6EA8: EC EC          LDD    ,U
-6EAA: DD 38          STD    $B0
+6EAA: DD 38          STD    speed_msb_b0
 6EAC: A6 6A          LDA    $2,U
 6EAE: 97 3A          STA    $B2
 6EB0: 0F 91          CLR    $B3
@@ -6052,7 +6052,7 @@ long_horse_6bcc:
 6F49: BD D1 86       JSR    $590E
 6F4C: 0D 28          TST    game_playing_00
 6F4E: 26 84          BNE    $6F5C
-6F50: 96 CD          LDA    $EF
+6F50: 96 CD          LDA    nb_long_horse_turns_ef
 6F52: 81 84          CMPA   #$06
 6F54: 26 24          BNE    $6F5C
 6F56: 96 64          LDA    $E6
@@ -6065,7 +6065,7 @@ long_horse_6bcc:
 6F64: 96 C4          LDA    $E6
 6F66: 81 84          CMPA   #$06
 6F68: 26 2A          BNE    $6F6C
-6F6A: 0C 67          INC    $EF
+6F6A: 0C 67          INC    nb_long_horse_turns_ef
 6F6C: 81 20          CMPA   #$08
 6F6E: 26 8A          BNE    $6F72
 6F70: 0F C4          CLR    $E6
@@ -6101,7 +6101,7 @@ long_horse_6bcc:
 6FB3: 39             RTS
 
 6FB4: CE 06 E2       LDU    #$2460
-6FB7: 96 C7          LDA    $EF
+6FB7: 96 C7          LDA    nb_long_horse_turns_ef
 6FB9: 2A 89          BPL    $6FBC
 6FBB: 4F             CLRA
 6FBC: BD 79 B2       JSR    $513A
@@ -6134,7 +6134,7 @@ long_horse_6bcc:
 6FF6: D7 AA          STB    event_sub_state_28
 6FF8: 39             RTS
 
-6FF9: 96 67          LDA    $EF
+6FF9: 96 67          LDA    nb_long_horse_turns_ef
 6FFB: 81 29          CMPA   #$01
 6FFD: 26 8B          BNE    $7002
 6FFF: 7C 16 C5       INC    $34E7
@@ -6463,7 +6463,7 @@ long_horse_6bcc:
 7288: 27 2B          BEQ    $728D
 728A: CE B8 D8       LDU    #$30F0
 728D: EC 4C          LDD    ,U
-728F: DD 92          STD    $B0
+728F: DD 92          STD    speed_msb_b0
 7291: EC C0          LDD    $2,U
 7293: DD 90          STD    $B2
 7295: CE B2 32       LDU    #$30B0
@@ -6671,20 +6671,20 @@ long_horse_6bcc:
 742C: 80 2A          SUBA   #$02
 742E: 48             ASLA
 742F: 6E F4          JMP    [A,U]        ; [jump_table]
-7431: DC 32          LDD    $B0
+7431: DC 32          LDD    speed_msb_b0
 7433: 10 83 23 87    CMPD   #$0105
 7437: 25 21          BCS    $7442
 7439: CC 89 8D       LDD    #$0105
-743C: DD 98          STD    $B0
+743C: DD 98          STD    speed_msb_b0
 743E: 0F 3A          CLR    $B2
 7440: 0F 91          CLR    $B3
 7442: 39             RTS
 
-7443: DC 92          LDD    $B0
+7443: DC 92          LDD    speed_msb_b0
 7445: 10 83 83 2B    CMPD   #$0103
 7449: 25 81          BCS    $7454
 744B: CC 29 2B       LDD    #$0103
-744E: DD 38          STD    $B0
+744E: DD 38          STD    speed_msb_b0
 7450: 0F 90          CLR    $B2
 7452: 0F 31          CLR    $B3
 7454: 39             RTS
@@ -7493,7 +7493,7 @@ long_horse_6bcc:
 7B2A: EC 4E          LDD    A,U
 7B2C: DD D0          STD    $F8
 7B2E: CE 5E 58       LDU    #$D67A
-7B31: 96 6D          LDA    $EF
+7B31: 96 6D          LDA    nb_long_horse_turns_ef
 7B33: 81 34          CMPA   #$16
 7B35: 25 80          BCS    $7B39
 7B37: 86 3E          LDA    #$16
@@ -11296,7 +11296,7 @@ archery_9a12:
 9A46: CC F2 38       LDD    #$7010
 9A49: DD 29          STD    $A1
 9A4B: CC 2A 2D       LDD    #$0205
-9A4E: DD 38          STD    $B0
+9A4E: DD 38          STD    speed_msb_b0
 9A50: 86 DD          LDA    #$FF
 9A52: 0D E8          TST    $6A
 9A54: 27 20          BEQ    $9A58
@@ -13127,7 +13127,7 @@ A95A: 27 A6          BEQ    $A98A
 A95C: 0C 00          INC    event_sub_state_28
 A95E: 86 89          LDA    #$01
 A960: B7 16 A7       STA    $3425
-A963: 96 92          LDA    $B0
+A963: 96 92          LDA    speed_msb_b0
 A965: C6 88          LDB    #$0A
 A967: 3D             MUL
 A968: DB 99          ADDB   $B1
@@ -13335,7 +13335,7 @@ AB28: B6 1C AF       LDA    $3427
 AB2B: 81 2D          CMPA   #$05
 AB2D: 25 8F          BCS    $AB36
 AB2F: CC 22 22       LDD    #$0000
-AB32: DD 32          STD    $B0
+AB32: DD 32          STD    speed_msb_b0
 AB34: DD 90          STD    $B2
 AB36: FC B1 52       LDD    $337A
 AB39: 47             ASRA
@@ -13926,7 +13926,7 @@ B027: BD 8E E9       JSR    $A6C1
 B02A: 81 89          CMPA   #$01
 B02C: 26 20          BNE    $B036
 B02E: DC D8          LDD    $50
-B030: DD 92          STD    $B0
+B030: DD 92          STD    speed_msb_b0
 B032: DC D0          LDD    $52
 B034: DD 90          STD    $B2
 B036: 35 92          PULS   X
