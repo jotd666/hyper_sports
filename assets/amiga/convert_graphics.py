@@ -8,6 +8,8 @@ sprite_names = get_sprite_names()
 
 mirror_sprites = get_mirror_sprites()
 
+magenta = (255,0,255)
+
 NB_SPRITES = 0x200
 NB_TILES = 0x400
 
@@ -219,6 +221,8 @@ for i,tsd in tile_sheet_dict.items():
 
 # pad
 tile_palette = sorted(tile_palette)
+print(f"Used tile cololrs: {len(tile_palette)}")
+
 tile_palette += (16-len(tile_palette)) * [(0x10,0x20,0x30)]
 
 sprite_palette = set()
@@ -243,6 +247,12 @@ for clut_index,tsd in sprite_sheet_dict.items():
 
 
 sprite_palette = sorted(sprite_palette)
+magi = sprite_palette.index(magenta)
+sprite_palette.pop(magi)
+# temporary: put magenta as first color to be able to decode the frames properly
+sprite_palette.insert(0,magi)
+
+print(f"Used sprite cololrs: {len(sprite_palette)}")
 sprite_palette += (16-len(sprite_palette)) * [(0x10,0x20,0x30)]
 
 
@@ -301,7 +311,7 @@ def read_tileset(img_set_list,palette,plane_orientation_flags,cache,is_bob):
                             y_start,wtile = bitplanelib.autocrop_y(wtile)
                             height = wtile.size[1]
                             width = wtile.size[0]//8 + 2
-                            bitplane_data = bitplanelib.palette_image2raw(wtile,None,palette,generate_mask=True)
+                            bitplane_data = bitplanelib.palette_image2raw(wtile,None,palette,generate_mask=True,mask_color=magenta)
                         else:
                             # 4 planes, no mask
                             height = 8
@@ -346,6 +356,10 @@ tile_table = read_tileset(tile_set_list,full_palette[:16],[True,False,False,Fals
 bob_plane_cache = {}
 
 sprite_table = read_tileset(sprite_set_list,full_palette[16:],[True,False,True,False],cache=bob_plane_cache, is_bob=True)
+
+# now that the sprites were decoded, put black as first color too (else for some priority reason
+# the background is magenta or whatever the color is)
+full_palette[16] = (0,0,9)
 
 with open(os.path.join(src_dir,"palette.68k"),"w") as f:
     bitplanelib.palette_dump(full_palette,f,bitplanelib.PALETTE_FORMAT_ASMGNU)
