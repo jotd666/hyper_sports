@@ -161,10 +161,6 @@ get_address:
     * not useful
 	.endm
 
-	.macro	JXX_A_INDEXED
-	and.w	#0xFF,d0  | mask 8 bits
-	add.w	d0,d0    | *2 (16 -> 32 bits)
-	.endm
 	
 	* hyper sports game specific
 	.macro	JSR_0E_X
@@ -174,6 +170,12 @@ get_address:
 	.ifdef	MC68020
 
 * 68020 compliant & optimized
+
+	.macro	JXX_A_INDEXED	inst,reg
+	and.w	#0xFF,d0  | mask 8 bits	
+	\inst	([\reg,d0.W*2])
+	.endm
+
 
 	.macro DO_EXTB	reg
 	extb.l	\reg
@@ -195,14 +197,6 @@ get_address:
 	move.w	\src,(\dest)
 	.endm
 
-	.macro	JSR_A_INDEXED	reg
-	JXX_A_INDEXED
-	jsr	([\reg,d0.W])
-	.endm
-	.macro	JMP_A_INDEXED	reg
-	JXX_A_INDEXED
-	jmp	([\reg,d0.W])
-	.endm
 
 	.macro READ_BE_WORD	srcreg
 	moveq	#0,d6
@@ -214,6 +208,12 @@ get_address:
 	.else
 
 * 68000 compliant
+	.macro	JXX_A_INDEXED	inst,reg
+	and.w	#0xFF,d0  | mask 8 bits
+	add.w	d0,d0    | *2 (16 -> 32 bits)
+	move.l	(\reg,d0.w),\reg
+	\inst	(\reg)	
+	.endm
 
 	.macro DO_EXTB	reg
 	ext	\reg
@@ -242,17 +242,7 @@ get_address:
 	.endm
 
 
-	.macro	JSR_A_INDEXED	reg
-	JXX_A_INDEXED
-	move.l	(\reg,d0.w),\reg
-	jsr	(\reg)
-	.endm
 
-	.macro	JMP_A_INDEXED	reg
-	JXX_A_INDEXED
-	move.l	(\reg,d0.w),\reg
-	jmp	(\reg)
-	.endm
 
 	.macro READ_BE_WORD	srcreg
 	moveq	#0,d6
@@ -263,6 +253,13 @@ get_address:
 	.endm
 
 	.endif
+	
+	.macro	JSR_A_INDEXED	reg
+	JXX_A_INDEXED	jsr,\reg
+	.endm
+	.macro	JMP_A_INDEXED	reg
+	JXX_A_INDEXED	jmp,\reg
+	.endm
 
 * registers must be masked out to proper size before use
 	.macro	GET_INDIRECT_ADDRESS_REGS	reg1,reg2,destreg
@@ -441,11 +438,11 @@ multiply_ab:
 	move.w	(a7)+,sr
 	.endm
 	
-	.macro	ENABLE_REGS_LOG
+	.macro	ENABLE_LOG_REGS
 	moveq	#1,d6		| enable
 	jbsr	osd_cpu_logging_control	
 	.endm
-	.macro	DISABLE_REGS_LOG
+	.macro	DISABLE_LOG_REGS
 	moveq	#0,d6		| disable
 	jbsr	osd_cpu_logging_control	
 	.endm	

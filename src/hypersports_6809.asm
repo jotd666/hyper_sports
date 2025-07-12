@@ -27,7 +27,10 @@ game_playing_00 = $00
 dsw2_copy_0d = $0d
 event_pointer_1c = $1c
 event_pointer_1e = $1e
+event_sub_state_28 = $28
+event_sub_state_2a = $2a
 current_level_68 = $68
+current_event_69 = $69
 chrono_hundredth_second_71 = $71
 chrono_second_72 = $72
 watchdog_1400 = $1400
@@ -642,7 +645,7 @@ draw_chrono_42c0:
 442A: BD CA 05       JSR    $422D
 442D: A6 8A          LDA    $2,X
 442F: BD 60 0F       JSR    $422D
-4432: 96 EB          LDA    $69
+4432: 96 EB          LDA    current_event_69
 4434: 81 22          CMPA   #$00
 4436: 27 8E          BEQ    $4444
 4438: 81 2A          CMPA   #$02
@@ -655,7 +658,7 @@ draw_chrono_42c0:
 4446: D6 E9          LDB    $6B
 4448: 26 22          BNE    $4454
 444A: 86 02          LDA    #$8A
-444C: D6 41          LDB    $69
+444C: D6 41          LDB    current_event_69
 444E: C1 8E          CMPB   #$06
 4450: 26 20          BNE    $4454
 4452: 86 A9          LDA    #$2B
@@ -663,7 +666,7 @@ draw_chrono_42c0:
 4457: D6 5D          LDB    $75
 4459: A6 8B          LDA    $3,X
 445B: BD 6A 05       JSR    $422D
-445E: 96 E1          LDA    $69
+445E: 96 E1          LDA    current_event_69
 4460: 81 26          CMPA   #$04
 4462: 26 85          BNE    $446B
 4464: 86 AE          LDA    #$8C
@@ -986,12 +989,14 @@ start_game_4673:
 46CC: 96 0E          LDA    $26
 46CE: 48             ASLA
 46CF: 6E B4          JMP    [A,X]		; [jump_table]
-46D1: 96 AA          LDA    $28
+
+46D1: 96 AA          LDA    event_sub_state_28
 46D3: 48             ASLA
 46D4: 8E F1 E4       LDX   #table_d366
 46D7: 6E BE          JMP    [A,X]		; [jump_table]
+
 46D9: 8E 5B E4       LDX   #table_d36c
-46DC: 96 02          LDA    $2A
+46DC: 96 02          LDA    event_sub_state_2a
 46DE: 48             ASLA
 46DF: 6E B4          JMP    [A,X]		; [jump_table]
 
@@ -1002,20 +1007,20 @@ start_game_4673:
 46EA: C6 8F          LDB    #$07
 46EC: BD 8E 8E       JSR    $A606
 46EF: A6 E4          LDA    A,U
-46F1: 97 EB          STA    $69
+46F1: 97 EB          STA    current_event_69
 46F3: 4F             CLRA
 46F4: BD 6C 18       JSR    queue_event_4e9a
 46F7: 86 2A          LDA    #$02
 46F9: 97 A3          STA    $2B
-46FB: 0C 02          INC    $2A
+46FB: 0C 02          INC    event_sub_state_2a
 46FD: 39             RTS
 
 46FE: 0A A3          DEC    $2B
 4700: 26 2B          BNE    $470B
 4702: 0F E7          CLR    $65
 4704: BD 7F 93       JSR    $5D11
-4707: 0C 00          INC    $28
-4709: 0F A2          CLR    $2A
+4707: 0C 00          INC    event_sub_state_28
+4709: 0F A2          CLR    event_sub_state_2a
 470B: 39             RTS
 
 470C: BD 57 BF       JSR    $7F37
@@ -1036,7 +1041,7 @@ start_game_4673:
 472F: 26 DB          BNE    $472A
 4731: 0F 99          CLR    $1B
 4733: 0F 49          CLR    $6B
-4735: 96 EB          LDA    $69
+4735: 96 EB          LDA    current_event_69
 4737: 81 2B          CMPA   #$03
 4739: 26 A2          BNE    $4765
 473B: 0C 43          INC    $6B
@@ -1063,7 +1068,7 @@ start_game_4673:
 4767: BD 66 9B       JSR    $4EB3
 476A: 86 89          LDA    #$01
 476C: B7 1C 7B       STA    $34F3
-476F: 0C 0A          INC    $28
+476F: 0C 0A          INC    event_sub_state_28
 4771: 39             RTS
 
 4772: BD D7 1E       JSR    $553C
@@ -1095,7 +1100,7 @@ start_game_4673:
 47B2: BD CC B8       JSR    queue_event_4e9a
 47B5: CC 80 AA       LDD    #$0228
 47B8: BD 66 12       JSR    queue_event_4e9a
-47BB: 0F 00          CLR    $28
+47BB: 0F 00          CLR    event_sub_state_28
 47BD: 0C AE          INC    $26
 47BF: 39             RTS
 
@@ -1108,7 +1113,7 @@ start_game_4673:
 47D0: BD 7A AE       JSR    $582C
 47D3: BD 70 EE       JSR    $52CC
 47D6: BD D4 F4       JSR    $56DC
-47D9: 96 A0          LDA    $28
+47D9: 96 A0          LDA    event_sub_state_28
 47DB: 48             ASLA
 47DC: 8E FB FF       LDX   #table_d377
 47DF: 6E B4          JMP    [A,X]		; [jump_table]
@@ -1141,7 +1146,7 @@ start_game_4673:
 4821: 4F             CLRA
 4822: D6 98          LDB    $1A
 4824: 26 2C          BNE    $4834
-4826: D6 EB          LDB    $69
+4826: D6 EB          LDB    current_event_69
 4828: C1 2B          CMPB   #$03
 482A: 27 80          BEQ    $4834
 482C: D6 31          LDB    $19
@@ -1168,26 +1173,26 @@ start_game_4673:
 4860: BD 77 36       JSR    $55B4
 4863: BD 7A 77       JSR    $5855
 4866: BD D5 D4       JSR    $57FC
-4869: 0C A0          INC    $28
+4869: 0C A0          INC    event_sub_state_28
 486B: 39             RTS
 
 486C: 8E FB 0F       LDX   #table_d387
-486F: 96 08          LDA    $2A
+486F: 96 08          LDA    event_sub_state_2a
 4871: 48             ASLA
 4872: 6E 14          JMP    [A,X]		; [jump_table]
 4874: 8E F1 19       LDX   #table_d39b
-4877: 96 41          LDA    $69
+4877: 96 41          LDA    current_event_69
 4879: 48             ASLA
 487A: AD 1E          JSR    [A,X]		; [jump_table]
-487C: 0C 02          INC    $2A
+487C: 0C 02          INC    event_sub_state_2a
 487E: 39             RTS
 
 487F: 8E F1 8B       LDX   #table_d3a9
-4882: 96 EB          LDA    $69
+4882: 96 EB          LDA    current_event_69
 4884: 48             ASLA
 4885: AD 14          JSR    [A,X]		; [jump_table]
-4887: 0C 00          INC    $28
-4889: 0F A2          CLR    $2A
+4887: 0C 00          INC    event_sub_state_28
+4889: 0F A2          CLR    event_sub_state_2a
 488B: 39             RTS
 
 488C: BD 7C B9       JSR    $5431
@@ -1195,7 +1200,7 @@ start_game_4673:
 4891: 0D 82          TST    game_playing_00
 4893: 26 20          BNE    $4897
 4895: 86 85          LDA    #$07
-4897: 97 00          STA    $28
+4897: 97 00          STA    event_sub_state_28
 4899: 39             RTS
 
 489A: BD 27 E9       JSR    $AFC1
@@ -1216,7 +1221,7 @@ start_game_4673:
 
 48C1: BD DC D1       JSR    $5E53
 48C4: 7E 7F 27       JMP    $5DA5
-48C7: 96 41          LDA    $69
+48C7: 96 41          LDA    current_event_69
 48C9: 81 8B          CMPA   #$03
 48CB: 27 08          BEQ    $48ED
 48CD: BD E8 EA       JSR    $6062
@@ -1230,7 +1235,7 @@ start_game_4673:
 48E3: BD 76 A9       JSR    $548B
 48E6: 86 22          LDA    #$A0
 48E8: 97 01          STA    $29
-48EA: 0C A0          INC    $28
+48EA: 0C A0          INC    event_sub_state_28
 48EC: 39             RTS
 
 48ED: BD E8 F7       JSR    $607F
@@ -1255,8 +1260,8 @@ start_game_4673:
 4914: 26 D5          BNE    $490D
 4916: 96 F5          LDA    $77
 4918: 97 31          STA    $19
-491A: 0C A0          INC    $28
-491C: 0C 00          INC    $28
+491A: 0C A0          INC    event_sub_state_28
+491C: 0C 00          INC    event_sub_state_28
 491E: 39             RTS
 
 491F: BD 76 F2       JSR    $54D0
@@ -1273,7 +1278,7 @@ start_game_4673:
 493A: 26 A3          BNE    $4967
 493C: 7F 1C 7B       CLR    $34F3
 493F: BD 7C 71       JSR    $5E53
-4942: 96 EB          LDA    $69
+4942: 96 EB          LDA    current_event_69
 4944: 81 26          CMPA   #$04
 4946: 26 99          BNE    $4963
 4948: 8E 0A A8       LDX    #$2220
@@ -1289,7 +1294,7 @@ start_game_4673:
 495F: 0A 6A          DEC    $48
 4961: 26 6C          BNE    $4951
 4963: 86 25          LDA    #$07
-4965: 97 AA          STA    $28
+4965: 97 AA          STA    event_sub_state_28
 4967: 39             RTS
 
 4968: 8E 1D 88       LDX    #$3500
@@ -1314,7 +1319,7 @@ start_game_4673:
 4994: 20 20          BRA    $4998
 4996: 86 83          LDA    #$01
 4998: 97 01          STA    $29
-499A: 0C A0          INC    $28
+499A: 0C A0          INC    event_sub_state_28
 499C: 39             RTS
 
 499D: BD DD 8E       JSR    $5506
@@ -1324,13 +1329,13 @@ start_game_4673:
 49A7: 0C 31          INC    $19
 49A9: 0A EE          DEC    $66
 49AB: 27 2B          BEQ    $49B0
-49AD: 0A A0          DEC    $28
+49AD: 0A A0          DEC    event_sub_state_28
 49AF: 39             RTS
 
-49B0: 0C 0A          INC    $28
+49B0: 0C 0A          INC    event_sub_state_28
 49B2: 39             RTS
 
-49B3: 96 4B          LDA    $69
+49B3: 96 4B          LDA    current_event_69
 49B5: 81 81          CMPA   #$03
 49B7: 26 0E          BNE    $49DF
 49B9: 8E B8 28       LDX    #$30A0
@@ -1355,27 +1360,28 @@ start_game_4673:
 49E9: 8C BC 08       CMPX   #$3480
 49EC: 26 D1          BNE    $49E7
 49EE: 0C AE          INC    $26
-49F0: 0F 0A          CLR    $28
+49F0: 0F 0A          CLR    event_sub_state_28
 49F2: 39             RTS
 
 49F3: BD 6C E8       JSR    $4ECA
 49F6: BD DA 04       JSR    $582C
 49F9: BD DA 44       JSR    $52CC
 49FC: BD 7E 54       JSR    $56DC
-49FF: 96 4B          LDA    $69
+49FF: 96 4B          LDA    current_event_69
 4A01: 48             ASLA
-4A02: 8E 51 95       LDX   #table_d3b7
+4A02: 8E 51 95       LDX   #event_table_d3b7
 4A05: 6E 14          JMP    [A,X]		; [jump_table]
+
 4A07: BD 70 04       JSR    $582C
 4A0A: BD DA E4       JSR    $52CC
 4A0D: BD DE 54       JSR    $56DC
 4A10: 8E F1 47       LDX   #table_d3c5
-4A13: 96 0A          LDA    $28
+4A13: 96 0A          LDA    event_sub_state_28
 4A15: 48             ASLA
 4A16: 6E 14          JMP    [A,X]		; [jump_table]
 4A18: 86 18          LDA    #$30
 4A1A: 97 A1          STA    $29
-4A1C: 0C 00          INC    $28
+4A1C: 0C 00          INC    event_sub_state_28
 4A1E: 39             RTS
 
 4A1F: 96 3B          LDA    $19
@@ -1389,7 +1395,7 @@ start_game_4673:
 4A34: BD 6C 18       JSR    queue_event_4e9a
 4A37: BD 70 7D       JSR    $5855
 4A3A: BD DF D4       JSR    $57FC
-4A3D: 96 E1          LDA    $69
+4A3D: 96 E1          LDA    current_event_69
 4A3F: 81 20          CMPA   #$02
 4A41: 26 8B          BNE    $4A4C
 4A43: BD 91 B8       JSR    $B39A
@@ -1401,7 +1407,7 @@ start_game_4673:
 4A51: 27 B1          BEQ    $4A86
 4A53: 8E 12 82       LDX    #$30A0
 4A56: CE 58 17       LDU    #$DA3F
-4A59: 96 E1          LDA    $69
+4A59: 96 E1          LDA    current_event_69
 4A5B: 81 29          CMPA   #$01
 4A5D: 26 8B          BNE    $4A62
 4A5F: CE FE FA       LDU    #$DCD8
@@ -1435,7 +1441,7 @@ start_game_4673:
 4AA4: 27 3A          BEQ    $4ABE
 4AA6: 8E B2 88       LDX    #$30A0
 4AA9: CE 52 D3       LDU    #$DA5B
-4AAC: 96 41          LDA    $69
+4AAC: 96 41          LDA    current_event_69
 4AAE: 81 89          CMPA   #$01
 4AB0: 26 21          BNE    $4AB5
 4AB2: CE 5E FD       LDU    #$DCDF
@@ -1445,7 +1451,7 @@ start_game_4673:
 4ABC: 20 3E          BRA    $4AD4
 4ABE: 8E B8 82       LDX    #$30A0
 4AC1: CE 58 EE       LDU    #$DA6C
-4AC4: 96 4B          LDA    $69
+4AC4: 96 4B          LDA    current_event_69
 4AC6: 81 83          CMPA   #$01
 4AC8: 26 2B          BNE    $4ACD
 4ACA: CE 54 CE       LDU    #$DCE6
@@ -1469,20 +1475,20 @@ start_game_4673:
 4AF8: 97 01          STA    $29
 4AFA: BD 08 28       JSR    $8000
 4AFD: BD 09 92       JSR    $811A
-4B00: 0C 0A          INC    $28
+4B00: 0C 0A          INC    event_sub_state_28
 4B02: 39             RTS
 
-4B03: 96 4B          LDA    $69
+4B03: 96 4B          LDA    current_event_69
 4B05: A6 44          LDA    A,U
 4B07: B7 1C DF       STA    $34F7
 4B0A: 39             RTS
 
 4B0B: CE F0 CE       LDU    #$D8E6
-4B0E: 96 E1          LDA    $69
+4B0E: 96 E1          LDA    current_event_69
 4B10: C6 2E          LDB    #$0C
 4B12: 3D             MUL
 4B13: A6 E9          LDA    D,U
-4B15: D6 EB          LDB    $69
+4B15: D6 EB          LDB    current_event_69
 4B17: C1 2E          CMPB   #$06
 4B19: 27 87          BEQ    $4B2A
 4B1B: C1 2A          CMPB   #$02
@@ -1534,7 +1540,7 @@ start_game_4673:
 4B76: BD 2D 87       JSR    $AFAF
 4B79: 86 78          LDA    #$F0
 4B7B: 97 01          STA    $29
-4B7D: 0C A0          INC    $28
+4B7D: 0C A0          INC    event_sub_state_28
 4B7F: 39             RTS
 
 4B80: 0F 6B          CLR    $49
@@ -1602,13 +1608,13 @@ start_game_4673:
 4C04: 27 25          BEQ    $4C0D
 4C06: 96 E9          LDA    $6B
 4C08: 27 63          BEQ    $4C55
-4C0A: 0C A0          INC    $28
+4C0A: 0C A0          INC    event_sub_state_28
 4C0C: 39             RTS
 
 4C0D: 8E B8 28       LDX    #$30A0
 4C10: 96 49          LDA    $6B
 4C12: 26 A4          BNE    $4C3A
-4C14: 96 4B          LDA    $69
+4C14: 96 4B          LDA    current_event_69
 4C16: 81 86          CMPA   #$04
 4C18: 27 39          BEQ    $4C2B
 4C1A: 81 89          CMPA   #$01
@@ -1646,7 +1652,7 @@ start_game_4673:
 4C67: 96 43          LDA    $6B
 4C69: 26 A8          BNE    $4C8B
 4C6B: 0C 0E          INC    $26
-4C6D: 0F A0          CLR    $28
+4C6D: 0F A0          CLR    event_sub_state_28
 4C6F: 39             RTS
 
 4C70: B6 11 76       LDA    $33F4
@@ -1659,14 +1665,14 @@ start_game_4673:
 4C81: BD CC 31       JSR    $4EB3
 4C84: 86 D2          LDA    #$F0
 4C86: 97 AB          STA    $29
-4C88: 0C 00          INC    $28
+4C88: 0C 00          INC    event_sub_state_28
 4C8A: 39             RTS
 
 4C8B: BD 7F 2B       JSR    $5703
 4C8E: 86 8D          LDA    #$05
 4C90: 97 04          STA    $26
 4C92: 86 81          LDA    #$03
-4C94: 97 0A          STA    $28
+4C94: 97 0A          STA    event_sub_state_28
 4C96: 39             RTS
 
 4C97: BD 54 B3       JSR    $7C9B
@@ -1678,7 +1684,7 @@ start_game_4673:
 4CA4: 27 C7          BEQ    $4C8B
 4CA6: A6 1D 18 D6    LDA    [$30FE]
 4CAA: B7 BB DC       STA    $33F4
-4CAD: 0A A0          DEC    $28
+4CAD: 0A A0          DEC    event_sub_state_28
 4CAF: 39             RTS
 
 4CB0: BD 72 A5       JSR    $5027
@@ -1686,8 +1692,8 @@ start_game_4673:
 4CB5: 26 8B          BNE    $4CC0
 4CB7: 0C 0C          INC    $24
 4CB9: 0F AE          CLR    $26
-4CBB: 0F 00          CLR    $28
-4CBD: 0F A2          CLR    $2A
+4CBB: 0F 00          CLR    event_sub_state_28
+4CBD: 0F A2          CLR    event_sub_state_2a
 4CBF: 39             RTS
 
 4CC0: 96 55          LDA    $77
@@ -1696,7 +1702,7 @@ start_game_4673:
 4CC7: C6 08          LDB    #$20
 4CC9: 3D             MUL
 4CCA: 30 03          LEAX   D,X
-4CCC: 96 41          LDA    $69
+4CCC: 96 41          LDA    current_event_69
 4CCE: 81 8A          CMPA   #$02
 4CD0: 26 26          BNE    $4CD6
 4CD2: 96 49          LDA    $CB
@@ -1717,19 +1723,19 @@ start_game_4673:
 4CF1: 24 69          BCC    $4CDE
 4CF3: 86 23          LDA    #$01
 4CF5: 97 A4          STA    $26
-4CF7: 0F 00          CLR    $28
-4CF9: 0F A2          CLR    $2A
+4CF7: 0F 00          CLR    event_sub_state_28
+4CF9: 0F A2          CLR    event_sub_state_2a
 4CFB: 39             RTS
 
 4CFC: 0F 31          CLR    $19
 4CFE: 8E BD 22       LDX    #$3500
 4D01: 20 64          BRA    $4CE9
 4D03: 0C 04          INC    $26
-4D05: 0F AA          CLR    $28
+4D05: 0F AA          CLR    event_sub_state_28
 4D07: 39             RTS
 
 4D08: 8E FB 57       LDX   #table_d3df
-4D0B: 96 00          LDA    $28
+4D0B: 96 00          LDA    event_sub_state_28
 4D0D: 48             ASLA
 4D0E: 6E 1E          JMP    [A,X]		; [jump_table]
 4D10: BD 70 C6       JSR    $5244
@@ -1753,15 +1759,15 @@ start_game_4673:
 4D35: 6A 83          DEC    $1,X
 4D37: 27 2D          BEQ    $4D3E
 4D39: 86 8A          LDA    #$02
-4D3B: 97 00          STA    $28
+4D3B: 97 00          STA    event_sub_state_28
 4D3D: 39             RTS
 
 4D3E: 6F 0C          CLR    ,X
-4D40: 0C 0A          INC    $28
+4D40: 0C 0A          INC    event_sub_state_28
 4D42: 39             RTS
 
 4D43: 8E F1 CF       LDX   #table_d3ed
-4D46: 96 A8          LDA    $2A
+4D46: 96 A8          LDA    event_sub_state_2a
 4D48: 48             ASLA
 4D49: 6E 1E          JMP    [A,X]		; [jump_table]
 4D4B: BD 7F 65       JSR    $574D
@@ -1785,7 +1791,7 @@ start_game_4673:
 4D75: BD CC 31       JSR    $4EB3
 4D78: 86 B6          LDA    #$9E
 4D7A: 97 A3          STA    $2B
-4D7C: 0C 02          INC    $2A
+4D7C: 0C 02          INC    event_sub_state_2a
 4D7E: 39             RTS
 
 4D7F: 8E 14 F2       LDX    #$36D0
@@ -1802,8 +1808,8 @@ start_game_4673:
 4D98: BD 7C 58       JSR    $54D0
 4D9B: 0A 03          DEC    $2B
 4D9D: 26 8C          BNE    $4DA3
-4D9F: 0C 0A          INC    $28
-4DA1: 0F A8          CLR    $2A
+4D9F: 0C 0A          INC    event_sub_state_28
+4DA1: 0F A8          CLR    event_sub_state_2a
 4DA3: 39             RTS
 
 4DA4: 86 26          LDA    #$04
@@ -1824,12 +1830,12 @@ start_game_4673:
 4DC1: 0A E7          DEC    $65
 4DC3: 26 C1          BNE    $4DA8
 4DC5: 0C A4          INC    $26
-4DC7: 0F 00          CLR    $28
+4DC7: 0F 00          CLR    event_sub_state_28
 4DC9: 39             RTS
 
 4DCA: 86 89          LDA    #$01
 4DCC: 97 0E          STA    $26
-4DCE: 0F A0          CLR    $28
+4DCE: 0F A0          CLR    event_sub_state_28
 4DD0: 39             RTS
 
 4DD1: 0F 9B          CLR    $19
@@ -1841,7 +1847,7 @@ start_game_4673:
 4DDD: 27 8A          BEQ    $4DE1
 4DDF: 97 3B          STA    $19
 4DE1: 97 A1          STA    $23
-4DE3: 0C 0A          INC    $28
+4DE3: 0C 0A          INC    event_sub_state_28
 4DE5: 39             RTS
 
 4DE6: BD D0 89       JSR    $52A1
@@ -1857,18 +1863,18 @@ start_game_4673:
 4DFB: 6A 29          DEC    $1,X
 4DFD: 27 8D          BEQ    $4E04
 4DFF: 86 24          LDA    #$06
-4E01: 97 AA          STA    $28
+4E01: 97 AA          STA    event_sub_state_28
 4E03: 39             RTS
 
 4E04: 6F A6          CLR    ,X
-4E06: 0C AA          INC    $28
+4E06: 0C AA          INC    event_sub_state_28
 4E08: 39             RTS
 
 4E09: 0A AB          DEC    $23
 4E0B: 27 2F          BEQ    $4E14
 4E0D: 0C 91          INC    $19
 4E0F: 86 26          LDA    #$04
-4E11: 97 AA          STA    $28
+4E11: 97 AA          STA    event_sub_state_28
 4E13: 39             RTS
 
 4E14: 96 38          LDA    $1A
@@ -1883,15 +1889,15 @@ start_game_4673:
 4E28: 0C 33          INC    $1B
 4E2A: 86 89          LDA    #$01
 4E2C: 97 0E          STA    $26
-4E2E: 0F A0          CLR    $28
+4E2E: 0F A0          CLR    event_sub_state_28
 4E30: 39             RTS
 
 4E31: 0C A4          INC    $26
-4E33: 0F 0A          CLR    $28
+4E33: 0F 0A          CLR    event_sub_state_28
 4E35: 39             RTS
 
 4E36: 8E 51 D9       LDX   #table_d3f1
-4E39: 96 A0          LDA    $28
+4E39: 96 A0          LDA    event_sub_state_28
 4E3B: 48             ASLA
 4E3C: 6E BE          JMP    [A,X]		; [jump_table]
 4E3E: 8E BD 20       LDX    #$3502
@@ -1903,7 +1909,7 @@ start_game_4673:
 4E4A: 30 00 3A       LEAX   $12,X
 4E4D: 4A             DECA
 4E4E: 26 7B          BNE    $4E43
-4E50: 0C 0A          INC    $28
+4E50: 0C 0A          INC    event_sub_state_28
 4E52: 39             RTS
 
 4E53: 8E 17 22       LDX    #$3500
@@ -1919,8 +1925,8 @@ start_game_4673:
 4E68: 0F 0A          CLR    $22
 4E6A: 0F AC          CLR    $24
 4E6C: 0F 0E          CLR    $26
-4E6E: 0F A0          CLR    $28
-4E70: 0F 08          CLR    $2A
+4E6E: 0F A0          CLR    event_sub_state_28
+4E70: 0F 08          CLR    event_sub_state_2a
 4E72: 39             RTS
 
 4E73: 96 6A          LDA    $48
@@ -1930,8 +1936,8 @@ start_game_4673:
 4E7B: 81 2F          CMPA   #$07
 4E7D: 27 8F          BEQ    $4E86
 4E7F: 0F 04          CLR    $26
-4E81: 0F AA          CLR    $28
-4E83: 0F 08          CLR    $2A
+4E81: 0F AA          CLR    event_sub_state_28
+4E83: 0F 08          CLR    event_sub_state_2a
 4E85: 39             RTS
 
 4E86: 96 8F          LDA    dsw2_copy_0d
@@ -1975,7 +1981,7 @@ queue_sound_event_4ead:
 4ECD: CE B8 B8       LDU    #$3030
 4ED0: 86 20          LDA    #$02
 4ED2: 97 CA          STA    $48
-4ED4: 96 4B          LDA    $69
+4ED4: 96 4B          LDA    current_event_69
 4ED6: 81 81          CMPA   #$03
 4ED8: 26 20          BNE    $4EE2
 4EDA: 96 92          LDA    $1A
@@ -2042,7 +2048,7 @@ queue_sound_event_4ead:
 
 4F4F: 96 22          LDA    game_playing_00
 4F51: 26 98          BNE    $4F6D
-4F53: 96 4B          LDA    $69
+4F53: 96 4B          LDA    current_event_69
 4F55: 81 83          CMPA   #$01
 4F57: 27 3D          BEQ    $4F6E
 4F59: 8E B8 B8       LDX    #$3030
@@ -2121,7 +2127,7 @@ queue_sound_event_4ead:
 4FE6: 39             RTS
 
 4FE7: 8E F0 CE       LDX    #$D8E6
-4FEA: 96 E1          LDA    $69
+4FEA: 96 E1          LDA    current_event_69
 4FEC: C6 24          LDB    #$0C
 4FEE: 3D             MUL
 4FEF: 30 A9          LEAX   D,X
@@ -2141,7 +2147,7 @@ queue_sound_event_4ead:
 5010: 39             RTS
 
 5011: 8E 5B B8       LDX    #$D93A
-5014: 96 4B          LDA    $69
+5014: 96 4B          LDA    current_event_69
 5016: 48             ASLA
 5017: 48             ASLA
 5018: 30 AE          LEAX   A,X
@@ -2325,7 +2331,7 @@ l_50c1:
 5153: 39             RTS
 
 5154: 8E FB D4       LDX    #$D956
-5157: 96 41          LDA    $69
+5157: 96 41          LDA    current_event_69
 5159: 48             ASLA
 515A: AE 0E          LDX    A,X
 515C: CE 1A A6       LDU    #$322E
@@ -2398,7 +2404,7 @@ l_50c1:
 51D9: ED C2          STD    $A,U
 51DB: 0A 60          DEC    $48
 51DD: 26 66          BNE    $51CD
-51DF: 96 4B          LDA    $69
+51DF: 96 4B          LDA    current_event_69
 51E1: 81 81          CMPA   #$03
 51E3: 26 36          BNE    $51F9
 51E5: 10 8E B7 2C    LDY    #$3504
@@ -2629,7 +2635,7 @@ l_50c1:
 539E: 27 9B          BEQ    $53B3
 53A0: 8E 11 02       LDX    #$3380
 53A3: 0F 6A          CLR    $48
-53A5: 96 EB          LDA    $69
+53A5: 96 EB          LDA    current_event_69
 53A7: 81 2D          CMPA   #$05
 53A9: 27 81          BEQ    $53B4
 53AB: 81 2E          CMPA   #$06
@@ -2651,7 +2657,7 @@ l_50c1:
 53C9: 0C C0          INC    $48
 53CB: 8E FD 35       LDX    #$D51D
 53CE: 20 9A          BRA    $53E2
-53D0: 96 4B          LDA    $69
+53D0: 96 4B          LDA    current_event_69
 53D2: 81 82          CMPA   #$00
 53D4: 27 28          BEQ    $53E0
 53D6: 81 84          CMPA   #$06
@@ -2676,7 +2682,7 @@ l_50c1:
 53FD: BD CA A4       JSR    write_char_and_move_cursor_422c
 5400: 96 6A          LDA    $48
 5402: 26 88          BNE    $540E
-5404: 96 4B          LDA    $69
+5404: 96 4B          LDA    current_event_69
 5406: 81 82          CMPA   #$00
 5408: 27 20          BEQ    $5412
 540A: 81 8E          CMPA   #$06
@@ -2690,14 +2696,14 @@ l_50c1:
 541B: 86 A4          LDA    #$8C
 541D: 0D C0          TST    $48
 541F: 26 24          BNE    $5427
-5421: D6 EB          LDB    $69
+5421: D6 EB          LDB    current_event_69
 5423: C1 26          CMPB   #$04
 5425: 27 80          BEQ    $5429
 5427: A6 A8          LDA    ,X+
 5429: BD CA A4       JSR    write_char_and_move_cursor_422c
 542C: A6 A8          LDA    ,X+
 542E: 7E CA 0E       JMP    write_char_and_move_cursor_422c
-5431: 96 EB          LDA    $69
+5431: 96 EB          LDA    current_event_69
 5433: 81 20          CMPA   #$02
 5435: 27 86          BEQ    $543B
 5437: 81 2B          CMPA   #$03
@@ -2752,7 +2758,7 @@ l_50c1:
 5493: 33 E9          LEAU   D,U
 5495: A6 46          LDA    ,U
 5497: 27 3C          BEQ    $54AD
-5499: 96 E1          LDA    $69
+5499: 96 E1          LDA    current_event_69
 549B: 81 2B          CMPA   #$03
 549D: 26 8C          BNE    $54A3
 549F: A6 66          LDA    $4,U
@@ -2899,7 +2905,7 @@ l_50c1:
 
 55B4: 8E 12 22       LDX    #$30A0
 55B7: CE FC 2D       LDU   #table_d405
-55BA: 96 E1          LDA    $69
+55BA: 96 E1          LDA    current_event_69
 55BC: 48             ASLA
 55BD: 6E 5E          JMP    [A,U]		; [jump_table]
 55BF: 7E A0 85       JMP    $82A7
@@ -3005,7 +3011,7 @@ l_50c1:
 56A3: 97 3B          STA    $19
 56A5: 39             RTS
 
-56A6: 96 EB          LDA    $69
+56A6: 96 EB          LDA    current_event_69
 56A8: 81 2A          CMPA   #$02
 56AA: 27 A7          BEQ    $56DB
 56AC: 81 2B          CMPA   #$03
@@ -3015,7 +3021,7 @@ l_50c1:
 56B4: CE 04 17       LDU    #$2695
 56B7: 8E FC 3B       LDX    #$D413
 56BA: 86 8B          LDA    #$03
-56BC: D6 41          LDB    $69
+56BC: D6 41          LDB    current_event_69
 56BE: C1 8C          CMPB   #$04
 56C0: 26 23          BNE    $56C3
 56C2: 4A             DECA
@@ -3052,7 +3058,7 @@ l_50c1:
 56FE: C6 8D          LDB    #$05
 5700: 7E 70 77       JMP    $52F5
 5703: 8E 1A 22       LDX    #$3800
-5706: 96 EB          LDA    $69
+5706: 96 EB          LDA    current_event_69
 5708: C6 08          LDB    #$20
 570A: 3D             MUL
 570B: 30 A3          LEAX   D,X
@@ -3083,13 +3089,13 @@ l_50c1:
 5741: 39             RTS
 
 5742: 10 8E F6 05    LDY    #$D427
-5746: 96 EB          LDA    $69
+5746: 96 EB          LDA    current_event_69
 5748: A6 8E          LDA    A,Y
 574A: 33 4E          LEAU   A,U
 574C: 39             RTS
 
 574D: 8E 5C A6       LDX    #$D42E
-5750: 96 4B          LDA    $69
+5750: 96 4B          LDA    current_event_69
 5752: 81 84          CMPA   #$06
 5754: 27 3D          BEQ    $5775
 5756: 81 80          CMPA   #$02
@@ -3138,7 +3144,7 @@ l_50c1:
 57AC: 7C 1C 7A       INC    $34F2
 57AF: 39             RTS
 
-57B0: 96 4B          LDA    $69
+57B0: 96 4B          LDA    current_event_69
 57B2: 81 81          CMPA   #$03
 57B4: 27 1B          BEQ    $57EF
 57B6: 81 87          CMPA   #$05
@@ -3150,7 +3156,7 @@ l_50c1:
 57C2: C4 8A          ANDB   #$08
 57C4: 26 20          BNE    $57C8
 57C6: 86 8D          LDA    #$0F
-57C8: D6 41          LDB    $69
+57C8: D6 41          LDB    current_event_69
 57CA: C1 8E          CMPB   #$06
 57CC: 27 0A          BEQ    $57F0
 57CE: C1 8C          CMPB   #$04
@@ -3202,7 +3208,7 @@ l_50c1:
 5829: 7E CA A5       JMP    $422D
 582C: 96 28          LDA    game_playing_00
 582E: 27 AC          BEQ    $5854
-5830: 96 4B          LDA    $69
+5830: 96 4B          LDA    current_event_69
 5832: 81 81          CMPA   #$03
 5834: 27 3C          BEQ    $5854
 5836: CE A4 6B       LDU    #$2643
@@ -3238,8 +3244,8 @@ l_50c1:
 5873: 97 00          STA    $22
 5875: 0F A6          CLR    $24
 5877: 0F 0E          CLR    $26
-5879: 0F A0          CLR    $28
-587B: 0F 02          CLR    $2A
+5879: 0F A0          CLR    event_sub_state_28
+587B: 0F 02          CLR    event_sub_state_2a
 587D: 86 89          LDA    #$01
 587F: 39             RTS
 
@@ -3320,7 +3326,7 @@ l_50c1:
 5914: 97 6B          STA    $49
 5916: 97 C9          STA    $4B
 5918: CE FC B1       LDU    #$D439
-591B: 96 41          LDA    $69
+591B: 96 41          LDA    current_event_69
 591D: 81 8E          CMPA   #$06
 591F: 26 20          BNE    $5923
 5921: 0F C9          CLR    $4B
@@ -3334,7 +3340,7 @@ l_50c1:
 5932: 27 A4          BEQ    $595A
 5934: A4 1D          ANDA   -$1,Y
 5936: 26 A0          BNE    $595A
-5938: D6 41          LDB    $69
+5938: D6 41          LDB    current_event_69
 593A: C1 8E          CMPB   #$06
 593C: 26 20          BNE    $5946
 593E: 11 83 14 FA    CMPU   #$36D8
@@ -3447,7 +3453,7 @@ l_50c1:
 5A10: 0F 73          CLR    $51
 5A12: 0F D0          CLR    $52
 5A14: CE F6 07       LDU    #$D485
-5A17: 96 41          LDA    $69
+5A17: 96 41          LDA    current_event_69
 5A19: 48             ASLA
 5A1A: EE 4E          LDU    A,U
 5A1C: 10 8E B8 D8    LDY    #$3050
@@ -3542,7 +3548,7 @@ l_50c1:
 5AC9: A6 8A          LDA    $2,X
 5ACB: 90 63          SUBA   $4B
 5ACD: A7 8A          STA    $2,X
-5ACF: D6 4B          LDB    $69
+5ACF: D6 4B          LDB    current_event_69
 5AD1: C1 80          CMPB   #$02
 5AD3: 27 2D          BEQ    $5AE4
 5AD5: C1 84          CMPB   #$06
@@ -3624,7 +3630,7 @@ l_50c1:
 5B6E: A7 85          STA    $D,X
 5B70: 20 F3          BRA    $5B43
 5B72: 5F             CLRB
-5B73: A6 BA 21       LDA    [$03,X]
+5B73: A6 BA 21       LDA    [$03,X]	; [video_address]
 5B76: 81 C7          CMPA   #$45
 5B78: 26 2C          BNE    $5B7E
 5B7A: 8D 8B          BSR    $5B7F
@@ -3643,7 +3649,7 @@ l_50c1:
 5B8F: A6 A6          LDA    ,X
 5B91: 26 93          BNE    $5BA4
 5B93: CE F6 B1       LDU    #$D493
-5B96: 96 EB          LDA    $69
+5B96: 96 EB          LDA    current_event_69
 5B98: A6 EE          LDA    A,U
 5B9A: A1 10 2B       CMPA   [$03,X]		; [video_address]
 5B9D: 26 8D          BNE    $5BA4
@@ -3741,7 +3747,7 @@ l_50c1:
 5C4C: 39             RTS
 
 5C4D: 10 8E 5C BB    LDY    #$D499
-5C51: 96 EB          LDA    $69
+5C51: 96 EB          LDA    current_event_69
 5C53: 48             ASLA
 5C54: 10 AE 24       LDY    A,Y
 5C57: CE 0D 97       LDU    #$25BF
@@ -3766,7 +3772,7 @@ l_50c1:
 5C81: 10 9F 34       STY    $B6
 5C84: 39             RTS
 
-5C85: 96 EB          LDA    $69
+5C85: 96 EB          LDA    current_event_69
 5C87: 81 28          CMPA   #$00
 5C89: 27 BA          BEQ    $5CBD
 5C8B: 81 2A          CMPA   #$02
@@ -3830,7 +3836,7 @@ l_50c1:
 5D08: 39             RTS
 
 5D09: 86 88          LDA    #$00
-5D0B: 97 41          STA    $69
+5D0B: 97 41          STA    current_event_69
 5D0D: 86 89          LDA    #$01
 5D0F: 97 47          STA    $65
 5D11: 86 80          LDA    #$02
@@ -3901,11 +3907,11 @@ l_50c1:
 5DA4: 39             RTS
 
 5DA5: 8E 56 41       LDX    #$D4C3
-5DA8: 96 41          LDA    $69
+5DA8: 96 41          LDA    current_event_69
 5DAA: 48             ASLA
 5DAB: 31 AE          LEAY   A,X
 5DAD: AE 2C          LDX    ,Y
-5DAF: 96 4B          LDA    $69
+5DAF: 96 4B          LDA    current_event_69
 5DB1: 81 84          CMPA   #$06
 5DB3: 27 29          BEQ    $5DC0
 5DB5: 81 86          CMPA   #$04
@@ -3947,7 +3953,7 @@ l_50c1:
 5E03: 86 20          LDA    #$02
 5E05: 97 C8          STA    $4A
 5E07: 8E FC 9D       LDX    #$D4B5
-5E0A: 96 E1          LDA    $69
+5E0A: 96 E1          LDA    current_event_69
 5E0C: 48             ASLA
 5E0D: AE 0E          LDX    A,X
 5E0F: CE 07 E2       LDU    #$25C0
@@ -3985,7 +3991,7 @@ l_50c1:
 5E52: 39             RTS
 
 5E53: 8E F6 85       LDX    #$D4A7
-5E56: 96 EB          LDA    $69
+5E56: 96 EB          LDA    current_event_69
 5E58: 48             ASLA
 5E59: AE 0E          LDX    A,X
 5E5B: CE 0B 28       LDU    #$2300
@@ -4006,7 +4012,7 @@ l_50c1:
 5E7D: 0A C0          DEC    $48
 5E7F: 26 D3          BNE    $5E72
 5E81: 33 4B 83 63    LEAU   $0141,U
-5E85: 96 EB          LDA    $69
+5E85: 96 EB          LDA    current_event_69
 5E87: 81 2E          CMPA   #$06
 5E89: 27 8C          BEQ    $5E8F
 5E8B: 81 2C          CMPA   #$04
@@ -4033,7 +4039,7 @@ l_50c1:
 5EBE: 26 8B          BNE    $5EC3
 5EC0: CE 07 02       LDU    #$2580
 5EC3: DF 96          STU    $B4
-5EC5: 96 EB          LDA    $69
+5EC5: 96 EB          LDA    current_event_69
 5EC7: 81 28          CMPA   #$00
 5EC9: 26 9C          BNE    $5EDF
 5ECB: 0C E7          INC    $CF
@@ -4051,7 +4057,7 @@ l_50c1:
 5EE0: 96 E5          LDA    $C7
 5EE2: 97 CA          STA    $48
 5EE4: CE F6 BB       LDU    #$D439
-5EE7: 96 41          LDA    $69
+5EE7: 96 41          LDA    current_event_69
 5EE9: 48             ASLA
 5EEA: 10 AE EE       LDY    A,U
 5EED: 34 A8          PSHS   Y
@@ -4242,14 +4248,17 @@ l_50c1:
 6099: DD 30          STD    $B8
 609B: 39             RTS
 
+triple_jump_609c:
 609C: 8E FC 57       LDX   #table_d4df
-609F: 96 0A          LDA    $28
+609F: 96 0A          LDA    event_sub_state_28
 60A1: 48             ASLA
 60A2: 6E 14          JMP    [A,X]		; [jump_table]
+
 60A4: 8E F6 71       LDX   #table_d4f3
-60A7: 96 02          LDA    $2A
+60A7: 96 02          LDA    event_sub_state_2a
 60A9: 48             ASLA
 60AA: 6E 1E          JMP    [A,X]		; [jump_table]
+
 60AC: 8E 18 28       LDX    #$30A0
 60AF: BD A0 85       JSR    $82A7
 60B2: CC A7 B9       LDD    #$259B
@@ -4264,7 +4273,7 @@ l_50c1:
 60C8: 97 C0          STA    $E8
 60CA: 86 96          LDA    #$1E
 60CC: 97 03          STA    $2B
-60CE: 0C A2          INC    $2A
+60CE: 0C A2          INC    event_sub_state_2a
 60D0: 39             RTS
 
 60D1: 0A A9          DEC    $2B
@@ -4276,8 +4285,8 @@ l_50c1:
 60DE: CC 98 44       LDD    #$1066
 60E1: DD 76          STD    $F4
 60E3: 0F D4          CLR    $F6
-60E5: 0C AA          INC    $28
-60E7: 0F 02          CLR    $2A
+60E5: 0C AA          INC    event_sub_state_28
+60E7: 0F 02          CLR    event_sub_state_2a
 60E9: 39             RTS
 
 60EA: BD C7 89       JSR    $4FA1
@@ -4303,13 +4312,13 @@ l_50c1:
 
 6115: CC 5B 1D       LDD    #$D99F
 6118: DD 83          STD    $AB
-611A: 0C A0          INC    $28
+611A: 0C A0          INC    event_sub_state_28
 611C: 39             RTS
 
 611D: 86 80          LDA    #$08
-611F: 97 0A          STA    $28
+611F: 97 0A          STA    event_sub_state_28
 6121: 86 81          LDA    #$03
-6123: 97 08          STA    $2A
+6123: 97 08          STA    event_sub_state_2a
 6125: 39             RTS
 
 6126: 8E B2 88       LDX    #$30A0
@@ -4327,7 +4336,7 @@ l_50c1:
 6146: BD D9 A7       JSR    $5B8F
 6149: 0D 28          TST    $A0
 614B: 27 2B          BEQ    $6150
-614D: 0C A0          INC    $28
+614D: 0C A0          INC    event_sub_state_28
 614F: 39             RTS
 
 6150: BD E2 82       JSR    $C000
@@ -4339,7 +4348,7 @@ l_50c1:
 615A: 96 68          LDA    $E0
 615C: 26 3D          BNE    $6173
 615E: A6 10 21       LDA    [$03,X]		; [video_address]
-6161: D6 EB          LDB    $69
+6161: D6 EB          LDB    current_event_69
 6163: C1 24          CMPB   #$06
 6165: 27 84          BEQ    $616D
 6167: 81 63          CMPA   #$4B
@@ -4349,7 +4358,7 @@ l_50c1:
 616F: 26 34          BNE    $6187
 6171: 0C 62          INC    $E0
 6173: A6 25          LDA    $7,X
-6175: D6 EB          LDB    $69
+6175: D6 EB          LDB    current_event_69
 6177: C1 2E          CMPB   #$06
 6179: 27 8E          BEQ    $6181
 617B: 81 27          CMPA   #$0F
@@ -4434,17 +4443,17 @@ l_50c1:
 622C: 0F ED          CLR    $C5
 622E: 6C 0C          INC    ,X
 6230: BD 56 A5       JSR    $7427
-6233: 0C 0A          INC    $28
+6233: 0C 0A          INC    event_sub_state_28
 6235: 39             RTS
 
 6236: 86 8B          LDA    #$09
-6238: 97 00          STA    $28
-623A: 0F A2          CLR    $2A
+6238: 97 00          STA    event_sub_state_28
+623A: 0F A2          CLR    event_sub_state_2a
 623C: 39             RTS
 
 623D: 8E B8 28       LDX    #$30A0
 6240: CE F6 75       LDU   #table_d4f7
-6243: 96 08          LDA    $2A
+6243: 96 08          LDA    event_sub_state_2a
 6245: 48             ASLA
 6246: 6E 54          JMP    [A,U]		; [jump_table]
 6248: 96 94          LDA    $BC
@@ -4474,8 +4483,8 @@ l_50c1:
 627D: 0F 34          CLR    $BC
 627F: 6C A6          INC    ,X
 6281: BD F6 A5       JSR    $7427
-6284: 0C 0A          INC    $28
-6286: 0F A8          CLR    $2A
+6284: 0C 0A          INC    event_sub_state_28
+6286: 0F A8          CLR    event_sub_state_2a
 6288: 39             RTS
 
 6289: BD FB EF       JSR    $7367
@@ -4496,7 +4505,7 @@ l_50c1:
 
 62AB: 8E 18 88       LDX    #$30A0
 62AE: CE 5D 25       LDU   #table_d507
-62B1: 96 A8          LDA    $2A
+62B1: 96 A8          LDA    event_sub_state_2a
 62B3: 48             ASLA
 62B4: 6E F4          JMP    [A,U]		; [jump_table]
 62B6: 96 3E          LDA    $BC
@@ -4527,8 +4536,8 @@ l_50c1:
 62ED: 6C 0C          INC    ,X
 62EF: BD 51 FD       JSR    $73DF
 62F2: BD F6 05       JSR    $7427
-62F5: 0C AA          INC    $28
-62F7: 0F 02          CLR    $2A
+62F5: 0C AA          INC    event_sub_state_28
+62F7: 0F 02          CLR    event_sub_state_2a
 62F9: 39             RTS
 
 62FA: BD FB 4F       JSR    $7367
@@ -4542,14 +4551,14 @@ l_50c1:
 630D: 26 31          BNE    $62C8
 630F: BD 79 5D       JSR    $5B7F
 6312: 86 8B          LDA    #$09
-6314: 97 0A          STA    $28
+6314: 97 0A          STA    event_sub_state_28
 6316: 86 80          LDA    #$02
-6318: 97 02          STA    $2A
+6318: 97 02          STA    event_sub_state_2a
 631A: 39             RTS
 
 631B: 8E 18 88       LDX    #$30A0
 631E: CE 5D 29       LDU   #table_d50b
-6321: 96 A8          LDA    $2A
+6321: 96 A8          LDA    event_sub_state_2a
 6323: 48             ASLA
 6324: 6E F4          JMP    [A,U]		; [jump_table]
 6326: 4F             CLRA
@@ -4563,7 +4572,7 @@ l_50c1:
 6337: BD AA DF       JSR    $82F7
 633A: 86 96          LDA    #$1E
 633C: 97 01          STA    $29
-633E: 0F A2          CLR    $2A
+633E: 0F A2          CLR    event_sub_state_2a
 6340: 0F E8          CLR    $CA
 6342: BD D2 17       JSR    $5035
 6345: BD D3 C7       JSR    $5145
@@ -4582,19 +4591,19 @@ l_50c1:
 6361: BD 01 BF       JSR    $833D
 6364: 96 E9          LDA    $CB
 6366: 26 81          BNE    $636B
-6368: 0C 00          INC    $28
+6368: 0C 00          INC    event_sub_state_28
 636A: 39             RTS
 
 636B: 0C C7          INC    $EF
 636D: 86 89          LDA    #$01
 636F: 97 E9          STA    $CB
 6371: 86 8A          LDA    #$08
-6373: 97 0A          STA    $28
+6373: 97 0A          STA    event_sub_state_28
 6375: 39             RTS
 
 6376: 8E B2 88       LDX    #$30A0
 6379: CE 5D 87       LDU   #table_d50f
-637C: 96 02          LDA    $2A
+637C: 96 02          LDA    event_sub_state_2a
 637E: 48             ASLA
 637F: 6E F4          JMP    [A,U]		; [jump_table]
 6381: 0A AB          DEC    $29
@@ -4612,7 +4621,7 @@ l_50c1:
 639D: BD C6 3B       JSR    $4EB3
 63A0: 86 06          LDA    #$24
 63A2: BD CC 91       JSR    $4EB3
-63A5: 0C A8          INC    $2A
+63A5: 0C A8          INC    event_sub_state_2a
 63A7: 39             RTS
 
 63A8: A6 AC          LDA    ,X
@@ -4642,7 +4651,7 @@ l_50c1:
 63DD: 96 28          LDA    $A0
 63DF: 81 24          CMPA   #$06
 63E1: 26 80          BNE    $63E5
-63E3: 0C 08          INC    $2A
+63E3: 0C 08          INC    event_sub_state_2a
 63E5: 39             RTS
 
 63E6: 0F 48          CLR    $CA
@@ -4697,14 +4706,14 @@ l_50c1:
 6446: 20 61          BRA    $642B
 6448: BD 56 A1       JSR    $7E29
 644B: BD 7C 4E       JSR    $5466
-644E: 0F A0          CLR    $28
-6450: 0F 08          CLR    $2A
+644E: 0F A0          CLR    event_sub_state_28
+6450: 0F 08          CLR    event_sub_state_2a
 6452: 0C A4          INC    $26
 6454: 39             RTS
 
 6455: 8E B2 22       LDX    #$30A0
 6458: CE FD 9D       LDU   #table_d515
-645B: 96 02          LDA    $2A
+645B: 96 02          LDA    event_sub_state_2a
 645D: 48             ASLA
 645E: 6E 5E          JMP    [A,U]		; [jump_table]
 6460: 86 24          LDA    #$06
@@ -4743,7 +4752,7 @@ l_50c1:
 64AD: FD BA A9       STD    $3221
 64B0: CC 06 55       LDD    #$24D7
 64B3: FD 10 01       STD    $3223
-64B6: 0C A8          INC    $2A
+64B6: 0C A8          INC    event_sub_state_2a
 64B8: 39             RTS
 
 64B9: A6 8A          LDA    $2,X
@@ -4784,15 +4793,15 @@ l_50c1:
 6503: 86 23          LDA    #$01
 6505: A7 8F          STA    $D,X
 6507: BD AB AF       JSR    $8387
-650A: 0C A2          INC    $2A
+650A: 0C A2          INC    event_sub_state_2a
 650C: 39             RTS
 
 650D: CE AB 61       LDU    #$23E9
 6510: 8D 2F          BSR    $651F
 6512: BD D6 44       JSR    $5466
 6515: 7F B6 65       CLR    $34E7
-6518: 0F 00          CLR    $28
-651A: 0F A2          CLR    $2A
+6518: 0F 00          CLR    event_sub_state_28
+651A: 0F A2          CLR    event_sub_state_2a
 651C: 0C 0E          INC    $26
 651E: 39             RTS
 
@@ -4809,7 +4818,7 @@ l_50c1:
 
 6536: 8E B2 88       LDX    #$30A0
 6539: CE 5D AB       LDU   #table_d523
-653C: 96 02          LDA    $2A
+653C: 96 02          LDA    event_sub_state_2a
 653E: 48             ASLA
 653F: 6E F4          JMP    [A,U]		; [jump_table]
 6541: A6 80          LDA    $2,X
@@ -4820,7 +4829,7 @@ l_50c1:
 654C: 0F 94          CLR    $BC
 654E: 86 8B          LDA    #$03
 6550: 97 47          STA    $65
-6552: 0C A8          INC    $2A
+6552: 0C A8          INC    event_sub_state_2a
 6554: 39             RTS
 
 6555: CE 57 70       LDU    #$D5F2
@@ -4847,7 +4856,7 @@ l_50c1:
 657C: A7 2A          STA    $2,X
 657E: CC 89 21       LDD    #$0103
 6581: DD E7          STD    $65
-6583: 0C 08          INC    $2A
+6583: 0C 08          INC    event_sub_state_2a
 6585: 0F 3E          CLR    $BC
 6587: 39             RTS
 
@@ -4874,14 +4883,18 @@ l_50c1:
 65B4: 39             RTS
 
 65B5: 7E E6 7E       JMP    $64FC
+
+free_style_65b8:
 65B8: 8E FD A3       LDX   #table_d52b
-65BB: 96 00          LDA    $28
+65BB: 96 00          LDA    event_sub_state_28
 65BD: 48             ASLA
 65BE: 6E 1E          JMP    [A,X]		; [jump_table]
+
 65C0: 8E F7 B7       LDX   #table_d535
-65C3: 96 08          LDA    $2A
+65C3: 96 08          LDA    event_sub_state_2a
 65C5: 48             ASLA
 65C6: 6E 14          JMP    [A,X]		; [jump_table]
+
 65C8: 86 29          LDA    #$01
 65CA: 97 FB          STA    $73
 65CC: 86 2D          LDA    #$05
@@ -4913,19 +4926,19 @@ l_50c1:
 660D: BD 0D BD       JSR    $8535
 6610: 86 3C          LDA    #$1E
 6612: 97 A9          STA    $2B
-6614: 0C 08          INC    $2A
+6614: 0C 08          INC    event_sub_state_2a
 6616: 39             RTS
 
 6617: 0A 03          DEC    $2B
 6619: 26 8C          BNE    $661F
-661B: 0C 00          INC    $28
-661D: 0F A2          CLR    $2A
+661B: 0C 00          INC    event_sub_state_28
+661D: 0F A2          CLR    event_sub_state_2a
 661F: 39             RTS
 
 6620: 8E 12 22       LDX    #$30A0
 6623: 0F 3B          CLR    $19
 6625: CE 57 BB       LDU   #table_d539
-6628: 96 02          LDA    $2A
+6628: 96 02          LDA    event_sub_state_2a
 662A: 48             ASLA
 662B: 6E FE          JMP    [A,U]		; [jump_table]
 662D: 86 08          LDA    #$80
@@ -4934,7 +4947,7 @@ l_50c1:
 6634: BD 6C 2F       JSR    queue_sound_event_4ead
 6637: 86 88          LDA    #$A0
 6639: 97 A3          STA    $2B
-663B: 0C 02          INC    $2A
+663B: 0C 02          INC    event_sub_state_2a
 663D: 39             RTS
 
 663E: 0A A3          DEC    $2B
@@ -4945,7 +4958,7 @@ l_50c1:
 6649: BD C6 25       JSR    queue_sound_event_4ead
 664C: 86 36          LDA    #$1E
 664E: 97 A3          STA    $2B
-6650: 0C 08          INC    $2A
+6650: 0C 08          INC    event_sub_state_2a
 6652: 39             RTS
 
 6653: 0A 09          DEC    $2B
@@ -4959,7 +4972,7 @@ l_50c1:
 6665: 26 76          BNE    $665B
 6667: 86 AA          LDA    #$82
 6669: 97 A3          STA    $2B
-666B: 0C 02          INC    $2A
+666B: 0C 02          INC    event_sub_state_2a
 666D: 39             RTS
 
 666E: 86 8C          LDA    #$04
@@ -4974,7 +4987,7 @@ l_50c1:
 6680: 84 27          ANDA   #$05
 6682: 27 87          BEQ    $6689
 6684: 6C A6          INC    ,X
-6686: 0C A8          INC    $2A
+6686: 0C A8          INC    event_sub_state_2a
 6688: 39             RTS
 
 6689: 0C 91          INC    $19
@@ -5001,8 +5014,8 @@ l_50c1:
 66BC: 33 E0 C8       LEAU   $40,U
 66BF: 0A 47          DEC    $65
 66C1: 26 72          BNE    $66B3
-66C3: 0C 0A          INC    $28
-66C5: 0F A8          CLR    $2A
+66C3: 0C 0A          INC    event_sub_state_28
+66C5: 0F A8          CLR    event_sub_state_2a
 66C7: 39             RTS
 
 66C8: 86 2C          LDA    #$04
@@ -5028,7 +5041,7 @@ l_50c1:
 66F1: 8B 8A          ADDA   #$08
 66F3: A7 20          STA    $2,X
 66F5: BD 06 67       JSR    $84E5
-66F8: 0C 02          INC    $2A
+66F8: 0C 02          INC    event_sub_state_2a
 66FA: 30 00 48       LEAX   $60,X
 66FD: 0C 91          INC    $19
 66FF: 0A 47          DEC    $65
@@ -5096,7 +5109,7 @@ l_50c1:
 6785: BD D1 FC       JSR    $537E
 6788: 86 9C          LDA    #$B4
 678A: 97 A3          STA    $2B
-678C: 0C 02          INC    $2A
+678C: 0C 02          INC    event_sub_state_2a
 678E: 86 98          LDA    #$10
 6790: BD 6C 31       JSR    $4EB3
 6793: 86 33          LDA    #$11
@@ -5121,8 +5134,8 @@ l_50c1:
 67BB: 27 21          BEQ    $67C6
 67BD: 0A AE          DEC    $26
 67BF: 86 25          LDA    #$07
-67C1: 97 AA          STA    $28
-67C3: 0F 08          CLR    $2A
+67C1: 97 AA          STA    event_sub_state_28
+67C3: 0F 08          CLR    event_sub_state_2a
 67C5: 39             RTS
 
 67C6: CC 80 36       LDD    #$021E
@@ -5131,7 +5144,7 @@ l_50c1:
 67CF: BD 6C B8       JSR    queue_event_4e9a
 67D2: 86 36          LDA    #$B4
 67D4: 97 09          STA    $2B
-67D6: 0C A8          INC    $2A
+67D6: 0C A8          INC    event_sub_state_2a
 67D8: 39             RTS
 
 67D9: BD DD 8E       JSR    $5506
@@ -5143,7 +5156,7 @@ l_50c1:
 67E6: 6A 83          DEC    $1,X
 67E8: 27 2D          BEQ    $67EF
 67EA: 86 81          LDA    #$09
-67EC: 97 02          STA    $2A
+67EC: 97 02          STA    event_sub_state_2a
 67EE: 39             RTS
 
 67EF: 6F A6          CLR    ,X
@@ -5156,13 +5169,13 @@ l_50c1:
 6801: BD CC 18       JSR    queue_event_4e9a
 6804: 86 96          LDA    #$B4
 6806: 97 A9          STA    $2B
-6808: 0C 02          INC    $2A
+6808: 0C 02          INC    event_sub_state_2a
 680A: 39             RTS
 
 680B: BD 7D 2E       JSR    $5506
 680E: 0A A3          DEC    $2B
 6810: 26 20          BNE    $6814
-6812: 0C A8          INC    $2A
+6812: 0C A8          INC    event_sub_state_2a
 6814: 39             RTS
 
 6815: 8E B7 82       LDX    #$3500
@@ -5188,14 +5201,14 @@ l_50c1:
 6840: 0C 39          INC    $1B
 6842: 20 53          BRA    $6815
 6844: 0A 04          DEC    $26
-6846: 0F AA          CLR    $28
-6848: 0F 02          CLR    $2A
+6846: 0F AA          CLR    event_sub_state_28
+6848: 0F 02          CLR    event_sub_state_2a
 684A: 39             RTS
 
 684B: 86 2E          LDA    #$06
 684D: 97 AE          STA    $26
-684F: 0F 0A          CLR    $28
-6851: 0F A8          CLR    $2A
+684F: 0F 0A          CLR    event_sub_state_28
+6851: 0F A8          CLR    event_sub_state_2a
 6853: 39             RTS
 
 6854: BD E2 82       JSR    $C000
@@ -5223,7 +5236,7 @@ l_50c1:
 6887: 96 09          LDA    $21
 6889: 81 8C          CMPA   #$04
 688B: 26 2A          BNE    $688F
-688D: 0C A0          INC    $28
+688D: 0C A0          INC    event_sub_state_28
 688F: 39             RTS
 
 6890: 0F 50          CLR    chrono_second_72
@@ -5240,7 +5253,7 @@ l_50c1:
 68AA: 0C 91          INC    $19
 68AC: 0A 4D          DEC    $65
 68AE: 26 63          BNE    $689B
-68B0: 0C 0A          INC    $28
+68B0: 0C 0A          INC    event_sub_state_28
 68B2: 39             RTS
 
 68B3: 6F AA 02       CLR    $20,X
@@ -5507,16 +5520,16 @@ l_50c1:
 6AF2: 5A             DECB
 6AF3: 26 D4          BNE    $6AEB
 6AF5: 0C A4          INC    $26
-6AF7: 0F 00          CLR    $28
+6AF7: 0F 00          CLR    event_sub_state_28
 6AF9: 39             RTS
 
-6AFA: 0C A0          INC    $28
+6AFA: 0C A0          INC    event_sub_state_28
 6AFC: 86 35          LDA    #$1D
 6AFE: BD C6 91       JSR    $4EB3
 6B01: 39             RTS
 
 6B02: 8E 57 47       LDX   #table_d565
-6B05: 96 A8          LDA    $2A
+6B05: 96 A8          LDA    event_sub_state_2a
 6B07: 48             ASLA
 6B08: 6E BE          JMP    [A,X]        ; [jump_table]
 6B0A: 8E BA B8       LDX    #$3290
@@ -5548,7 +5561,7 @@ l_50c1:
 6B46: 26 73          BNE    $6B39
 6B48: 86 14          LDA    #$3C
 6B4A: 97 A3          STA    $2B
-6B4C: 0C 02          INC    $2A
+6B4C: 0C 02          INC    event_sub_state_2a
 6B4E: 39             RTS
 
 6B4F: 86 1E          LDA    #$3C
@@ -5604,20 +5617,23 @@ l_50c1:
 6BBE: 26 6F          BNE    $6BA7
 6BC0: 86 1B          LDA    #$39
 6BC2: BD CC 91       JSR    $4EB3
-6BC5: 0F AA          CLR    $28
-6BC7: 0F 02          CLR    $2A
+6BC5: 0F AA          CLR    event_sub_state_28
+6BC7: 0F 02          CLR    event_sub_state_2a
 6BC9: 0C AE          INC    $26
 6BCB: 39             RTS
 
+long_horse_6bcc:
 6BCC: 8E 18 28       LDX    #$30A0
 6BCF: CE F7 53       LDU   #table_d571
-6BD2: 96 AA          LDA    $28
+6BD2: 96 AA          LDA    event_sub_state_28
 6BD4: 48             ASLA
 6BD5: 6E 54          JMP    [A,U]        ; [jump_table]
+
 6BD7: CE FD A5       LDU   #table_d58d
-6BDA: 96 A2          LDA    $2A
+6BDA: 96 A2          LDA    event_sub_state_2a
 6BDC: 48             ASLA
 6BDD: 6E 5E          JMP    [A,U]        ; [jump_table]
+
 6BDF: BD A0 85       JSR    $82A7
 6BE2: CC 8E 32       LDD    #$0C10
 6BE5: FD B1 F7       STD    $3375
@@ -5629,19 +5645,19 @@ l_50c1:
 6BF5: BD 07 22       JSR    $85A0
 6BF8: 86 36          LDA    #$1E
 6BFA: 97 A3          STA    $2B
-6BFC: 0C 02          INC    $2A
+6BFC: 0C 02          INC    event_sub_state_2a
 6BFE: 39             RTS
 
 6BFF: 0A 09          DEC    $2B
 6C01: 26 8B          BNE    $6C0C
 6C03: 86 05          LDA    #$27
 6C05: BD CC 31       JSR    $4EB3
-6C08: 0C 00          INC    $28
-6C0A: 0F A2          CLR    $2A
+6C08: 0C 00          INC    event_sub_state_28
+6C0A: 0F A2          CLR    event_sub_state_2a
 6C0C: 39             RTS
 
 6C0D: CE 5D 19       LDU   #table_d591
-6C10: 96 08          LDA    $2A
+6C10: 96 08          LDA    event_sub_state_2a
 6C12: 48             ASLA
 6C13: 6E F4          JMP    [A,U]        ; [jump_table]
 6C15: 0D 82          TST    game_playing_00
@@ -5683,11 +5699,11 @@ l_50c1:
 6C63: 7F 16 D0       CLR    $34F2
 6C66: 86 87          LDA    #$05
 6C68: 97 03          STA    $2B
-6C6A: 0C A2          INC    $2A
+6C6A: 0C A2          INC    event_sub_state_2a
 6C6C: 39             RTS
 
 6C6D: 86 85          LDA    #$0D
-6C6F: 97 0A          STA    $28
+6C6F: 97 0A          STA    event_sub_state_28
 6C71: 86 83          LDA    #$01
 6C73: 97 0B          STA    $29
 6C75: 39             RTS
@@ -5696,8 +5712,8 @@ l_50c1:
 6C78: 26 20          BNE    $6C82
 6C7A: C6 08          LDB    #$80
 6C7C: 8D 2D          BSR    $6C83
-6C7E: 0F A2          CLR    $2A
-6C80: 0C 0A          INC    $28
+6C7E: 0F A2          CLR    event_sub_state_2a
+6C80: 0C 0A          INC    event_sub_state_28
 6C82: 39             RTS
 
 6C83: CE 00 65       LDU    #$2247
@@ -5739,7 +5755,7 @@ l_50c1:
 6CD3: BD 43 78       JSR    $615A
 6CD6: 0D 22          TST    $A0
 6CD8: 27 2A          BEQ    $6CDC
-6CDA: 0C A0          INC    $28
+6CDA: 0C A0          INC    event_sub_state_28
 6CDC: 39             RTS
 
 6CDD: BD D1 3A       JSR    $59B2
@@ -5768,7 +5784,7 @@ l_50c1:
 6D14: BD 6C 2F       JSR    queue_sound_event_4ead
 6D17: 0F ED          CLR    $C5
 6D19: 0C 28          INC    $A0
-6D1B: 0C 00          INC    $28
+6D1B: 0C 00          INC    event_sub_state_28
 6D1D: 39             RTS
 
 6D1E: CC 51 8F       LDD    #$D9AD
@@ -5781,11 +5797,11 @@ l_50c1:
 6D2F: 86 2A          LDA    #$08
 6D31: 97 AB          STA    $29
 6D33: 86 2E          LDA    #$0C
-6D35: 97 AA          STA    $28
+6D35: 97 AA          STA    event_sub_state_28
 6D37: 39             RTS
 
 6D38: CE FD 11       LDU   #table_d599
-6D3B: 96 02          LDA    $2A
+6D3B: 96 02          LDA    event_sub_state_2a
 6D3D: 48             ASLA
 6D3E: 6E 5E          JMP    [A,U]        ; [jump_table]
 6D40: CE F7 1D       LDU    #$D59F
@@ -5803,7 +5819,7 @@ l_50c1:
 6D5C: 8D 3E          BSR    $6D74
 6D5E: 86 8E          LDA    #$06
 6D60: 97 09          STA    $2B
-6D62: 0C A8          INC    $2A
+6D62: 0C A8          INC    event_sub_state_2a
 6D64: 39             RTS
 
 6D65: 0A A9          DEC    $2B
@@ -5811,7 +5827,7 @@ l_50c1:
 6D69: CE AC 4F       LDU    #$24C7
 6D6C: 8E FD 2E       LDX    #$D5A6
 6D6F: 8D 21          BSR    $6D74
-6D71: 0C A8          INC    $2A
+6D71: 0C A8          INC    event_sub_state_2a
 6D73: 39             RTS
 
 6D74: 86 20          LDA    #$02
@@ -5894,8 +5910,8 @@ l_50c1:
 6E20: 97 E6          STA    $C4
 6E22: 0F 47          CLR    $C5
 6E24: 0F 9E          CLR    $BC
-6E26: 0F A8          CLR    $2A
-6E28: 0C 00          INC    $28
+6E26: 0F A8          CLR    event_sub_state_2a
+6E28: 0C 00          INC    event_sub_state_28
 6E2A: 39             RTS
 
 6E2B: EC E9          LDD    ,U++
@@ -5989,7 +6005,7 @@ l_50c1:
 6EEA: BD C6 85       JSR    queue_sound_event_4ead
 6EED: 86 94          LDA    #$1C
 6EEF: BD 6C 8F       JSR    queue_sound_event_4ead
-6EF2: 0C AA          INC    $28
+6EF2: 0C AA          INC    event_sub_state_28
 6EF4: 39             RTS
 
 6EF5: 7F B4 AF       CLR    $362D
@@ -6006,7 +6022,7 @@ l_50c1:
 6F0E: 86 77          LDA    #$FF
 6F10: BD 6C 31       JSR    $4EB3
 6F13: 86 25          LDA    #$07
-6F15: 97 AA          STA    $28
+6F15: 97 AA          STA    event_sub_state_28
 6F17: 39             RTS
 
 6F18: 96 27          LDA    $0F
@@ -6081,7 +6097,7 @@ l_50c1:
 6FA9: BD C6 25       JSR    queue_sound_event_4ead
 6FAC: 86 0B          LDA    #$23
 6FAE: BD C6 8F       JSR    queue_sound_event_4ead
-6FB1: 0C AA          INC    $28
+6FB1: 0C AA          INC    event_sub_state_28
 6FB3: 39             RTS
 
 6FB4: CE 06 E2       LDU    #$2460
@@ -6115,7 +6131,7 @@ l_50c1:
 6FF0: 81 24          CMPA   #$06
 6FF2: 27 87          BEQ    $6FF9
 6FF4: C6 28          LDB    #$0A
-6FF6: D7 AA          STB    $28
+6FF6: D7 AA          STB    event_sub_state_28
 6FF8: 39             RTS
 
 6FF9: 96 67          LDA    $EF
@@ -6125,7 +6141,7 @@ l_50c1:
 7002: C6 8B          LDB    #$09
 7004: 20 D2          BRA    $6FF6
 7006: CE 57 C0       LDU   #table_d5e8
-7009: 96 A2          LDA    $2A
+7009: 96 A2          LDA    event_sub_state_2a
 700B: 48             ASLA
 700C: 6E FE          JMP    [A,U]        ; [jump_table]
 
@@ -6152,7 +6168,7 @@ l_50c1:
 7037: 86 1F          LDA    #$37
 7039: BD C6 3B       JSR    $4EB3
 703C: 0F 94          CLR    $BC
-703E: 0C A2          INC    $2A
+703E: 0C A2          INC    event_sub_state_2a
 7040: 39             RTS
 
 7041: 96 8D          LDA    $0F
@@ -6180,14 +6196,14 @@ l_50c1:
 7069: 86 96          LDA    #$1E
 706B: 97 01          STA    $29
 706D: 86 85          LDA    #$0D
-706F: 97 0A          STA    $28
-7071: 0F A8          CLR    $2A
+706F: 97 0A          STA    event_sub_state_28
+7071: 0F A8          CLR    event_sub_state_2a
 7073: 39             RTS
 
 7074: BD A2 F5       JSR    $8077
 7077: 8E 18 88       LDX    #$30A0
 707A: CE 5D C4       LDU   #table_d5ec
-707D: 96 A2          LDA    $2A
+707D: 96 A2          LDA    event_sub_state_2a
 707F: 48             ASLA
 7080: 6E F4          JMP    [A,U]        ; [jump_table]
 7082: 86 DE          LDA    #$5C
@@ -6201,7 +6217,7 @@ l_50c1:
 7092: BD 07 FB       JSR    $85D9
 7095: 86 9C          LDA    #$1E
 7097: 97 03          STA    $2B
-7099: 0C A2          INC    $2A
+7099: 0C A2          INC    event_sub_state_2a
 709B: 39             RTS
 
 709C: 0A 03          DEC    $2B
@@ -6212,13 +6228,13 @@ l_50c1:
 70A8: 27 2A          BEQ    $70AC
 70AA: 86 08          LDA    #$80
 70AC: 97 03          STA    $2B
-70AE: 0C A2          INC    $2A
+70AE: 0C A2          INC    event_sub_state_2a
 70B0: 39             RTS
 
 70B1: 0A A9          DEC    $2B
 70B3: 26 26          BNE    $70B9
 70B5: 86 89          LDA    #$0B
-70B7: 97 00          STA    $28
+70B7: 97 00          STA    event_sub_state_28
 70B9: 39             RTS
 
 70BA: 8E B8 88       LDX    #$30A0
@@ -6257,18 +6273,18 @@ l_50c1:
 7101: 96 68          LDA    $EA
 7103: 27 27          BEQ    $710A
 7105: BD 02 E1       JSR    $8063
-7108: 0A 00          DEC    $28
+7108: 0A 00          DEC    event_sub_state_28
 710A: 39             RTS
 
 710B: CE FE 2D       LDU   #table_d605
-710E: 96 A2          LDA    $2A
+710E: 96 A2          LDA    event_sub_state_2a
 7110: 48             ASLA
 7111: 6E 54          JMP    [A,U]        ; [jump_table]
 7113: 86 74          LDA    #$56
 7115: A7 83          STA    $1,X
 7117: 86 4C          LDA    #$64
 7119: BD C6 3B       JSR    $4EB3
-711C: 0C 02          INC    $2A
+711C: 0C 02          INC    event_sub_state_2a
 711E: 39             RTS
 
 711F: 96 E7          LDA    $C5
@@ -6304,8 +6320,8 @@ l_50c1:
 715C: 86 4C          LDA    #$64
 715E: BD C6 91       JSR    $4EB3
 7161: 86 8A          LDA    #$08
-7163: 97 0A          STA    $28
-7165: 0F A8          CLR    $2A
+7163: 97 0A          STA    event_sub_state_28
+7165: 0F A8          CLR    event_sub_state_2a
 7167: 39             RTS
 
 7168: BD 53 86       JSR    $7B0E
@@ -6315,32 +6331,32 @@ l_50c1:
 7174: BD 76 E4       JSR    $5466
 7177: BD 56 57       JSR    $7E7F
 717A: 0C AE          INC    $26
-717C: 0F 00          CLR    $28
-717E: 0F A2          CLR    $2A
+717C: 0F 00          CLR    event_sub_state_28
+717E: 0F A2          CLR    event_sub_state_2a
 7180: 39             RTS
 
 7181: CE 54 8B       LDU   #table_d609
-7184: 96 08          LDA    $2A
+7184: 96 08          LDA    event_sub_state_2a
 7186: 48             ASLA
 7187: 6E FE          JMP    [A,U]        ; [jump_table]
 7189: 0A A1          DEC    $29
 718B: 26 2A          BNE    $718F
-718D: 0C A2          INC    $2A
+718D: 0C A2          INC    event_sub_state_2a
 718F: 39             RTS
 
 7190: 86 3C          LDA    #$1E
 7192: 97 AB          STA    $29
-7194: 0C 0A          INC    $28
-7196: 0F A8          CLR    $2A
+7194: 0C 0A          INC    event_sub_state_28
+7196: 0F A8          CLR    event_sub_state_2a
 7198: 39             RTS
 
 7199: CE 5E 9B       LDU   #table_d613
-719C: 96 02          LDA    $2A
+719C: 96 02          LDA    event_sub_state_2a
 719E: 48             ASLA
 719F: 6E F4          JMP    [A,U]        ; [jump_table]
 71A1: 0A AB          DEC    $29
 71A3: 26 20          BNE    $71A7
-71A5: 0C A8          INC    $2A
+71A5: 0C A8          INC    event_sub_state_2a
 71A7: 39             RTS
 
 71A8: CE 0C 2E       LDU    #$24A6
@@ -6353,8 +6369,8 @@ l_50c1:
 71B9: 30 03          LEAX   D,X
 71BB: 6F AC          CLR    ,X
 71BD: 6F 89          CLR    $1,X
-71BF: 0F 0A          CLR    $28
-71C1: 0F A8          CLR    $2A
+71BF: 0F 0A          CLR    event_sub_state_28
+71C1: 0F A8          CLR    event_sub_state_2a
 71C3: 0C 04          INC    $26
 71C5: 39             RTS
 
@@ -6462,7 +6478,7 @@ l_50c1:
 72A9: 97 C0          STA    $48
 72AB: BD 78 F9       JSR    $50D1
 72AE: BD FB FD       JSR    $73DF
-72B1: 0C A8          INC    $2A
+72B1: 0C A8          INC    event_sub_state_2a
 72B3: 39             RTS
 
 72B4: 10 8E B2 7A    LDY    #$30F8
@@ -6507,9 +6523,9 @@ l_50c1:
 
 7308: BD 73 F7       JSR    $5B7F
 730B: 86 21          LDA    #$09
-730D: 97 A0          STA    $28
+730D: 97 A0          STA    event_sub_state_28
 730F: 86 20          LDA    #$02
-7311: 97 A8          STA    $2A
+7311: 97 A8          STA    event_sub_state_2a
 7313: 39             RTS
 
 7314: 86 2B          LDA    #$09
@@ -6581,7 +6597,7 @@ l_50c1:
 7393: 96 C7          LDA    $E5
 7395: 26 8C          BNE    $73A5
 7397: BD 79 6D       JSR    $5145
-739A: A6 4C          LDA    ,U
+739A: A6 4C          LDA    ,U		; [video_address]
 739C: 81 1A          CMPA   #$32
 739E: 27 89          BEQ    $73A1
 73A0: 39             RTS
@@ -7556,8 +7572,9 @@ l_50c1:
 7BC5: 96 FC          LDA    $7E
 7BC7: C6 2B          LDB    #$03
 7BC9: BD 2E 8E       JSR    $A606
+; select next demo
 7BCC: A6 AE          LDA    A,X
-7BCE: 97 E1          STA    $69
+7BCE: 97 E1          STA    current_event_69
 7BD0: 86 23          LDA    #$01
 7BD2: 97 8D          STA    $0F
 7BD4: 7F 11 EE       CLR    $336C
@@ -7597,7 +7614,7 @@ l_50c1:
 7C15: 97 A0          STA    $22
 7C17: 0F 0C          CLR    $24
 7C19: 0F AE          CLR    $26
-7C1B: 0F 02          CLR    $2A
+7C1B: 0F 02          CLR    event_sub_state_2a
 7C1D: 0F A3          CLR    $2B
 7C1F: 39             RTS
 
@@ -7606,8 +7623,8 @@ l_50c1:
 7C24: 0F 00          CLR    $22
 7C26: 0F A6          CLR    $24
 7C28: 0F 0E          CLR    $26
-7C2A: 0F A0          CLR    $28
-7C2C: 0F 02          CLR    $2A
+7C2A: 0F A0          CLR    event_sub_state_28
+7C2C: 0F 02          CLR    event_sub_state_2a
 7C2E: 0F A4          CLR    $2C
 7C30: 39             RTS
 
@@ -8009,7 +8026,7 @@ l_50c1:
 7F6B: 3D             MUL
 7F6C: 30 A3          LEAX   D,X
 7F6E: CE 5F B9       LDU    #$D79B
-7F71: 96 EB          LDA    $69
+7F71: 96 EB          LDA    current_event_69
 7F73: 1F AB          TFR    A,B
 7F75: 48             ASLA
 7F76: EE 44          LDU    A,U
@@ -8022,7 +8039,7 @@ l_50c1:
 7F83: 33 E9          LEAU   D,U
 7F85: 8E B2 E2       LDX    #$3060
 7F88: 4F             CLRA
-7F89: D6 E1          LDB    $69
+7F89: D6 E1          LDB    current_event_69
 7F8B: C1 2B          CMPB   #$03
 7F8D: 26 8A          BNE    $7F91
 7F8F: A6 E2          LDA    ,U+
@@ -8047,7 +8064,7 @@ l_50c1:
 7FAE: 3D             MUL
 7FAF: 30 A9          LEAX   D,X
 7FB1: CE 54 55       LDU    #$D6D7
-7FB4: 96 4B          LDA    $69
+7FB4: 96 4B          LDA    current_event_69
 7FB6: E6 44          LDB    A,U
 7FB8: 30 AD          LEAX   B,X
 7FBA: CE B8 48       LDU    #$3060
@@ -8069,7 +8086,7 @@ l_50c1:
 7FDA: 31 2E          LEAY   A,Y
 7FDC: 7E A1 C3       JMP    $894B
 
-8000: 96 4B          LDA    $69
+8000: 96 4B          LDA    current_event_69
 8002: 81 82          CMPA   #$00
 8004: 26 31          BNE    $8019
 8006: 8E B0 48       LDX    #$3260
@@ -8082,7 +8099,7 @@ l_50c1:
 8017: 8D 12          BSR    $8053
 8019: 39             RTS
 
-801A: 96 E1          LDA    $69
+801A: 96 E1          LDA    current_event_69
 801C: 81 28          CMPA   #$00
 801E: 26 BA          BNE    $8052
 8020: 8E 10 E2       LDX    #$3260
@@ -8204,7 +8221,7 @@ l_50c1:
 8116: BD CC B2       JSR    queue_event_4e9a
 8119: 39             RTS
 
-811A: 96 E1          LDA    $69
+811A: 96 E1          LDA    current_event_69
 811C: 81 2A          CMPA   #$02
 811E: 26 94          BNE    $813C
 8120: 8E 10 E2       LDX    #$3260
@@ -8220,7 +8237,7 @@ l_50c1:
 8139: BD F7 47       JSR    $7FCF
 813C: 39             RTS
 
-813D: 96 E1          LDA    $69
+813D: 96 E1          LDA    current_event_69
 813F: 81 20          CMPA   #$02
 8141: 26 CB          BNE    $818C
 8143: 8E 10 42       LDX    #$3260
@@ -8439,12 +8456,12 @@ l_50c1:
 8308: 81 38          CMPA   #$10
 830A: 27 AE          BEQ    $8332
 830C: CE F0 6E       LDU    #$D8E6
-830F: 96 4B          LDA    $69
+830F: 96 4B          LDA    current_event_69
 8311: C6 8E          LDB    #$0C
 8313: 3D             MUL
 8314: A6 E9          LDA    D,U
 8316: 80 8A          SUBA   #$08
-8318: D6 41          LDB    $69
+8318: D6 41          LDB    current_event_69
 831A: C1 8E          CMPB   #$06
 831C: 27 3F          BEQ    $8335
 831E: C1 8A          CMPB   #$02
@@ -9360,7 +9377,7 @@ l_50c1:
 8A69: DD AA          STD    $22
 8A6B: DD 0C          STD    $24
 8A6D: DD AE          STD    $26
-8A6F: DD 0A          STD    $28
+8A6F: DD 0A          STD    event_sub_state_28
 8A71: 39             RTS
 
 8A72: 4F             CLRA
@@ -9395,10 +9412,12 @@ l_50c1:
 
 8AAE: 39             RTS
 
-8AAF: 96 0A          LDA    $28
+skeet_shooting_8aaf:
+8AAF: 96 0A          LDA    event_sub_state_28
 8AB1: 48             ASLA
 8AB2: 8E 6E C8       LDX   #table_ecea
 8AB5: 6E 14          JMP    [A,X]        ; [jump_table]
+
 8AB7: 8E 19 E8       LDX    #$31C0
 8ABA: CC E8 A6       LDD    #$608E
 8ABD: ED 89          STD    $1,X
@@ -9418,7 +9437,7 @@ l_50c1:
 8ADB: 86 0F          LDA    #$27
 8ADD: BD C6 3B       JSR    $4EB3
 8AE0: BD B2 F4       JSR    $9076
-8AE3: 0C 0A          INC    $28
+8AE3: 0C 0A          INC    event_sub_state_28
 8AE5: 86 7D          LDA    #$FF
 8AE7: D6 40          LDB    current_level_68
 8AE9: 5A             DECB
@@ -9488,7 +9507,7 @@ l_50c1:
 8B65: BD CD 08       JSR    $4F8A
 8B68: A6 EC          LDA    ,U
 8B6A: 27 84          BEQ    $8B78
-8B6C: 0C 00          INC    $28
+8B6C: 0C 00          INC    event_sub_state_28
 8B6E: CC 89 27       LDD    #$0105
 8B71: 0D 82          TST    game_playing_00
 8B73: 26 23          BNE    $8B76
@@ -9950,7 +9969,7 @@ l_50c1:
 8F53: BA 13 42       ORA    $3160
 8F56: 9A 78          ORA    $FA
 8F58: 26 2A          BNE    $8F5C
-8F5A: 0C A0          INC    $28
+8F5A: 0C A0          INC    event_sub_state_28
 8F5C: 0D FF          TST    $D7
 8F5E: 26 8E          BNE    $8F66
 8F60: 96 E6          LDA    $C4
@@ -10189,7 +10208,7 @@ l_50c1:
 9144: CC 62 02       LDD    #$4080
 9147: ED 29          STD    $1,X
 9149: 10 8E 54 A8    LDY    #$DC80
-914D: 96 A0          LDA    $28
+914D: 96 A0          LDA    event_sub_state_28
 914F: 81 21          CMPA   #$03
 9151: 27 8D          BEQ    $9162
 9153: 0D C7          TST    $E5
@@ -11248,10 +11267,12 @@ l_50c1:
 9A0F: 0F 00          CLR    $22
 9A11: 39             RTS
 
-9A12: 96 AA          LDA    $28
+archery_9a12:
+9A12: 96 AA          LDA    event_sub_state_28
 9A14: 48             ASLA
 9A15: 8E 6D 3A       LDX   #table_efb8
 9A18: 6E BE          JMP    [A,X]        ; [jump_table]
+
 9A1A: BD 27 87       JSR    $AFAF
 9A1D: 8E B9 48       LDX    #$31C0
 9A20: 86 62          LDA    #$40
@@ -11297,7 +11318,7 @@ l_50c1:
 9A79: 30 00 B3       LEAX   $3B,X
 9A7C: 8E D8 E8       LDX    #$F060
 9A7F: 9F 9C          STX    $BE
-9A81: 0C AA          INC    $28
+9A81: 0C AA          INC    event_sub_state_28
 9A83: 96 2D          LDA    $0F
 9A85: 84 8D          ANDA   #$0F
 9A87: 26 29          BNE    $9A8A
@@ -11335,7 +11356,7 @@ l_50c1:
 9AC5: D7 F0          STB    chrono_second_72
 9AC7: 84 2D          ANDA   #$05
 9AC9: 27 91          BEQ    $9AE4
-9ACB: 0C 00          INC    $28
+9ACB: 0C 00          INC    event_sub_state_28
 9ACD: 86 87          LDA    #$0F
 9ACF: 97 0B          STA    $29
 9AD1: 0D E8          TST    $6A
@@ -11637,7 +11658,7 @@ l_50c1:
 9D54: 86 88          LDA    #$AA
 9D56: 97 AD          STA    $2F
 9D58: 20 2A          BRA    $9D5C
-9D5A: 0C A0          INC    $28
+9D5A: 0C A0          INC    event_sub_state_28
 9D5C: 8E 0B CB       LDX    #$2343
 9D5F: CC 26 A2       LDD    #$0480
 9D62: 97 D6          STA    $54
@@ -12040,7 +12061,7 @@ A08A: 8E B8 00       LDX    #$3028
 A08D: 7E 1E 63       JMP    $96EB
 A090: 39             RTS
 
-A091: 96 AA          LDA    $28
+A091: 96 AA          LDA    event_sub_state_28
 A093: 8E D2 B4       LDX   #table_f096
 A096: 48             ASLA
 A097: AD BE          JSR    [A,X]        ; [jump_table]
@@ -12067,7 +12088,7 @@ A0C3: 5A             DECB
 A0C4: 26 DB          BNE    $A0BF
 A0C6: 4F             CLRA
 A0C7: BD 66 B2       JSR    queue_event_4e9a
-A0CA: 0C A0          INC    $28
+A0CA: 0C A0          INC    event_sub_state_28
 A0CC: 39             RTS
 
 A0CD: 8E A8 88       LDX    #$2000
@@ -12091,7 +12112,7 @@ A0EA: 8E AC A8       LDX    #$2480
 A0ED: CE 6F 20       LDU    #$E7A8
 A0F0: 86 02          LDA    #$20
 A0F2: 97 CB          STA    $49
-A0F4: D6 08          LDB    $2A
+A0F4: D6 08          LDB    event_sub_state_2a
 A0F6: 86 87          LDA    #$05
 A0F8: 97 60          STA    $48
 A0FA: A6 48          LDA    ,U+
@@ -12111,7 +12132,7 @@ A11B: A6 E8          LDA    ,U+
 A11D: 97 D8          STA    $50
 A11F: 86 02          LDA    #$20
 A121: 97 CA          STA    $48
-A123: 96 08          LDA    $2A
+A123: 96 08          LDA    event_sub_state_2a
 A125: BD 23 5D       JSR    $A1DF
 A128: 30 A0 A8       LEAX   $20,X
 A12B: 33 E0 C8       LEAU   -$20,U
@@ -12197,7 +12218,7 @@ A1CF: 8D 2C          BSR    $A1DF
 A1D1: 30 0A BC       LEAX   $3E,X
 A1D4: 0A 6B          DEC    $49
 A1D6: 26 70          BNE    $A1CA
-A1D8: 0C 00          INC    $28
+A1D8: 0C 00          INC    event_sub_state_28
 A1DA: 39             RTS
 
 A1DB: 97 60          STA    $48
@@ -12210,7 +12231,7 @@ A1E9: 26 7C          BNE    $A1DF
 A1EB: 39             RTS
 
 A1EC: CC 68 48       LDD    #$40C0
-A1EF: DD 08          STD    $2A
+A1EF: DD 08          STD    event_sub_state_2a
 A1F1: 8E A3 A1       LDX    #$2123
 A1F4: CE D2 1C       LDU    #$F09E
 A1F7: C6 20          LDB    #$08
@@ -12260,7 +12281,7 @@ A25A: 26 78          BNE    $A24C
 A25C: 39             RTS
 
 A25D: CC C8 48       LDD    #$40C0		; original  LDD    #$20A0
-A260: DD 08          STD    $2A
+A260: DD 08          STD    event_sub_state_2a
 A262: 8E A2 81       LDX    #$20A3
 A265: CE 73 86       LDU    #$F104
 A268: 86 24          LDA    #$0C
@@ -12287,7 +12308,7 @@ A298: A6 E8          LDA    ,U+
 A29A: 97 D8          STA    $50
 A29C: 86 08          LDA    #$20
 A29E: 97 C0          STA    $48
-A2A0: 96 08          LDA    $2A
+A2A0: 96 08          LDA    event_sub_state_2a
 A2A2: BD 23 FD       JSR    $A1DF
 A2A5: 30 0A A2       LEAX   $20,X
 A2A8: 33 E0 68       LEAU   -$20,U
@@ -12317,7 +12338,7 @@ A2E0: A6 E2          LDA    ,U+
 A2E2: 97 D2          STA    $50
 A2E4: 86 02          LDA    #$20
 A2E6: 97 CA          STA    $48
-A2E8: 96 02          LDA    $2A
+A2E8: 96 02          LDA    event_sub_state_2a
 A2EA: BD 29 F7       JSR    $A1DF
 A2ED: 30 00 A8       LEAX   $20,X
 A2F0: 33 EA 62       LEAU   -$20,U
@@ -12356,7 +12377,7 @@ A33D: CE BC D0       LDU    #$3458
 A340: BD 87 D7       JSR    $A555
 A343: 6D 7D          TST    -$1,U
 A345: 2A 85          BPL    $A34E
-A347: 0C 00          INC    $28
+A347: 0C 00          INC    event_sub_state_28
 A349: CC 8A 10       LDD    #$0298
 A34C: DD 58          STD    $70
 A34E: 96 87          LDA    $0F
@@ -12379,8 +12400,8 @@ A370: 26 2E          BNE    $A37E
 A372: 0A F2          DEC    $70
 A374: 26 2A          BNE    $A37E
 A376: 0C A0          INC    $22
-A378: 0F 00          CLR    $28
-A37A: 0F A2          CLR    $2A
+A378: 0F 00          CLR    event_sub_state_28
+A37A: 0F A2          CLR    event_sub_state_2a
 A37C: 0F 03          CLR    $2B
 A37E: 39             RTS
 
@@ -12813,11 +12834,13 @@ A6D0: 39             RTS
 A6D1: 86 7D          LDA    #$FF
 A6D3: 39             RTS
 
-A6D4: 96 0A          LDA    $28
+pole_vault_a6d4:
+A6D4: 96 0A          LDA    event_sub_state_28
 A6D6: 48             ASLA
 A6D7: 8E DA D7       LDX   #table_f2ff
 A6DA: 6E 1E          JMP    [A,X]        ; [jump_table]
-A6DC: 96 02          LDA    $2A
+
+A6DC: 96 02          LDA    event_sub_state_2a
 A6DE: 48             ASLA
 A6DF: 8E D1 2F       LDX   #table_f30d
 A6E2: 6E 14          JMP    [A,X]        ; [jump_table]
@@ -13003,7 +13026,7 @@ A875: 8E B0 F2       LDX    #$3270
 A878: 6F AC          CLR    ,X
 A87A: 6F 89          CLR    $1,X
 A87C: BD EC ED       JSR    $C465
-A87F: 0C 08          INC    $2A
+A87F: 0C 08          INC    event_sub_state_2a
 A881: 39             RTS
 
 A882: BD CD 83       JSR    $4FA1
@@ -13022,9 +13045,9 @@ A8A1: 86 BA          LDA    #$38
 A8A3: BD 6C 91       JSR    $4EB3
 A8A6: 39             RTS
 
-A8A7: 0F 02          CLR    $2A
+A8A7: 0F 02          CLR    event_sub_state_2a
 A8A9: 86 8D          LDA    #$05
-A8AB: 97 00          STA    $28
+A8AB: 97 00          STA    event_sub_state_28
 A8AD: 39             RTS
 
 A8AE: 8E B8 82       LDX    #$30A0
@@ -13042,8 +13065,8 @@ A8C7: 0F E3          CLR    $CB
 A8C9: 7F BA A8       CLR    $3220
 A8CC: CC 2B 89       LDD    #$0301
 A8CF: FD 16 72       STD    $3450
-A8D2: 0F A8          CLR    $2A
-A8D4: 0C 0A          INC    $28
+A8D2: 0F A8          CLR    event_sub_state_2a
+A8D4: 0C 0A          INC    event_sub_state_28
 A8D6: 39             RTS
 
 A8D7: BD 7F B7       JSR    $579F
@@ -13090,10 +13113,10 @@ A93E: BD D3 AD       JSR    $5B8F
 A941: BD 31 E2       JSR    $B360
 A944: 4D             TSTA
 A945: 27 8B          BEQ    $A950
-A947: 0C 00          INC    $28
-A949: 0C A0          INC    $28
-A94B: 0C 00          INC    $28
-A94D: 0C A0          INC    $28
+A947: 0C 00          INC    event_sub_state_28
+A949: 0C A0          INC    event_sub_state_28
+A94B: 0C 00          INC    event_sub_state_28
+A94D: 0C A0          INC    event_sub_state_28
 A94F: 39             RTS
 
 A950: 7D 10 E2       TST    $3260
@@ -13101,7 +13124,7 @@ A953: 27 17          BEQ    $A98A
 A955: BD CD 23       JSR    $4FA1
 A958: 84 2A          ANDA   #$02
 A95A: 27 A6          BEQ    $A98A
-A95C: 0C 00          INC    $28
+A95C: 0C 00          INC    event_sub_state_28
 A95E: 86 89          LDA    #$01
 A960: B7 16 A7       STA    $3425
 A963: 96 92          LDA    $B0
@@ -13124,7 +13147,7 @@ A985: B7 B6 A9       STA    $342B
 A988: 0F 27          CLR    $0F
 A98A: 39             RTS
 
-A98B: 96 02          LDA    $2A
+A98B: 96 02          LDA    event_sub_state_2a
 A98D: 48             ASLA
 A98E: 8E 7B 33       LDX   #table_f311
 A991: 6E 14          JMP    [A,X]        ; [jump_table]
@@ -13137,10 +13160,10 @@ A99E: BD D0 99       JSR    $58BB
 A9A1: BD 31 E2       JSR    $B360
 A9A4: 4D             TSTA
 A9A5: 27 8B          BEQ    $A9B0
-A9A7: 0F 02          CLR    $2A
-A9A9: 0C A0          INC    $28
-A9AB: 0C 00          INC    $28
-A9AD: 0C A0          INC    $28
+A9A7: 0F 02          CLR    event_sub_state_2a
+A9A9: 0C A0          INC    event_sub_state_28
+A9AB: 0C 00          INC    event_sub_state_28
+A9AD: 0C A0          INC    event_sub_state_28
 A9AF: 39             RTS
 
 A9B0: B6 16 A9       LDA    $342B
@@ -13159,7 +13182,7 @@ A9CF: 7C 16 07       INC    $3425
 A9D2: B6 B6 06       LDA    $3424
 A9D5: B1 B6 A7       CMPA   $3425
 A9D8: 24 2A          BCC    $A9DC
-A9DA: 0C A2          INC    $2A
+A9DA: 0C A2          INC    event_sub_state_2a
 A9DC: 39             RTS
 
 A9DD: 8E B8 28       LDX    #$30A0
@@ -13236,7 +13259,7 @@ AA80: 86 3C          LDA    #$1E
 AA82: B7 B6 06       STA    $3424
 AA85: 86 85          LDA    #$07
 AA87: BD 66 9B       JSR    $4EB3
-AA8A: 0C A2          INC    $2A
+AA8A: 0C A2          INC    event_sub_state_2a
 AA8C: 0F 27          CLR    $0F
 AA8E: 39             RTS
 
@@ -13244,8 +13267,8 @@ AA8F: 86 39          LDA    #$1B
 AA91: BD CC 31       JSR    $4EB3
 AA94: 86 3E          LDA    #$1C
 AA96: BD CC 9B       JSR    $4EB3
-AA99: 0F A2          CLR    $2A
-AA9B: 0C 00          INC    $28
+AA99: 0F A2          CLR    event_sub_state_2a
+AA9B: 0C 00          INC    event_sub_state_28
 AA9D: 39             RTS
 
 AA9E: 8E B8 92       LDX    #$30B0
@@ -13550,8 +13573,8 @@ AD5D: 39             RTS
 
 AD5E: 0D 43          TST    $CB
 AD60: 27 20          BEQ    $AD64
-AD62: 0C AA          INC    $28
-AD64: 0C 0A          INC    $28
+AD62: 0C AA          INC    event_sub_state_28
+AD64: 0C 0A          INC    event_sub_state_28
 AD66: 39             RTS
 
 AD67: 96 E1          LDA    $C9
@@ -13572,8 +13595,8 @@ AD8A: BD DC 4E       JSR    $5466
 AD8D: 96 40          LDA    $C8
 AD8F: 84 DF          ANDA   #$FD
 AD91: 97 4A          STA    $C8
-AD93: 0C 0A          INC    $28
-AD95: 0C AA          INC    $28
+AD93: 0C 0A          INC    event_sub_state_28
+AD95: 0C AA          INC    event_sub_state_28
 AD97: 39             RTS
 
 AD98: 86 29          LDA    #$01
@@ -13664,7 +13687,7 @@ AE41: BD CC 31       JSR    $4EB3
 AE44: 86 DD          LDA    #$FF
 AE46: BD CC 9B       JSR    $4EB3
 AE49: 7F BC DE       CLR    $3456
-AE4C: 0C 00          INC    $28
+AE4C: 0C 00          INC    event_sub_state_28
 AE4E: 39             RTS
 
 AE4F: 96 EA          LDA    $C8
@@ -13726,8 +13749,8 @@ AECE: 7F BC C4       CLR    $34E6
 AED1: 7F B6 65       CLR    $34E7
 AED4: 86 23          LDA    #$01
 AED6: B7 B0 48       STA    $3260
-AED9: 0F A0          CLR    $28
-AEDB: 0F 02          CLR    $2A
+AED9: 0F A0          CLR    event_sub_state_28
+AEDB: 0F 02          CLR    event_sub_state_2a
 AEDD: 0C AE          INC    $26
 AEDF: 39             RTS
 
@@ -13764,7 +13787,7 @@ AF1E: A7 4C          STA    ,U
 AF20: 0A 3B          DEC    $19
 AF22: 39             RTS
 
-AF23: 96 4B          LDA    $69
+AF23: 96 4B          LDA    current_event_69
 AF25: 81 86          CMPA   #$04
 AF27: 27 2D          BEQ    $AF2E
 AF29: BD DA 07       JSR    $528F
@@ -13776,7 +13799,7 @@ AF35: 3D             MUL
 AF36: 30 09          LEAX   D,X
 AF38: 10 8E B0 88    LDY    #$3800
 AF3C: 86 08          LDA    #$20
-AF3E: D6 E1          LDB    $69
+AF3E: D6 E1          LDB    current_event_69
 AF40: 3D             MUL
 AF41: 31 29          LEAY   D,Y
 AF43: 10 9F 73       STY    $51
@@ -14345,14 +14368,18 @@ B3D0: CB 61          ADDB   #$43
 B3D2: FD B6 0B       STD    $3429
 B3D5: 10 8E 71 AB    LDY    #$F383
 B3D9: 7E 38 1E       JMP    $B096
-B3DC: 96 02          LDA    $2A
+
+weight_lifting_b3dc:
+B3DC: 96 02          LDA    event_sub_state_2a
 B3DE: 48             ASLA
 B3DF: 8E D7 11       LDX   #table_f533
 B3E2: 6E 14          JMP    [A,X]        ; [jump_table]
+
 B3E4: 96 0E          LDA    $2C
 B3E6: 8E 77 17       LDX   #table_f53f
 B3E9: 48             ASLA
 B3EA: 6E 1E          JMP    [A,X]        ; [jump_table]
+
 B3EC: CC 29 88       LDD    #$0100
 B3EF: BD 6C B8       JSR    queue_event_4e9a
 B3F2: CC 80 2F       LDD    #$020D
@@ -14751,7 +14778,7 @@ B77C: 27 21          BEQ    $B787
 B77E: 86 84          LDA    #$0C
 B780: B7 16 C0       STA    $3442
 B783: 0F 0E          CLR    $2C
-B785: 0C A8          INC    $2A
+B785: 0C A8          INC    event_sub_state_2a
 B787: 39             RTS
 
 B788: 8E 18 28       LDX    #$30A0
@@ -15056,7 +15083,7 @@ BA3D: 20 89          BRA    $BA40
 BA3F: 39             RTS
 
 BA40: 86 20          LDA    #$02
-BA42: 97 A8          STA    $2A
+BA42: 97 A8          STA    event_sub_state_2a
 BA44: 39             RTS
 
 BA45: 0A AF          DEC    $2D
@@ -15095,14 +15122,14 @@ BA86: BD CC 85       JSR    queue_sound_event_4ead
 BA89: 0F A4          CLR    $2C
 BA8B: 0D E3          TST    $CB
 BA8D: 27 8D          BEQ    $BA94
-BA8F: 0C 08          INC    $2A
-BA91: 0C A8          INC    $2A
+BA8F: 0C 08          INC    event_sub_state_2a
+BA91: 0C A8          INC    event_sub_state_2a
 BA93: 39             RTS
 
 BA94: 86 28          LDA    #$0A
 BA96: B7 B6 49       STA    $3461
 BA99: 86 8D          LDA    #$05
-BA9B: 97 02          STA    $2A
+BA9B: 97 02          STA    event_sub_state_2a
 BA9D: 39             RTS
 
 BA9E: BD 37 80       JSR    $BFA2
@@ -15134,8 +15161,8 @@ BAD7: CE 1C 04       LDU    #$342C
 BADA: 86 8D          LDA    #$05
 BADC: 97 60          STA    $48
 BADE: BD D8 BD       JSR    $509F
-BAE1: 0C A8          INC    $2A
-BAE3: 0C 08          INC    $2A
+BAE1: 0C A8          INC    event_sub_state_2a
+BAE3: 0C 08          INC    event_sub_state_2a
 BAE5: 39             RTS
 
 BAE6: BD 2C DD       JSR    $AEF5
@@ -15144,7 +15171,7 @@ BAEC: 0D 28          TST    game_playing_00
 BAEE: 27 8E          BEQ    $BAF6
 BAF0: 8E 11 02       LDX    #$3380
 BAF3: BD 71 96       JSR    $53B4
-BAF6: 0C A8          INC    $2A
+BAF6: 0C A8          INC    event_sub_state_2a
 BAF8: 39             RTS
 
 BAF9: 8E BD 80       LDX    #$3508
@@ -15162,8 +15189,8 @@ BB13: FD 16 05       STD    $3427
 BB16: 86 90          LDA    #$12
 BB18: FD 1C AC       STD    $3424
 BB1B: 0F 06          CLR    $2E
-BB1D: 0F A2          CLR    $2A
-BB1F: 0F 0A          CLR    $28
+BB1D: 0F A2          CLR    event_sub_state_2a
+BB1F: 0F 0A          CLR    event_sub_state_28
 BB21: 0C A4          INC    $26
 BB23: 39             RTS
 
@@ -15727,7 +15754,7 @@ C023: BD 6C B8       JSR    queue_event_4e9a
 C026: 39             RTS
 
 C027: 96 27          LDA    $0F
-C029: D6 E1          LDB    $69
+C029: D6 E1          LDB    current_event_69
 C02B: 10 8E D0 4A    LDY    #$F8C2
 C02F: E6 87          LDB    B,Y
 C031: BD 24 84       JSR    $A606
@@ -15889,7 +15916,7 @@ C14A: D3 D8          ADDD   $50
 C14C: 39             RTS
 
 C14D: 8E 70 5D       LDX   #table_f8d5
-C150: 96 08          LDA    $2A
+C150: 96 08          LDA    event_sub_state_2a
 C152: 48             ASLA
 C153: 6E B4          JMP    [A,X]        ; [jump_table]
 
@@ -15907,7 +15934,7 @@ C16A: 30 89          LEAX   $1,X
 C16C: BD 7A 2B       JSR    $52A3
 C16F: 96 4E          LDA    $6C
 C171: 26 8C          BNE    $C181
-C173: 0C 0A          INC    $28
+C173: 0C 0A          INC    event_sub_state_28
 C175: 39             RTS
 
 C176: 30 84          LEAX   $6,X
@@ -15930,7 +15957,7 @@ C196: 26 73          BNE    $C189
 C198: 96 60          LDA    $48
 C19A: 81 8A          CMPA   #$02
 C19C: 25 FD          BCS    $C173
-C19E: 0C A2          INC    $2A
+C19E: 0C A2          INC    event_sub_state_2a
 C1A0: 39             RTS
 
 C1A1: 4F             CLRA
@@ -15948,7 +15975,7 @@ C1B7: 86 16          LDA    #$3E
 C1B9: BD C6 3B       JSR    $4EB3
 C1BC: 86 2A          LDA    #$02
 C1BE: 97 A3          STA    $2B
-C1C0: 0C 08          INC    $2A
+C1C0: 0C 08          INC    event_sub_state_2a
 C1C2: 39             RTS
 
 C1C3: 0A 09          DEC    $2B
@@ -15956,7 +15983,7 @@ C1C5: 26 79          BNE    $C1C2
 C1C7: CC 29 22       LDD    #$010A
 C1CA: BD C6 B2       JSR    queue_event_4e9a
 C1CD: 86 8A          LDA    #$02
-C1CF: D6 4B          LDB    $69
+C1CF: D6 4B          LDB    current_event_69
 C1D1: CB AC          ADDB   #$2E
 C1D3: BD 6C B8       JSR    queue_event_4e9a
 C1D6: CC 83 29       LDD    #$0101
@@ -16029,7 +16056,7 @@ C271: 7F B6 76       CLR    $34F4
 C274: BD A1 EF       JSR    $836D
 C277: 86 B8          LDA    #$90
 C279: 97 A3          STA    $2B
-C27B: 0C 02          INC    $2A
+C27B: 0C 02          INC    event_sub_state_2a
 C27D: 39             RTS
 
 C27E: 10 8E 11 42    LDY    #$3360
@@ -16062,8 +16089,8 @@ C2B7: 44             LSRA
 C2B8: 24 20          BCC    $C2C2
 C2BA: 0A A3          DEC    $2B
 C2BC: 26 2C          BNE    $C2C2
-C2BE: 0C A0          INC    $28
-C2C0: 0F 08          CLR    $2A
+C2BE: 0C A0          INC    event_sub_state_28
+C2C0: 0F 08          CLR    event_sub_state_2a
 C2C2: 39             RTS
 
 C2C3: 8E 11 F2       LDX    #$33D0
@@ -16108,10 +16135,10 @@ C315: 0A AB          DEC    $29
 C317: 26 25          BNE    $C326
 C319: 7F BC 78       CLR    $34F0
 C31C: CE D0 55       LDU   #table_f8dd
-C31F: 96 4B          LDA    $69
+C31F: 96 4B          LDA    current_event_69
 C321: 48             ASLA
 C322: AD 54          JSR    [A,U]        ; [jump_table]
-C324: 0C 0A          INC    $28
+C324: 0C 0A          INC    event_sub_state_28
 C326: 39             RTS
 
 C327: 96 E3          LDA    $CB
@@ -16124,7 +16151,7 @@ C330: 26 DB          BNE    $C32B
 C332: BD D0 66       JSR    $5244
 C335: 8E B1 02       LDX    #$3380
 C338: 96 42          LDA    $6A
-C33A: D6 E1          LDB    $69
+C33A: D6 E1          LDB    current_event_69
 C33C: C1 2A          CMPB   #$02
 C33E: 26 8A          BNE    $C342
 C340: 96 4D          LDA    $6F
@@ -16139,7 +16166,7 @@ C34E: A6 0C          LDA    ,X
 C350: 81 34          CMPA   #$16
 C352: 27 97          BEQ    $C369
 C354: CE DA 69       LDU   #table_f8eb
-C357: 96 41          LDA    $69
+C357: 96 41          LDA    current_event_69
 C359: 48             ASLA
 C35A: 6E 5E          JMP    [A,U]        ; [jump_table]
 C35C: 86 8A          LDA    #$A2
@@ -16147,7 +16174,7 @@ C35E: BD C6 91       JSR    $4EB3
 C361: 86 06          LDA    #$84
 C363: BD 6C 91       JSR    $4EB3
 C366: 7E 46 4D       JMP    $C465
-C369: 96 E1          LDA    $69
+C369: 96 E1          LDA    current_event_69
 C36B: 81 2A          CMPA   #$02
 C36D: 27 87          BEQ    $C37E
 C36F: 86 A0          LDA    #$82
@@ -16272,7 +16299,7 @@ C470: 81 B4          CMPA   #$96
 C472: 26 80          BNE    $C476
 C474: 86 82          LDA    #$A0
 C476: BD CC 9B       JSR    $4EB3
-C479: 96 E1          LDA    $69
+C479: 96 E1          LDA    current_event_69
 C47B: 81 2E          CMPA   #$06
 C47D: 27 9F          BEQ    $C496
 C47F: A6 26          LDA    $4,X
@@ -16315,7 +16342,7 @@ C4CA: CE 77 C8       LDU    #$FFE0
 C4CD: C0 86          SUBB   #$0E
 C4CF: A6 E7          LDA    B,U
 C4D1: 20 6F          BRA    $C4C0
-C4D3: 96 08          LDA    $2A
+C4D3: 96 08          LDA    event_sub_state_2a
 C4D5: 48             ASLA
 C4D6: CE 7B 2B       LDU   #table_f903
 C4D9: 6E 5E          JMP    [A,U]        ; [jump_table]
@@ -16330,7 +16357,7 @@ C4E9: C3 88 89       ADDD   #$0001
 C4EC: 83 28 8F       SUBD   #$0007
 C4EF: 27 27          BEQ    $C4F6
 C4F1: 24 7B          BCC    $C4EC
-C4F3: 0C 0A          INC    $28
+C4F3: 0C 0A          INC    event_sub_state_28
 C4F5: 39             RTS
 
 C4F6: 8E B7 28       LDX    #$3500
@@ -16341,14 +16368,14 @@ C4FF: 30 AA 02       LEAX   $20,X
 C502: 5A             DECB
 C503: 26 D4          BNE    $C4FB
 C505: CC 82 82       LDD    #$0000
-C508: DD 02          STD    $2A
-C50A: 0C A0          INC    $28
+C508: DD 02          STD    event_sub_state_2a
+C50A: 0C A0          INC    event_sub_state_28
 C50C: 39             RTS
 
 C50D: BD 43 25       JSR    $CBAD
 C510: D6 68          LDB    $4A
 C512: F7 B6 02       STB    $3420
-C515: 0C A8          INC    $2A
+C515: 0C A8          INC    event_sub_state_2a
 C517: 0F 03          CLR    $2B
 C519: BD 27 27       JSR    $AFAF
 C51C: BD E3 15       JSR    $CB9D
@@ -16370,8 +16397,8 @@ C540: CE DB E3       LDU    #$F961
 C543: 96 6A          LDA    $48
 C545: 26 8A          BNE    $C54F
 C547: CC 28 28       LDD    #$0000
-C54A: DD A2          STD    $2A
-C54C: 0C 00          INC    $28
+C54A: DD A2          STD    event_sub_state_2a
+C54C: 0C 00          INC    event_sub_state_28
 C54E: 39             RTS
 
 C54F: 4A             DECA
@@ -16411,7 +16438,7 @@ C58F: 84 21          ANDA   #$03
 C591: 48             ASLA
 C592: 0C A9          INC    $2B
 C594: 6E F4          JMP    [A,U]        ; [jump_table]
-C596: 0C A8          INC    $2A
+C596: 0C A8          INC    event_sub_state_2a
 C598: 0F 03          CLR    $2B
 C59A: 8E 73 5F       LDX    #$FB77
 C59D: BD 44 B9       JSR    $CC31
@@ -16448,12 +16475,12 @@ C5E1: F6 B6 A2       LDB    $3420
 C5E4: 26 2D          BNE    $C5F5
 C5E6: B6 B6 18       LDA    $3430
 C5E9: 97 A4          STA    $2C
-C5EB: 0C 02          INC    $2A
+C5EB: 0C 02          INC    event_sub_state_2a
 C5ED: CE 71 9D       LDU   #table_f915
 C5F0: 96 0E          LDA    $2C
 C5F2: 48             ASLA
 C5F3: 6E F4          JMP    [A,U]        ; [jump_table]
-C5F5: 0C A8          INC    $2A
+C5F5: 0C A8          INC    event_sub_state_2a
 C5F7: 97 04          STA    $2C
 C5F9: 7E 4E 60       JMP    $C6E8
 C5FC: BD EE 9F       JSR    $C617
@@ -16561,8 +16588,8 @@ C6DC: B7 1C A6       STA    $342E
 C6DF: 39             RTS
 
 C6E0: CC 22 82       LDD    #$0000
-C6E3: DD 08          STD    $2A
-C6E5: 0C AA          INC    $28
+C6E3: DD 08          STD    event_sub_state_2a
+C6E5: 0C AA          INC    event_sub_state_28
 C6E7: 39             RTS
 
 C6E8: B6 1C A8       LDA    $3420
@@ -16610,11 +16637,11 @@ C74B: 7A 1C 08       DEC    $3420
 C74E: 2B 80          BMI    $C758
 C750: DD 0E          STD    $2C
 C752: CC 80 22       LDD    #$0200
-C755: DD A8          STD    $2A
+C755: DD A8          STD    event_sub_state_2a
 C757: 39             RTS
 
 C758: DD 04          STD    $2C
-C75A: 0C A2          INC    $2A
+C75A: 0C A2          INC    event_sub_state_2a
 C75C: 86 68          LDA    #$40
 C75E: 97 A3          STA    $2B
 C760: 39             RTS
@@ -16659,7 +16686,7 @@ C7B2: 39             RTS
 
 C7B3: CC 22 22       LDD    #$0000
 C7B6: DD AE          STD    $2C
-C7B8: 0C 02          INC    $2A
+C7B8: 0C 02          INC    event_sub_state_2a
 C7BA: 86 C8          LDA    #$40
 C7BC: 97 03          STA    $2B
 C7BE: 39             RTS
@@ -16774,7 +16801,7 @@ C8A5: 10 26 7D 19    LBNE   $C7DA
 C8A9: B6 BC AC       LDA    $3424
 C8AC: 10 26 77 A2    LBNE   $C7DA
 C8B0: 86 26          LDA    #$04
-C8B2: 97 A8          STA    $2A
+C8B2: 97 A8          STA    event_sub_state_2a
 C8B4: CC 22 82       LDD    #$0000
 C8B7: DD 04          STD    $2C
 C8B9: DD A6          STD    $2E
@@ -16827,7 +16854,7 @@ C919: CC 88 88       LDD    #$0000
 C91C: DD 04          STD    $2C
 C91E: DD A6          STD    $2E
 C920: 86 26          LDA    #$04
-C922: 97 A8          STA    $2A
+C922: 97 A8          STA    event_sub_state_2a
 C924: 39             RTS
 
 C925: CE B2 42       LDU    #$30C0
@@ -16873,7 +16900,7 @@ C980: 97 0C          STA    $2E
 C982: 39             RTS
 
 C983: CC 26 62       LDD    #$0440
-C986: DD A8          STD    $2A
+C986: DD A8          STD    event_sub_state_2a
 C988: 4F             CLRA
 C989: DD A4          STD    $2C
 C98B: DD 06          STD    $2E
@@ -17017,7 +17044,7 @@ CAAC: 10 24 88 1F    LBCC   $CB47
 CAB0: 10 8E 7B 70    LDY    #$F9F2
 CAB4: 7E E9 C5       JMP    $CB47
 CAB7: CC 2C 68       LDD    #$0440
-CABA: DD A2          STD    $2A
+CABA: DD A2          STD    event_sub_state_2a
 CABC: CC 28 88       LDD    #$0000
 CABF: DD 0E          STD    $2C
 CAC1: DD AC          STD    $2E
@@ -17640,14 +17667,14 @@ table_d3a9:
 	dc.w	$48c1	; $d3b3
 	dc.w	$48c1	; $d3b5
 
-table_d3b7:
-	dc.w	$609c	; $d3b7
-	dc.w	$8aaf	; $d3b9
-	dc.w	$a6d4	; $d3bb
-	dc.w	$65b8	; $d3bd
-	dc.w	$b3dc	; $d3bf
-	dc.w	$9a12	; $d3c1
-	dc.w	$6bcc	; $d3c3
+event_table_d3b7:
+	dc.w	triple_jump_609c	; $d3b7
+	dc.w	skeet_shooting_8aaf	; $d3b9
+	dc.w	pole_vault_a6d4	; $d3bb
+	dc.w	free_style_65b8	; $d3bd
+	dc.w	weight_lifting_b3dc	; $d3bf
+	dc.w	archery_9a12	; $d3c1
+	dc.w	long_horse_6bcc	; $d3c3
 
 table_d3c5:
 	dc.w	$4a18	; $d3c5

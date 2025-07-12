@@ -32,7 +32,13 @@ def remove_code(pattern,lines,i):
 def subt(m):
     tn = m.group(1)
     rn = m.group(2)
-    return  f"lea\t{tn},a{rn}"
+    offset = tn.split("_")[-1]
+    rval = f"""
+\t.ifndef\tRELEASE
+\tmove.w\t#0x{offset},d{rn}
+\t.endif
+\tlea\t{tn},a{rn}"""
+    return rval
 
 equates = []
 
