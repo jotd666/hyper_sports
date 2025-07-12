@@ -308,6 +308,7 @@ reset_4000:
 417E: CE AC 27       LDU    #$2405
 4181: 86 94          LDA    #$16
 4183: 97 6A          STA    $48
+; loop to write "QUALIFY DIP SW"
 4185: A6 02          LDA    ,X+
 4187: 80 18          SUBA   #$30
 4189: B7 9C 88       STA    watchdog_1400

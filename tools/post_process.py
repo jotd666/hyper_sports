@@ -132,6 +132,12 @@ with open(source_dir / "conv.s") as f:
         elif "[$50bf" in line:
             # insert missing label
             lines[i+1] = "l_50c1:\n"+lines[i+1]
+        elif "[$41a4" in line:
+            # remove cpu dependent loop at start, replace by osd_wait
+            line = "" # = "\tmove.w\t#0x20,d0\n\tjbsr\tosd_wait\n"
+            lines[i+1] = ""
+            lines[i+2] = ""
+            lines[i+3] = ""
 
         elif "review stray daa" in line:
             line = """\tCLR_XC_FLAGS

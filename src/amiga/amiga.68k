@@ -224,6 +224,7 @@ start:
 		.global osd_read_inputs_1
 		.global osd_read_inputs_2
 		.global osd_read_system_inputs
+		.global osd_wait
 		
 		* read/write on memory
 		.ifndef	RELEASE
@@ -400,12 +401,10 @@ _user:
 	* set them even if reset by game afterwards
 	* avoiding ugly stripe bitplane effect at startup
 
-	lea	tiles_bitplanes+2,a0
-    move.l	background_ptr,d0
-	jbsr		set_static_bitplanes
+	jbsr		really_update_scroll
 	
 	bsr		set_bob_bitplanes
-
+	
 	move.w	#TOTAL_NB_COLORS*2,d0
 	lea		palette,a0
 	lea		tiles_colors,a1
@@ -482,6 +481,7 @@ _user:
 	move.b	d1,dip_switches_2
 	
 	jsr	 _detect_controller_types 
+
 
 	jra		demo_game
 
@@ -1038,8 +1038,9 @@ osd_break:
 * < D0: number of 1/60Hz ticks
 * can work with interrupts enabled or disabled
 osd_wait:
+	movem.l	d0-a6,-(a7)
 	move.w	d0,delay_timer
-	**jbsr	osd_is_vblank_interrupt_enabled
+	jbsr	osd_is_vblank_interrupt_enabled
 	tst.w	d0
 	jne		2f
 	* interrupts are disabled: timer isn't going to change
@@ -1062,14 +1063,21 @@ osd_wait:
 	beq.b	4f
 	bpl.b	0b
 4:
+	movem.l	(a7)+,d0-a6
 	rts
 	
 2:
 	tst.w	delay_timer
 	bne.b	2b
+	movem.l	(a7)+,d0-a6
 	rts
 
 
+* < D0: nonzero interrupts enabled
+osd_is_vblank_interrupt_enabled:
+	move.w	_custom+intenar,d0
+	and.w	#0x0030,d0
+	rts
 	
 	
 * 2 conditions I can think of:
@@ -1154,7 +1162,7 @@ really_update_scroll:
 * instead of 0x400 each frame.
 
 really_update_tiles:
-	lea		_custom,a5
+	*lea		_custom,a5
 	*WAIT_BLIT  | no need in AGA: dual playfield
 	GET_MEMORY_START_AND_DP
 	lea		(VIDEO_ADDRESS,a6),a6
