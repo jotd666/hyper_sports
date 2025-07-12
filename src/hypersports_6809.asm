@@ -7692,7 +7692,7 @@ long_horse_6bcc:
 7CAF: C4 2A          ANDB   #$08
 7CB1: 27 80          BEQ    $7CB5
 7CB3: 86 21          LDA    #$03
-7CB5: A7 02          STA    ,X+
+7CB5: A7 02          STA    ,X+		; [video_address]
 7CB7: 0A 60          DEC    $48
 7CB9: 26 72          BNE    $7CB5
 7CBB: 96 27          LDA    $0F
@@ -7740,79 +7740,79 @@ long_horse_6bcc:
 7D26: 30 04          LEAX   A,X
 7D28: D6 60          LDB    $48
 7D2A: A6 0C          LDA    ,X
-7D2C: A7 E8          STA    ,U+
+7D2C: A7 E8          STA    ,U+		; [video_address]
 7D2E: 5A             DECB
 7D2F: 27 37          BEQ    $7D46
 7D31: A6 83          LDA    $1,X
-7D33: A7 E2          STA    ,U+
+7D33: A7 E2          STA    ,U+		; [video_address]
 7D35: 5A             DECB
 7D36: 27 8C          BEQ    $7D46
 7D38: A6 2A          LDA    $2,X
-7D3A: A7 48          STA    ,U+
+7D3A: A7 48          STA    ,U+		; [video_address]
 7D3C: 5A             DECB
 7D3D: 27 8F          BEQ    $7D46
 7D3F: A6 21          LDA    $3,X
-7D41: A7 42          STA    ,U+
+7D41: A7 42          STA    ,U+		; [video_address]
 7D43: 5A             DECB
 7D44: 26 C6          BNE    $7D2A
 7D46: D6 CB          LDB    $49
 7D48: A6 AC          LDA    ,X
-7D4A: A7 4C          STA    ,U
+7D4A: A7 4C          STA    ,U		; [video_address]
 7D4C: 33 E0 C8       LEAU   $40,U
 7D4F: 5A             DECB
 7D50: 27 3C          BEQ    $7D70
 7D52: A6 83          LDA    $1,X
-7D54: A7 E6          STA    ,U
+7D54: A7 E6          STA    ,U				; [video_address]
 7D56: 33 4A 68       LEAU   $40,U
 7D59: 5A             DECB
 7D5A: 27 9C          BEQ    $7D70
 7D5C: A6 2A          LDA    $2,X
-7D5E: A7 4C          STA    ,U
+7D5E: A7 4C          STA    ,U					; [video_address]
 7D60: 33 EA C2       LEAU   $40,U
 7D63: 5A             DECB
 7D64: 27 28          BEQ    $7D70
 7D66: A6 81          LDA    $3,X
-7D68: A7 EC          STA    ,U
+7D68: A7 EC          STA    ,U					; [video_address]
 7D6A: 33 40 68       LEAU   $40,U
 7D6D: 5A             DECB
 7D6E: 26 50          BNE    $7D48
 7D70: 33 63          LEAU   $1,U
 7D72: D6 CA          LDB    $48
 7D74: A6 A6          LDA    ,X
-7D76: A7 40          STA    ,-U
+7D76: A7 40          STA    ,-U				; [video_address]
 7D78: 5A             DECB
 7D79: 27 9D          BEQ    $7D90
 7D7B: A6 29          LDA    $1,X
-7D7D: A7 4A          STA    ,-U
+7D7D: A7 4A          STA    ,-U					; [video_address]
 7D7F: 5A             DECB
 7D80: 27 2C          BEQ    $7D90
 7D82: A6 80          LDA    $2,X
-7D84: A7 E0          STA    ,-U
+7D84: A7 E0          STA    ,-U					; [video_address]
 7D86: 5A             DECB
 7D87: 27 2F          BEQ    $7D90
 7D89: A6 8B          LDA    $3,X
-7D8B: A7 EA          STA    ,-U
+7D8B: A7 EA          STA    ,-U					; [video_address]
 7D8D: 5A             DECB
 7D8E: 26 6C          BNE    $7D74
 7D90: 33 7D          LEAU   -$1,U
 7D92: D6 CB          LDB    $49
 7D94: A6 A6          LDA    ,X
-7D96: A7 46          STA    ,U
-7D98: 33 E0 48       LEAU   -$40,U
+7D96: A7 46          STA    ,U			; [video_address]
+7D98: 33 E0 48       LEAU   -$40,U	
 7D9B: 5A             DECB
 7D9C: 27 36          BEQ    $7DBC
 7D9E: A6 89          LDA    $1,X
-7DA0: A7 E6          STA    ,U
+7DA0: A7 E6          STA    ,U						; [video_address]
 7DA2: 33 4A E2       LEAU   -$40,U
 7DA5: 5A             DECB
 7DA6: 27 96          BEQ    $7DBC
 7DA8: A6 2A          LDA    $2,X
-7DAA: A7 4C          STA    ,U
+7DAA: A7 4C          STA    ,U					; [video_address]
 7DAC: 33 E0 48       LEAU   -$40,U
 7DAF: 5A             DECB
 7DB0: 27 28          BEQ    $7DBC
 7DB2: A6 81          LDA    $3,X
-7DB4: A7 E6          STA    ,U
+7DB4: A7 E6          STA    ,U					; [video_address]
 7DB6: 33 4A E8       LEAU   -$40,U
 7DB9: 5A             DECB
 7DBA: 26 50          BNE    $7D94
