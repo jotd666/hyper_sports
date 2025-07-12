@@ -1389,6 +1389,19 @@ update_one_bob:
 	* mirror (most sprites don't have that, it will just display
 	* the next frame if not generated, which can be off-putting!
 	add.w	#((NB_BOB_PLANES+1)*4+8),a0
+	.ifndef		RELEASE
+	tst.w	(a0)
+	jpl		101f
+	move.l	(a7),a1
+	move.b	(TARGET_SPRITE_CODE,a1),d3
+	move.b	(TARGET_SPRITE_ATTR,a1),d2
+	btst.b	#5,d2
+	jeq		111f
+	bset	#8,d3		| add 256
+111:
+	BREAKPOINT	"unexpected mirror bit set, tile code in d3"
+	jra		21f
+	.endif
 101:
 	move.w	(a0)+,d4		| height
 	move.w	(a0)+,d5		| width
@@ -1396,7 +1409,6 @@ update_one_bob:
 	btst	#7,d3
 	jeq		101f
 	* flipped: correct Y start
-	move.b	#0,0x101
 	neg.w	d2
 	sub.w	d4,d2
 	add.w	#SPRITE_HEIGHT,d2

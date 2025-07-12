@@ -37,7 +37,7 @@ for i in range(16):
                 if (x,y) in yellow_pixels:
                     pass
                 else:
-                    p = (255,0,255)  # bkack => magenta
+                    p = (254,0,254)  # bkack => magenta but not full magenta to avoid conflicts
             dst_image.putpixel((x,y),p)
 
     dst_image.save(dst)

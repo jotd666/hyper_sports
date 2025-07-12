@@ -54,10 +54,9 @@ def process(the_dump,name_filter=None,hide_named_sprite=None):
     # in input, we use a MAME memory dump: save sprites,$A000,$400
     # (0x200 are read, but there's a kind of double buffering
     with open(the_dump,"rb") as f:
-        mem_1800 = bytearray(f.read())
+        mem_1000 = bytearray(f.read())
 
-    spriteram = mem_1800[0x400:0x440]
-    spriteram_2 = mem_1800[:0x40]
+    m_spriteram = mem_1000
 
     result = Image.new("RGB",(256,256))
 
@@ -66,15 +65,14 @@ def process(the_dump,name_filter=None,hide_named_sprite=None):
 
 
 
-    for offs in range(0X3E,-2,-2):
-        if spriteram[offs] or spriteram_2[offs + 1]:
-            attr = spriteram_2[offs]
-            color = attr & 0x0f
-            code = spriteram[offs + 1]
-            flipx = bool(~attr & 0x40)
-            flipy = bool(attr & 0x80)
-            sx = spriteram[offs] - 1
-            sy = 240-spriteram_2[offs + 1] + 1
+    for offs in range(0XBC,-4,-4):
+        sx = m_spriteram[offs + 3];
+        sy = 240 - m_spriteram[offs + 1];
+        if sx or (240-sy):
+            code = m_spriteram[offs + 2] + 8 * (m_spriteram[offs] & 0x20)
+            color = m_spriteram[offs] & 0x0f
+            flipx = ~m_spriteram[offs] & 0x40
+            flipy = m_spriteram[offs] & 0x80
 
             im = tile_set[color][code]
 
@@ -92,5 +90,5 @@ def process(the_dump,name_filter=None,hide_named_sprite=None):
     print(f"nb active: {nb_active}")
 
 
-process(r"../../sprite_ram_1800")
+process(r"../../sprites")
 

@@ -8,7 +8,7 @@ sprite_names = get_sprite_names()
 
 mirror_sprites = get_mirror_sprites()
 
-magenta = (255,0,255)
+magenta = (254,0,254)
 
 NB_SPRITES = 0x200
 NB_TILES = 0x400
@@ -252,7 +252,7 @@ sprite_palette.pop(magi)
 # temporary: put magenta as first color to be able to decode the frames properly
 sprite_palette.insert(0,magi)
 
-print(f"Used sprite cololrs: {len(sprite_palette)}")
+print(f"Used sprite colors: {len(sprite_palette)}")
 sprite_palette += (16-len(sprite_palette)) * [(0x10,0x20,0x30)]
 
 
@@ -474,7 +474,7 @@ with open(os.path.join(src_dir,"graphics.68k"),"w") as f:
                         raise Exception(f"height not found for {name}!!")
                     for orientation,_ in plane_orientations:
                         if orientation in t:
-                            f.write("* {}\n".format(orientation))
+                            f.write("* orientation={}\n".format(orientation))
                             active_planes = 0
                             bitplanes = t[orientation]["bitplanes"]
 
@@ -490,9 +490,8 @@ with open(os.path.join(src_dir,"graphics.68k"),"w") as f:
                                 else:
                                     f.write("0")
                                 f.write("\n")
-                            if len(t)==1:
-                                # optim: only standard
-                                break
+                        elif orientation == "mirror":
+                            f.write(f"\t.word\t-1  | no mirror declared\n")
 
     f.write("\t.section\t.datachip\n")
 

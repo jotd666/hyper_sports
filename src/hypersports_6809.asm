@@ -10593,9 +10593,9 @@ skeet_shooting_8aaf:
 9459: BD 2E 8E       JSR    $A606
 945C: 1E A1          EXG    A,B
 945E: 8E AF 34       LDX    #$2716
-9461: ED 85          STD    $7,X
+9461: ED 85          STD    $7,X		; [video_address]
 9463: CC 28 28       LDD    #$0A0A
-9466: ED 0B 20 2F    STD    $0807,X
+9466: ED 0B 20 2F    STD    $0807,X		; [video_address]
 946A: CE 67 2D       LDU    #$EF05
 946D: C6 8E          LDB    #$06
 946F: D7 6A          STB    $48
