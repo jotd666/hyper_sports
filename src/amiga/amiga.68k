@@ -963,10 +963,10 @@ _vblank:
 	
 osd_log_cpu:
 	* first, check that registers don't have a wrong longword mask
-	CHECK_ZERO_MSW	d1
-	CHECK_ZERO_MSW	d2
-	CHECK_ZERO_MSW	d3
-	CHECK_ZERO_MSW	d4
+	*CHECK_ZERO_MSW	d1
+	*CHECK_ZERO_MSW	d2
+	*CHECK_ZERO_MSW	d3
+	*CHECK_ZERO_MSW	d4
 	move.w	(6,a7),last_known_m6809_pc
 
 	move.l	a6,-(a7)

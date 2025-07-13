@@ -152,12 +152,12 @@ except OSError:
 
 
 
-### for all player frames with all player "races" (sorry)
-##for index,name in sprite_names.items():
-##    if "player" in name:
-##        add_tile(sprite_cluts,index,cluts=[0,1,2,3])
-##        if index in player_sprite_pairs:
-##            add_tile(sprite_cluts,index+1,cluts=[0,1,2,3])
+# for all player frames with all player "races" (sorry)
+for index,name in sprite_names.items():
+    if "player" in name:
+        add_tile(sprite_cluts,index,cluts=[0,1,2,3])
+        if index in player_sprite_pairs:
+            add_tile(sprite_cluts,index+1,cluts=[0,1,2,3])
 
 if all_tile_cluts:
     tile_cluts = None
