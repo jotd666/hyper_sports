@@ -2,7 +2,7 @@ import subprocess,os,glob,shutil
 
 progdir = os.path.abspath(os.path.join(os.path.dirname(__file__),os.pardir))
 
-gamename = "track_and_field"
+gamename = "hyper_sports"
 # JOTD path for cranker, adapt to whatever your path is :)
 os.environ["PATH"] += os.pathsep+r"K:\progs\cli"
 

@@ -765,22 +765,18 @@ demo_game:
 	add.l	#ROM_START-RAM_START,d1
 	move.l 	d1,a1
 	move.w	#(0x10000-ROM_START)/4-1,d0
-	lea		rom_base,a0
-0:
-	move.l	(a0)+,(a1)+
-	dbf		d0,0b
 	.else
 	* release mode
 
 	* copy the ROM data after RAM
 	lea		rom_buffer,a1
 	move.w	#(0x10000-ROM_START)/4-1,d0
+	.endif
+	
 	lea		rom_base,a0
 0:
 	move.l	(a0)+,(a1)+
 	dbf		d0,0b
-	.endif
-	
 	
 *	GET_MEMORY_START_AND_DP
 *	* patch rom, let's hope there aren't any forgotten checksums :)
@@ -2367,10 +2363,13 @@ update_bg_tile:
 	move.w	#NB_TILE_PLANES-1,d4
 	move.l		background_ptr,a1
 
-
 	lea		mulBG_NB_BYTES_PER_ROW_table,A2
+	.ifdef	NO68020
 	add.w	d1,d1
 	move.w	(a2,d1.w),d1
+	.else
+	move.w	(a2,d1.w*2),d1
+	.endif
 	add.w	d1,d0
 	add.w	d0,a1
 	

@@ -32,9 +32,9 @@
 
 ram_buffer:
 	.ifdef	RELEASE
-	.skip	0x6000-0x1000
+	.skip	0x4000-0x1000
 rom_buffer:
-	.skip	0x10000-0x6000
+	.skip	0x10000-0x4000
 	.else
 dev_ram_buffer:
 	.skip	0x20000
