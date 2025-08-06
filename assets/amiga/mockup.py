@@ -71,8 +71,8 @@ def process(the_dump,name_filter=None,hide_named_sprite=None):
         if sx or (240-sy):
             code = m_spriteram[offs + 2] + 8 * (m_spriteram[offs] & 0x20)
             color = m_spriteram[offs] & 0x0f
-            flipx = ~m_spriteram[offs] & 0x40
-            flipy = m_spriteram[offs] & 0x80
+            flipx = bool(~m_spriteram[offs] & 0x40)
+            flipy = bool(m_spriteram[offs] & 0x80)
 
             im = tile_set[color][code]
 
@@ -90,5 +90,5 @@ def process(the_dump,name_filter=None,hide_named_sprite=None):
     print(f"nb active: {nb_active}")
 
 
-process(r"../../sprites")
+process(r"sprites_mame")
 

@@ -111,11 +111,16 @@ with open(source_dir / "conv.s") as f:
             line = line + "\tGET_DP_ADDRESS\tcurrent_level_68\n\tmove.b\tstart_level,(a0)\n"
 
 
-        for a in [0x6ec1,0x9ef4,0xa9f5,0xc005,0xccca,0xcd0b,0xce37]:
+        for a in [0xa9f5,0xccca]:
             if f"[${a:04x}" in line:
                 line = "\tPUSH_SR\n"+line
                 lines[i+1] += "\tPOP_SR\n"
                 lines[i+3] = ""
+
+        for a in [0x6ec1,0x9ef4,0xc005,0xcd0b,0xce37]:
+            if f"[${a:04x}" in line:
+                line = "\tPUSH_SR\n"+line+"\tPOP_SR\n"
+                lines[i+2] = ""
 
         # more complex register preserve
         if "[$939c" in line and "GET_REG" in line:
@@ -144,16 +149,7 @@ with open(source_dir / "conv.s") as f:
 \tmove.b\t(a0),d6
 \tabcd\td6,d0
 """
-##        elif "[$605f" in line:
-##            # don't do the init clear loop
-##            line = remove_instruction(lines,i)
 
-##        elif "[$83cc" in line:
-##            line = change_instruction("subq.b\t#0x01,(a0)",lines,i)
-##            lines[i-1] = ""
-##            lines[i+1] = remove_instruction(lines,i+1)
-##            lines[i+2] = ""
-##            lines[i+4] = ""
 
         elif "flip_screen_set_1080" in line:
             line = remove_instruction(lines,i)

@@ -131,7 +131,9 @@ def add_tile(table,index,cluts=[0]):
     elif not isinstance(index,(list,tuple)):
         index = [index]
     for idx in index:
-        table[idx] = cluts
+        if idx in table:
+            cluts += table[idx]
+        table[idx] = sorted(set(cluts))
 
 sprite_cluts = {}
 tile_cluts = {}
@@ -146,18 +148,14 @@ try:
 except OSError:
     print("Cannot find used_sprites")
 
-# 1UP, 2UP ...
-##ac = list(range(0xA,0xE))
-##add_tile(sprite_cluts,[0xB0,0xB1,0xB8,0xB9],ac)
 
-
-
+player_cluts = [1,2]  # only 2 players supported: less memory
 # for all player frames with all player "races" (sorry)
 for index,name in sprite_names.items():
     if "player" in name:
-        add_tile(sprite_cluts,index,cluts=[0,1,2,3])
+        add_tile(sprite_cluts,index,cluts=player_cluts)
         if index in player_sprite_pairs:
-            add_tile(sprite_cluts,index+1,cluts=[0,1,2,3])
+            add_tile(sprite_cluts,index+1,cluts=player_cluts)
 
 if all_tile_cluts:
     tile_cluts = None

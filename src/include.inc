@@ -193,6 +193,15 @@ get_address:
 	move.w	(\src),\dest
 	.endm
 
+	.macro	CMP_W_TO_REG	src,dest
+	cmp.w	(\src),\dest
+	.endm
+	.macro	ADD_W_TO_REG	src,dest
+	add.w	(\src),\dest
+	.endm
+	.macro	SUB_W_TO_REG	src,dest
+	sub.w	(\src),\dest
+	.endm
 	.macro    MOVE_W_FROM_REG    src,dest
 	move.w	\src,(\dest)
 	.endm
@@ -234,6 +243,21 @@ get_address:
 	move.b	(1,\src),\dest
 	.endm
 
+	.macro	INST_W_TO_REG	inst,src,dest
+	move.b	(\src),d6
+	ror.w	#8,d6
+	move.b	(1,\src),d6
+	\inst\().w	d6,\dest
+	.endm
+    .macro    SUB_W_TO_REG    src,dest
+    INST_W_TO_REG   sub,\src,\dest
+    .endm
+    .macro    ADD_W_TO_REG    src,dest
+    INST_W_TO_REG   add,\src,\dest
+    .endm
+    .macro    CMP_W_TO_REG    src,dest
+    INST_W_TO_REG   cmp,\src,\dest
+    .endm
 	.macro	MOVE_W_FROM_REG	src,dest
 	ror.w	#8,\src
 	move.b	\src,(\dest)
@@ -277,8 +301,17 @@ get_address:
 	lea	(a5,\offset\().W),a0
 	.endm
 
+	.macro OP_1_ON_DP_ADDRESS	inst,offset
+	\inst\().b	(a5,\offset\().W)
+	.endm
 
+	.macro OP_R_ON_DP_ADDRESS	inst,offset,reg
+	\inst\().b	(a5,\offset\().W),\reg
+	.endm
 
+	.macro OP_W_ON_DP_ADDRESS	inst,offset,reg
+	\inst\().b	\reg,(a5,\offset\().W)
+	.endm
 	.macro SET_DP_FROM_A
 	lsl.w    #8,d0
 	move.l    d0,a0
@@ -399,13 +432,14 @@ do_jmp_0e_x:
 	illegal
 	rts
 	
+* do not init d5 during irq
 cpu_init:
 	moveq	#0,d0
 	moveq	#0,d1
 	moveq	#0,d2
 	moveq	#0,d3
 	moveq	#0,d4
-	moveq	#0,d5
+	
 	moveq	#0,d6
 	moveq	#0,d7
 	rts
