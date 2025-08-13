@@ -47,7 +47,7 @@ $(AMIGASRC)/sounds.68k: $(ASSETS)/convert_sounds.py
 	del sound_entries.o sounds.o
 	
 $(MAIN): $(OBJS)
-	$(GCC_BIN)/m68k-amigaos-ld -o $(MAIN) $(OBJS)
+	$(GCC_BIN)/m68k-amigaos-ld $(OPT_RELEASE_LINK) -o $(MAIN) $(OBJS)
 
 ram.o: ram.68k $(PROGNAME).inc
 	$(ASM) ram.68k -o ram.o
