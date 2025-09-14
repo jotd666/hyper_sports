@@ -37,7 +37,7 @@ SPRITE_FMODE = 3			| required!!
 
 BORDERBLANK = 1
 
-COPPEY_Y_START = 0x18
+COPPER_Y_START = 0x18
 BASE_BPLCON3_VALUE = (1<<12)+(BORDERBLANK<<5)  | dpf second playfield palette starts at color 16!
 BASE_BPLCON2_VALUE = 0x0024		| sprites above all playfields
 
@@ -2089,8 +2089,8 @@ platform_init:
 	move.w	#BASE_BPLCON2_VALUE,bplcon2(a5)
 	move.w	#BASE_BPLCON3_VALUE,bplcon3(a5)
  	*         VVHH
-    move.w #0x99-0X18+0x40+(COPPEY_Y_START<<8),diwstrt(a5)
-    move.w #0x79+0x48+(COPPEY_Y_START<<8),diwstop(a5)
+    move.w #0x99-0X18+0x40+(COPPER_Y_START<<8),diwstrt(a5)
+    move.w #0x79+0x38+(COPPER_Y_START<<8),diwstop(a5)
     move.w #0x0038,ddfstrt(a5)
     move.w #0x00D0,ddfstop(a5)
 
@@ -3366,7 +3366,7 @@ tiles_colors:
 bobs_colors:
 	DECL_COLORS	0,TOTAL_NB_COLORS
 
-	.set	y_start,COPPEY_Y_START
+	.set	y_start,COPPER_Y_START
 scroll_rows_first_half:
 	DEF_SCROLL_ROWS	NB_SCROLL_ROWS_PART_1
 	* not sure if it's really half screen but it doesn't matter
