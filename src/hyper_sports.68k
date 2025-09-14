@@ -3135,24 +3135,18 @@ l_506d:
 	GET_REG_ADDRESS	0x1b,d2                	| [$5084: sta    $1b,x]
 	move.b	d0,(a0)                         	| [...]
 	addq.w	#0x1,d4                         	| [$5087: leau   $1,u]
-	PUSH_SR
 	move.w	d4,d1                           	| [$5089: tfr    u,d]
 	ror.w	#8,d4                            	| [...]
 	move.b	d4,d0                           	| [...] set MSB
 	ror.w	#8,d4                            	| [...]
-	POP_SR
 	BIT	#0x3f,d1                           	| [$508b: bitb   #$3f]
 	jne	l_5092                             	| [$508d: bne    $5092]
 	MAKE_D                                 	| [...]
 	sub.w	#0x0040,d1                       	| [$508f: subd   #$0040]
-	PUSH_SR                                	| [...]
 	MAKE_A                                 	| [...]
-	POP_SR                                 	| [...]
 l_5092:
-	PUSH_SR
 	MAKE_D                                 	| [...]
 	move.w	d1,d4                           	| [$5092: tfr    d,u]
-	POP_SR
 l_5094:
 	move.w	#0xd3fb,d3                      	| [$5094: ldy    #$d3fb]
 	OP_R_ON_DP_ADDRESS	move,0xca,d0         | [$5098: lda    $ca]
@@ -3330,21 +3324,15 @@ l_5145:
 	GET_REG_ADDRESS	0x3,d2                 	| [$5145: ldd    $3,x]
 	LOAD_D                                 	| [$5145: ldd    $3,x]
 	add.w	#0x0001,d1                       	| [$5147: addd   #$0001]
-	PUSH_SR                                	| [...]
 	MAKE_A                                 	| [...]
-	POP_SR                                 	| [...]
 	BIT	#0x3f,d1                           	| [$514a: bitb   #$3f]
 	jne	l_5151                             	| [$514c: bne    $5151]
 	MAKE_D                                 	| [...]
 	sub.w	#0x0040,d1                       	| [$514e: subd   #$0040]
-	PUSH_SR                                	| [...]
 	MAKE_A                                 	| [...]
-	POP_SR                                 	| [...]
 l_5151:
-	PUSH_SR
 	MAKE_D                                 	| [...]
 	move.w	d1,d4                           	| [$5151: tfr    d,u]
-	POP_SR
 	rts                                    	| [$5153: rts]
 
 l_5154:
@@ -5062,9 +5050,7 @@ l_5aa3:
 	GET_REG_ADDRESS	0x1,d4                 	| [$5ab7: lsr    $1,u]
 	move.b	(a0),d6	| [$5ab7: lsr    $1,u]
 	lsr.b	#1,d6                          	| [$5ab7: lsr    $1,u]
-	PUSH_SR
 	move.b	d6,(a0)	| [$5ab7: lsr    $1,u]
-	POP_SR
 	rts                                    	| [$5ab9: rts]
 
 l_5aba:
@@ -6034,35 +6020,27 @@ l_5fe3:
 	jbsr	l_5fba                            	| [$5ff1: bsr    $5fba]
 	GET_REG_ADDRESS	0x16,d2                	| [$5ff3: sty    $16,x]
 	MOVE_W_FROM_REG	d3,a0                         	| [...]
-	PUSH_SR
 	move.w	d4,d1                           	| [$5ff7: tfr    u,d]
 	ror.w	#8,d4                            	| [...]
 	move.b	d4,d0                           	| [...] set MSB
 	ror.w	#8,d4                            	| [...]
-	POP_SR
 	BIT	#0x3f,d1                           	| [$5ff9: bitb   #$3f]
 	jne	l_6000                             	| [$5ffb: bne    $6000]
 	MAKE_D                                 	| [...]
 	sub.w	#0x0040,d1                       	| [$5ffd: subd   #$0040]
-	PUSH_SR                                	| [...]
 	MAKE_A                                 	| [...]
-	POP_SR                                 	| [...]
 l_6000:
 	MAKE_D                                 	| [...]
 	GET_REG_ADDRESS	0x31,d2                	| [$6000: std    $31,x]
 	MOVE_W_FROM_REG	d1,a0                         	| [...]
 	MAKE_D                                 	| [...]
 	add.w	#0x0001,d1                       	| [$6003: addd   #$0001]
-	PUSH_SR                                	| [...]
 	MAKE_A                                 	| [...]
-	POP_SR                                 	| [...]
 	BIT	#0x3f,d1                           	| [$6006: bitb   #$3f]
 	jne	l_600d                             	| [$6008: bne    $600d]
 	MAKE_D                                 	| [...]
 	sub.w	#0x0040,d1                       	| [$600a: subd   #$0040]
-	PUSH_SR                                	| [...]
 	MAKE_A                                 	| [...]
-	POP_SR                                 	| [...]
 l_600d:
 	MAKE_D                                 	| [...]
 	GET_REG_ADDRESS	0x14,d2                	| [$600d: std    $14,x]
@@ -6107,12 +6085,10 @@ l_6023:
 	move.b	d0,(a0)                         	| [...]
 l_6043:
 	add.w	#0x00ff,d4                       	| [$6043: leau   $00ff,u]
-	PUSH_SR
 	move.w	d4,d1                           	| [$6047: tfr    u,d]
 	ror.w	#8,d4                            	| [...]
 	move.b	d4,d0                           	| [...] set MSB
 	ror.w	#8,d4                            	| [...]
-	POP_SR
 	OP_W_ON_DP_ADDRESS	move,0x54,d1         | [$6049: stb    $54]
 	and.b	#0x3f,d1                         	| [$604b: andb   #$3f]
 	cmp.b	#0x3f,d1                         	| [$604d: cmpb   #$3f]
@@ -6120,9 +6096,7 @@ l_6043:
 	OP_R_ON_DP_ADDRESS	move,0x54,d1         | [$6051: ldb    $54]
 	MAKE_D                                 	| [...]
 	add.w	#0x0040,d1                       	| [$6053: addd   #$0040]
-	PUSH_SR                                	| [...]
 	MAKE_A                                 	| [...]
-	POP_SR                                 	| [...]
 	jra	l_605a                             	| [$6056: bra    $605a]
 l_6058:
 	OP_R_ON_DP_ADDRESS	move,0x54,d1         | [$6058: ldb    $54]
@@ -6390,9 +6364,9 @@ l_61e2:
 	GET_DP_ADDRESS	speed_msb_b0            	| [$61e2: ldd    speed_msb_b0]
 	LOAD_D                                 	| [$61e2: ldd    speed_msb_b0]
 	sub.w	#0x0103,d1                       	| [$61e4: subd   #$0103]
-	PUSH_SR                                	| [...]
+	PUSH_SR                                	| [...]				| required!
 	MAKE_A                                 	| [...]
-	POP_SR                                 	| [...]
+	POP_SR                                 	| [...]				| required!
 	jcs	l_6209                             	| [$61e7: bcs    $6209]
 	cmp.b	#0x02,d1                         	| [$61e9: cmpb   #$02]
 	jcs	l_61ef                             	| [$61eb: bcs    $61ef]
@@ -6937,9 +6911,7 @@ l_64dd:
 	LOAD_D                                 	| [$64e0: ldd    $ec]
 	GET_DP_ADDRESS	0xe6                    	| [$64e2: subd   $e6]
 	SUB_W_TO_REG	a0,d1                          	| [...]
-	PUSH_SR                                	| [...]
 	MAKE_A                                 	| [...]
-	POP_SR                                 	| [...]
 	move.b	#0x08,d0                        	| [$64e4: lda    #$08]
 	jbsr	multiply_ab                       	| [$64e6: mul]
 	OP_R_ON_DP_ADDRESS	add,0xee,d1          | [$64e7: addb   $ee]
@@ -7711,9 +7683,9 @@ l_6953:
 	GET_REG_ADDRESS	0xe,d2                 	| [$6962: ldd    $e,x]
 	LOAD_D                                 	| [$6962: ldd    $e,x]
 	sub.w	#0x03f8,d1                       	| [$6964: subd   #$03f8]
-	PUSH_SR                                	| [...]
+	PUSH_SR                                	| [...]				| required!
 	MAKE_A                                 	| [...]
-	POP_SR                                 	| [...]
+	POP_SR                                 	| [...]				| required!
 	jcs	l_69c4                             	| [$6967: bcs    $69c4]
 	OP_W_ON_DP_ADDRESS	move,0x50,d1         | [$6969: stb    $50]
 	GET_REG_ADDRESS	0x2,d2                 	| [$696b: lda    $2,x]
@@ -7837,18 +7809,18 @@ l_6a13:
 	GET_REG_ADDRESS	0xe,d2                 	| [$6a22: ldd    $e,x]
 	LOAD_D                                 	| [$6a22: ldd    $e,x]
 	sub.w	#0x0828,d1                       	| [$6a24: subd   #$0828]
-	PUSH_SR                                	| [...]
+	PUSH_SR                                	| [...]				| required!
 	MAKE_A                                 	| [...]
-	POP_SR                                 	| [...]
+	POP_SR                                 	| [...]				| required!
 	jcc	l_6a6d                             	| [$6a27: bcc    $6a6d]
 	OP_R_ON_DP_ADDRESS	move,0xdc,d0         | [$6a29: lda    $dc]
 	jne	l_6a52                             	| [$6a2b: bne    $6a52]
 	GET_REG_ADDRESS	0xe,d2                 	| [$6a2d: ldd    $e,x]
 	LOAD_D                                 	| [$6a2d: ldd    $e,x]
 	sub.w	#0x0448,d1                       	| [$6a2f: subd   #$0448]
-	PUSH_SR                                	| [...]
+	PUSH_SR                                	| [...]				| required!
 	MAKE_A                                 	| [...]
-	POP_SR                                 	| [...]
+	POP_SR                                 	| [...]				| required!
 	jcs	l_6a51                             	| [$6a32: bcs    $6a51]
 	move.b	#0x04,d0                        	| [$6a34: ldd    #$0448]
 	move.w	#0x0448,d1                      	| [$6a34: ldd    #$0448]
@@ -7879,9 +7851,9 @@ l_6a52:
 	GET_REG_ADDRESS	0xe,d2                 	| [$6a56: ldd    $e,x]
 	LOAD_D                                 	| [$6a56: ldd    $e,x]
 	sub.w	#0x0448,d1                       	| [$6a58: subd   #$0448]
-	PUSH_SR                                	| [...]
+	PUSH_SR                                	| [...]				| required!
 	MAKE_A                                 	| [...]
-	POP_SR                                 	| [...]
+	POP_SR                                 	| [...]				| required!
 	jls	l_6a6c                             	| [$6a5b: bls    $6a6c]
 	OP_W_ON_DP_ADDRESS	move,0x51,d1         | [$6a5d: stb    $51]
 	move.b	#0x04,d0                        	| [$6a5f: ldd    #$0448]
@@ -8634,9 +8606,9 @@ l_6ea3:
 	move.b	#0x05,d0                        	| [$6ebc: lda    #$05]
 	OP_R_ON_DP_ADDRESS	sub,0xf4,d0          | [$6ebe: suba   $f4]
 	lsr.b	#1,d0                            	| [$6ec0: lsra]
-	PUSH_SR
+	PUSH_SR				| required!
 	OP_W_ON_DP_ADDRESS	move,0x49,d0         | [$6ec1: sta    $49]
-	POP_SR
+	POP_SR				| required!
 	jcc	l_6ecc                             	| [$6ec3: bcc    $6ecc]
 	move.b	#0x05,d0                        	| [$6ec5: lda    #$05]
 	OP_W_ON_DP_ADDRESS	move,0x48,d0         | [$6ec7: sta    $48]
@@ -9400,9 +9372,7 @@ l_7314:
 	jeq	l_732e                             	| [$7329: beq    $732e]
 	MAKE_D                                 	| [...]
 	sub.w	#0x0040,d1                       	| [$732b: subd   #$0040]
-	PUSH_SR                                	| [...]
 	MAKE_A                                 	| [...]
-	POP_SR                                 	| [...]
 l_732e:
 	MAKE_D                                 	| [...]
 	GET_DP_ADDRESS	0xe3                    	| [$732e: std    $e3]
@@ -9692,9 +9662,7 @@ l_74a4:
 	MAKE_D                                 	| [...]
 	GET_REG_ADDRESS	-0x32,d2               	| [$74a4: subd   -$32,x]
 	SUB_W_TO_REG	a0,d1                          	| [...]
-	PUSH_SR                                	| [...]
 	MAKE_A                                 	| [...]
-	POP_SR                                 	| [...]
 	MAKE_D                                 	| [...]
 	GET_REG_ADDRESS	0x2,d2                 	| [$74a7: std    $2,x]
 	MOVE_W_FROM_REG	d1,a0                         	| [...]
@@ -9809,18 +9777,16 @@ l_7557:
 	LOAD_D                                 	| [$7559: ldd    $42,x]
 	GET_REG_ADDRESS	0x44,d2                	| [$755c: subd   $44,x]
 	SUB_W_TO_REG	a0,d1                          	| [...]
-	PUSH_SR                                	| [...]
+	PUSH_SR                                	| [...]				| required!
 	MAKE_A                                 	| [...]
-	POP_SR                                 	| [...]
+	POP_SR                                 	| [...]				| required!
 	jcc	l_7569                             	| [$755f: bcc    $7569]
 	OP_W_ON_DP_ADDRESS	addq,0x4d,#1         | [$7561: inc    $4d]
 	GET_REG_ADDRESS	0x44,d2                	| [$7563: ldd    $44,x]
 	LOAD_D                                 	| [$7563: ldd    $44,x]
 	GET_REG_ADDRESS	0x42,d2                	| [$7566: subd   $42,x]
 	SUB_W_TO_REG	a0,d1                          	| [...]
-	PUSH_SR                                	| [...]
 	MAKE_A                                 	| [...]
-	POP_SR                                 	| [...]
 l_7569:
 	OP_W_ON_DP_ADDRESS	move,0x4e,d1         | [$7569: stb    $4e]
 	OP_1_ON_DP_ADDRESS	tst,0x4d             | [$756b: tst    $4d]
@@ -15564,9 +15530,10 @@ l_94a2:
 	subq.w	#0x5,d2                         	| [$94a5: leax   -$5,x]
 	OP_R_ON_DP_ADDRESS	move,swimmer_19,d0         | [$94a7: lda    $19]
 	addq.b	#1,d0                           	| [$94a9: inca]
-	GET_REG_ADDRESS	0,d2                   	| [$94aa: sta    ,x++]
+	GET_REG_UNCHECKED_ADDRESS	0,d2                   	| [$94aa: sta    ,x++]
 	addq.w	#2,d2                           	| [...]
 	move.b	d0,(a0)                         	| [...]
+	VIDEO_BYTE_DIRTY
 	move.b	#0x03,d1                        	| [$94ac: ldb    #$03]
 	jbsr	multiply_ab                       	| [$94ae: mul]
 	move.w	#0x335d,d4                      	| [$94af: ldu    #$335d]
@@ -15605,10 +15572,8 @@ l_94ea:
 l_94ec:
 	move.b	#0x10,d1                        	| [$94ec: ldb    #$10]
 l_94ee:
-	PUSH_SR
 	MAKE_D                                 	| [...]
 	move.w	d1,d4                           	| [$94ee: tfr    d,u]
-	POP_SR
 	move.b	#0x01,d0                        	| [$94f0: lda    #$01]
 l_94f2:
 	GET_REG_ADDRESS	0,d2                   	| [$94f2: stu    ,x++]
@@ -15621,12 +15586,10 @@ l_94f2:
 	addq.b	#1,d0                           	| [$94f9: inca]
 	cmp.b	#0x0a,d0                         	| [$94fa: cmpa   #$0a]
 	jne	l_94f2                             	| [$94fc: bne    $94f2]
-	PUSH_SR
 	move.w	d4,d1                           	| [$94fe: tfr    u,d]
 	ror.w	#8,d4                            	| [...]
 	move.b	d4,d0                           	| [...] set MSB
 	ror.w	#8,d4                            	| [...]
-	POP_SR
 	cmp.b	#0x09,d1                         	| [$9500: cmpb   #$09]
 	jne	l_950d                             	| [$9502: bne    $950d]
 	cmp.b	#0x10,d0                         	| [$9504: cmpa   #$10]
@@ -17310,9 +17273,9 @@ l_9ef1:
 	CLR_XC_FLAGS
 	move.b	(a0),d6	| [...]
 	abcd	d6,d0	| [...]
-	PUSH_SR
+	PUSH_SR				| required!
 	OP_W_ON_DP_ADDRESS	move,0x99,d0         | [$9ef4: sta    $99]
-	POP_SR
+	POP_SR				| required!
 	jcc	l_9eff                             	| [$9ef6: bcc    $9eff]
 l_9ef8:
 	OP_R_ON_DP_ADDRESS	move,0x98,d0         | [$9ef8: lda    $98]
@@ -19279,10 +19242,10 @@ l_a9dd:
 	move.b	(a0),d0                         	| [...]
 	GET_ADDRESS	0x342a                     	| [$a9f2: suba   $342a]
 	sub.b	(a0),d0                          	| [...]
-	PUSH_SR
+	PUSH_SR				| required!
 	GET_ADDRESS	0x344b                     	| [$a9f5: sta    $344b]
 	move.b	d0,(a0)                         	| [...]
-	POP_SR
+	POP_SR				| required!
 	jcs	l_aa06                             	| [$a9f8: bcs    $aa06]
 	move.b	#0x04,d1                        	| [$a9fa: ldb    #$04]
 l_a9fc:
@@ -19529,9 +19492,7 @@ l_ab55:
 	GET_ADDRESS	0x337a                     	| [$ab62: ldd    $337a]
 	LOAD_D                                 	| [$ab62: ldd    $337a]
 	add.w	#0x0001,d1                       	| [$ab65: addd   #$0001]
-	PUSH_SR                                	| [...]
 	MAKE_A                                 	| [...]
-	POP_SR                                 	| [...]
 	MAKE_D                                 	| [...]
 	GET_ADDRESS	0x337a                     	| [$ab68: std    $337a]
 	MOVE_W_FROM_REG	d1,a0                         	| [...]
@@ -20610,12 +20571,10 @@ l_b145:
 	jcs	l_b15f                             	| [$b15b: bcs    $b15f]
 	addq.w	#0x1,d2                         	| [$b15d: leax   $1,x]
 l_b15f:
-	PUSH_SR
 	move.w	d2,d1                           	| [$b15f: tfr    x,d]
 	ror.w	#8,d2                            	| [...]
 	move.b	d2,d0                           	| [...] set MSB
 	ror.w	#8,d2                            	| [...]
-	POP_SR
 	movem.l	(sp)+,d2                       	| [$b161: puls   x]
 	OP_1_ON_DP_ADDRESS	tst,0x49             | [$b163: tst    $49]
 	jeq	l_b168                             	| [$b165: beq    $b168]
@@ -20641,9 +20600,7 @@ l_b176:
 	GET_REG_ADDRESS	0x3,d2                 	| [$b176: ldd    $3,x]
 	LOAD_D                                 	| [$b176: ldd    $3,x]
 	add.w	#0x0040,d1                       	| [$b178: addd   #$0040]
-	PUSH_SR                                	| [...]
 	MAKE_A                                 	| [...]
-	POP_SR                                 	| [...]
 	MAKE_D                                 	| [...]
 	GET_REG_ADDRESS	0x3,d2                 	| [$b17b: std    $3,x]
 	MOVE_W_FROM_REG	d1,a0                         	| [...]
@@ -21197,9 +21154,7 @@ l_b486:
 	MAKE_D                                 	| [...]
 	GET_REG_ADDRESS	0,d3                   	| [$b486: subd   ,y]
 	SUB_W_TO_REG	a0,d1                          	| [...]
-	PUSH_SR                                	| [...]
 	MAKE_A                                 	| [...]
-	POP_SR                                 	| [...]
 	exg	d0,d1                              	| [$b488: exg    a,b]
 	MAKE_D                                 	| [...]
 	GET_REG_ADDRESS	0,d2                   	| [$b48a: std    ,x++]
@@ -21471,9 +21426,7 @@ l_b623:
 	MAKE_D                                 	| [...]
 	GET_REG_ADDRESS	0,d3                   	| [$b623: addd   ,y]
 	ADD_W_TO_REG	a0,d1                          	| [...]
-	PUSH_SR                                	| [...]
 	MAKE_A                                 	| [...]
-	POP_SR                                 	| [...]
 	exg	d0,d1                              	| [$b625: exg    a,b]
 	MAKE_D                                 	| [...]
 	GET_REG_ADDRESS	0,d2                   	| [$b627: std    ,x++]
@@ -21802,9 +21755,7 @@ l_b7dd:
 	jra	l_b7dd                             	| [$b7e3: bra    $b7dd]
 l_b7e5:
 	movem.l	(sp)+,d0                       	| [$b7e5: puls   a]
-	PUSH_SR                                	| [...]
 	MAKE_D                                 	| [...]
-	POP_SR                                 	| [...]
 	tst.b	d0                               	| [$b7e7: tsta]
 	jeq	l_b7f2                             	| [$b7e8: beq    $b7f2]
 	subq.b	#1,d0                           	| [$b7ea: deca]
@@ -21903,9 +21854,7 @@ l_b868:
 	jra	l_b868                             	| [$b86e: bra    $b868]
 l_b870:
 	movem.l	(sp)+,d0                       	| [$b870: puls   a]
-	PUSH_SR                                	| [...]
 	MAKE_D                                 	| [...]
-	POP_SR                                 	| [...]
 	tst.b	d0                               	| [$b872: tsta]
 	jeq	l_b87d                             	| [$b873: beq    $b87d]
 	subq.b	#1,d0                           	| [$b875: deca]
@@ -22076,9 +22025,7 @@ l_b963:
 	jbsr	l_aff4                            	| [$b966: jsr    $aff4]
 	MAKE_D                                 	| [...]
 	add.w	#0x0002,d1                       	| [$b969: addd   #$0002]
-	PUSH_SR                                	| [...]
 	MAKE_A                                 	| [...]
-	POP_SR                                 	| [...]
 	MAKE_D
 	GET_ADDRESS	0x3437                     	| [$b96c: cmpd   $3437]
 	CMP_W_TO_REG	a0,d1                          	| [...]
@@ -22904,9 +22851,7 @@ l_bdca:
 	GET_REG_ADDRESS	0x13,d2                	| [$bdcf: ldd    $13,x]
 	LOAD_D                                 	| [$bdcf: ldd    $13,x]
 	sub.w	#0xddcd,d1                       	| [$bdd2: subd   #$ddcd]
-	PUSH_SR                                	| [...]
 	MAKE_A                                 	| [...]
-	POP_SR                                 	| [...]
 	move.w	#0xf7a9,d3                      	| [$bdd5: ldy    #$f7a9]
 	moveq	#0,d6                            	| [...]
 	move.b	d1,d6                           	| [...] as byte
@@ -22926,9 +22871,7 @@ l_bdca:
 	GET_REG_ADDRESS	0x0083,d2              	| [$bde5: ldd    $0083,x]
 	LOAD_D                                 	| [$bde5: ldd    $0083,x]
 	sub.w	#0xddcd,d1                       	| [$bde9: subd   #$ddcd]
-	PUSH_SR                                	| [...]
 	MAKE_A                                 	| [...]
-	POP_SR                                 	| [...]
 	move.w	#0xf7a9,d3                      	| [$bdec: ldy    #$f7a9]
 	moveq	#0,d6                            	| [...]
 	move.b	d1,d6                           	| [...] as byte
@@ -22958,9 +22901,7 @@ l_be07:
 	GET_REG_ADDRESS	0x43,d2                	| [$be0a: ldd    $43,x]
 	LOAD_D                                 	| [$be0a: ldd    $43,x]
 	sub.w	#0xdd8a,d1                       	| [$be0d: subd   #$dd8a]
-	PUSH_SR                                	| [...]
 	MAKE_A                                 	| [...]
-	POP_SR                                 	| [...]
                                          | [$be10: lsrb]
 	lsr.b	#2,d1                            	| [$be11: lsrb]
 	move.b	#0x06,d0                        	| [$be12: lda    #$06]
@@ -23313,9 +23254,9 @@ l_c000:
 	CLR_XC_FLAGS
 	move.b	(a0),d6	| [...]
 	abcd	d6,d0	| [...]
-	PUSH_SR
+	PUSH_SR				| required!
 	OP_W_ON_DP_ADDRESS	move,chrono_second_72,d0| [$c005: sta    chrono_second_72]
-	POP_SR
+	POP_SR				| required!
 	jcc	l_c01d                             	| [$c007: bcc    $c01d]
 	CLR_XC_FLAGS
 	move.b	#0x01,d6	| [...]
@@ -23392,9 +23333,7 @@ l_c03a:
 	MAKE_D                                 	| [...]
 	GET_DP_ADDRESS	0x4c                    	| [$c07a: addd   $4c]
 	ADD_W_TO_REG	a0,d1                          	| [...]
-	PUSH_SR                                	| [...]
 	MAKE_A                                 	| [...]
-	POP_SR                                 	| [...]
 	MAKE_D                                 	| [...]
 	GET_DP_ADDRESS	0x48                    	| [$c07c: std    $48]
 	MOVE_W_FROM_REG	d1,a0                         	| [...]
@@ -23403,9 +23342,7 @@ l_c03a:
 	jbsr	multiply_ab                       	| [$c082: mul]
 	GET_DP_ADDRESS	0x48                    	| [$c083: addd   $48]
 	ADD_W_TO_REG	a0,d1                          	| [...]
-	PUSH_SR                                	| [...]
 	MAKE_A                                 	| [...]
-	POP_SR                                 	| [...]
 	MAKE_D                                 	| [...]
 	GET_DP_ADDRESS	0x48                    	| [$c085: std    $48]
 	MOVE_W_FROM_REG	d1,a0                         	| [...]
@@ -23414,9 +23351,7 @@ l_c03a:
 	jbsr	multiply_ab                       	| [$c08b: mul]
 	GET_DP_ADDRESS	0x48                    	| [$c08c: addd   $48]
 	ADD_W_TO_REG	a0,d1                          	| [...]
-	PUSH_SR                                	| [...]
 	MAKE_A                                 	| [...]
-	POP_SR                                 	| [...]
 	MAKE_D                                 	| [...]
 	GET_DP_ADDRESS	0x48                    	| [$c08e: std    $48]
 	MOVE_W_FROM_REG	d1,a0                         	| [...]
@@ -23518,9 +23453,7 @@ l_c03a:
 	MAKE_D                                 	| [...]
 	GET_DP_ADDRESS	0x50                    	| [$c101: addd   $50]
 	ADD_W_TO_REG	a0,d1                          	| [...]
-	PUSH_SR                                	| [...]
 	MAKE_A                                 	| [...]
-	POP_SR                                 	| [...]
 	MAKE_D                                 	| [...]
 	GET_DP_ADDRESS	0x50                    	| [$c103: std    $50]
 	MOVE_W_FROM_REG	d1,a0                         	| [...]
@@ -23528,18 +23461,14 @@ l_c03a:
 	LOAD_D                                 	| [$c105: ldd    $4c]
 	GET_DP_ADDRESS	0x50                    	| [$c107: subd   $50]
 	SUB_W_TO_REG	a0,d1                          	| [...]
-	PUSH_SR                                	| [...]
 	MAKE_A                                 	| [...]
-	POP_SR                                 	| [...]
 	MAKE_D                                 	| [...]
 	GET_DP_ADDRESS	0x4c                    	| [$c109: std    $4c]
 	MOVE_W_FROM_REG	d1,a0                         	| [...]
 	GET_ADDRESS	0x337a                     	| [$c10b: ldd    $337a]
 	LOAD_D                                 	| [$c10b: ldd    $337a]
 	add.w	#0x0001,d1                       	| [$c10e: addd   #$0001]
-	PUSH_SR                                	| [...]
 	MAKE_A                                 	| [...]
-	POP_SR                                 	| [...]
 	MAKE_D                                 	| [...]
 	GET_ADDRESS	0x337a                     	| [$c111: std    $337a]
 	MOVE_W_FROM_REG	d1,a0                         	| [...]
@@ -23594,9 +23523,7 @@ l_c139:
 	jbsr	multiply_ab                       	| [$c149: mul]
 	GET_DP_ADDRESS	0x50                    	| [$c14a: addd   $50]
 	ADD_W_TO_REG	a0,d1                          	| [...]
-	PUSH_SR                                	| [...]
 	MAKE_A                                 	| [...]
-	POP_SR                                 	| [...]
 	rts                                    	| [$c14c: rts]
 
 l_c14d:
@@ -24218,15 +24145,13 @@ l_c4db:
 	moveq	#0,d0                            	| [$c4e8: clra]
 	MAKE_D                                 	| [...]
 	add.w	#0x0001,d1                       	| [$c4e9: addd   #$0001]
-	PUSH_SR                                	| [...]
 	MAKE_A                                 	| [...]
-	POP_SR                                 	| [...]
 l_c4ec:
 	MAKE_D                                 	| [...]
 	sub.w	#0x0007,d1                       	| [$c4ec: subd   #$0007]
-	PUSH_SR                                	| [...]
+	PUSH_SR                                	| [...]				| required!
 	MAKE_A                                 	| [...]
-	POP_SR                                 	| [...]
+	POP_SR                                 	| [...]				| required!
 	jeq	l_c4f6                             	| [$c4ef: beq    $c4f6]
 	jcc	l_c4ec                             	| [$c4f1: bcc    $c4ec]
 	OP_W_ON_DP_ADDRESS	addq,event_sub_state_28,#1| [$c4f3: inc    event_sub_state_28]
@@ -25769,10 +25694,10 @@ l_ccc1:
 	move.b	d0,(a0)                         	| [...]
 	GET_REG_ADDRESS	0x1,d2                 	| [$ccc8: adda   $1,x]
 	add.b	(a0),d0                          	| [...]
-	PUSH_SR
+	PUSH_SR				| required!
 	GET_REG_ADDRESS	0x1,d2                 	| [$ccca: sta    $1,x]
 	move.b	d0,(a0)                         	| [...]
-	POP_SR
+	POP_SR				| required!
 	jcc	l_cce1                             	| [$cccc: bcc    $cce1]
 	GET_REG_ADDRESS	0x2,d2                 	| [$ccce: inc    $2,x]
 	addq.b	#1,(a0)                         	| [...]
@@ -25823,9 +25748,9 @@ l_ccfe:
 l_cd07:
 	OP_R_ON_DP_ADDRESS	move,0x21,d0         | [$cd07: lda    $21]
 	add.b	#0x01,d0                         	| [$cd09: adda   #$01]
-	PUSH_SR
+	PUSH_SR				| required!
 	OP_W_ON_DP_ADDRESS	move,0x21,d0         | [$cd0b: sta    $21]
-	POP_SR
+	POP_SR				| required!
 	jcs	l_cd5e                             	| [$cd0d: bcs    $cd5e]
 	rts                                    	| [$cd0f: rts]
 
@@ -26037,9 +25962,9 @@ l_ce32:
 l_ce33:
 	move.b	#0x40,d0                        	| [$ce33: lda    #$40]
 	OP_R_ON_DP_ADDRESS	add,0x25,d0          | [$ce35: adda   $25]
-	PUSH_SR
+	PUSH_SR				| required!
 	OP_W_ON_DP_ADDRESS	move,0x25,d0         | [$ce37: sta    $25]
-	POP_SR
+	POP_SR				| required!
 	jcc	l_ce4c                             	| [$ce39: bcc    $ce4c]
 	jbsr	l_ce4d                            	| [$ce3b: bsr    $ce4d]
 	GET_REG_ADDRESS	0x0800,d2              	| [$ce3d: lda    $0800,x]
