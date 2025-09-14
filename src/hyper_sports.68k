@@ -51,6 +51,7 @@ in0_1681 = 0x1681
 in1_1682 = 0x1682
 dsw1_1683 = 0x1683
 sprite_ram_1000 = 0x1000
+sprite_shadow_ram_3600 = 0x3600
 scroll_registers_10c0 = 0x10c0
 flip_screen_set_1480 = 0x1480
 sh_irqtrigger_w_1481 = 0x1481
@@ -657,7 +658,7 @@ l_42a2:
 	OP_R_ON_DP_ADDRESS	move,0x46,d0         | [$42b6: lda    $46]
 	jbsr	l_422d                            	| [$42b8: jsr    $422d]
 	move.b	#0xfb,d0                        	| [$42bb: lda    #$fb]
-	jmp	l_422d                             	| [$42bd: jmp    $422d]
+	jra	l_422d                             	| [$42bd: jra    $422d]
 
 draw_chrono_42c0:
 	move.b	#0x20,d1                        	| [$42c0: ldb    #$20]
@@ -976,7 +977,7 @@ l_4459:
 l_446b:
 	GET_REG_ADDRESS	0x4,d2                 	| [$446b: lda    $4,x]
 	move.b	(a0),d0                         	| [...]
-	jmp	l_422d                             	| [$446d: jmp    $422d]
+	jra	l_422d                             	| [$446d: jra    $422d]
 l_4470:
 	OP_R_ON_DP_ADDRESS	move,game_playing_00,d0| [$4470: lda    game_playing_00]
 	jne	l_4475                             	| [$4472: bne    $4475]
@@ -1070,7 +1071,7 @@ l_44ed:
 	OP_W_ON_DP_ADDRESS	subq,0x42,#1         | [$44ed: dec    $42]
 	jne	l_44c5                             	| [$44ef: bne    $44c5]
 	moveq	#0,d0                            	| [$44f1: clra]
-	jmp	l_422d                             	| [$44f2: jmp    $422d]
+	jra	l_422d                             	| [$44f2: jra    $422d]
 
 irq_44f5:
 	jbsr	osd_disable_interrupts |  [$44f5: clr    irq_mask_w_1487]
@@ -1088,8 +1089,8 @@ irq_44f5:
 	.endif
 	lea	table_d33a,a2                  	| [$450b: ldx   #table_d33a]
 	JSR_A_INDEXED	A2                   	| [$450e: jsr    [a,x]] [jump_table]
-	jbsr	l_4fd2                            	| [$4510: jsr    $4fd2]
-	jbsr	l_4fbd                            	| [$4513: jsr    $4fbd]
+	jbsr	update_scroll_registers_4fd2                            	| [$4510: jsr    $4fd2]
+	jbsr	update_sprites_4fbd                            	| [$4513: jsr    $4fbd]
 	 |  [$4516: lda    #$01]
 	jbsr	osd_enable_interrupts |  [$4518: sta    irq_mask_w_1487]
 	rts |  [$451b: rti]
@@ -1255,7 +1256,7 @@ l_45f7:
 	move.w	#0xd344,d2
 	.endif
 	lea	table_d344,a2                  	| [$45fd: ldx   #table_d344]
-	JMP_A_INDEXED	A2                   	| [$4600: jmp    [a,x]] [jump_table]
+	JMP_A_INDEXED	A2                   	| [$4600: jra    [a,x]] [jump_table]
 l_4602:
 	
 	.ifndef	RELEASE
@@ -1264,7 +1265,7 @@ l_4602:
 	lea	table_d34c,a2                  	| [$4602: ldx   #table_d34c]
 	OP_R_ON_DP_ADDRESS	move,0x22,d0         | [$4605: lda    $22]
 	asl.b	#1,d0                            	| [$4607: asla]
-	JMP_A_INDEXED	A2                   	| [$4608: jmp    [a,x]] [jump_table]
+	JMP_A_INDEXED	A2                   	| [$4608: jra    [a,x]] [jump_table]
 l_460a:
 	GET_ADDRESS	flip_screen_set_1480       	| [$460a: clr    flip_screen_set_1480]
 	clr.b	(a0)                         	| [...]
@@ -1323,7 +1324,7 @@ l_4650:
 	jeq	l_4664                             	| [$465a: beq    $4664]
 	move.w	#0x2586,d4                      	| [$465c: ldu    #$2586]
 	move.b	#0x14,d1                        	| [$465f: ldb    #$14]
-	jmp	l_52f5                             	| [$4661: jmp    $52f5]
+	jra	l_52f5                             	| [$4661: jra    $52f5]
 l_4664:
 	OP_R_ON_DP_ADDRESS	move,0x03,d1         | [$4664: ldb    $03]
 	cmp.b	#0x04,d1                         	| [$4666: cmpb   #$04]
@@ -1332,7 +1333,7 @@ l_4664:
 l_466c:
 	add.b	#0x14,d1                         	| [$466c: addb   #$14]
 	move.b	#0x02,d0                        	| [$466e: lda    #$02]
-	jmp	queue_event_4e9a                   	| [$4670: jmp    queue_event_4e9a]
+	jra	queue_event_4e9a                   	| [$4670: jra    queue_event_4e9a]
 
 start_game_4673:
 	OP_W_ON_DP_ADDRESS	addq,game_playing_00,#1| [$4673: inc    game_playing_00]
@@ -1412,7 +1413,7 @@ l_46c9:
 	lea	table_d358,a2                  	| [$46c9: ldx   #table_d358]
 	OP_R_ON_DP_ADDRESS	move,0x26,d0         | [$46cc: lda    $26]
 	asl.b	#1,d0                            	| [$46ce: asla]
-	JMP_A_INDEXED	A2                   	| [$46cf: jmp    [a,x]] [jump_table]
+	JMP_A_INDEXED	A2                   	| [$46cf: jra    [a,x]] [jump_table]
 
 l_46d1:
 	OP_R_ON_DP_ADDRESS	move,event_sub_state_28,d0| [$46d1: lda    event_sub_state_28]
@@ -1422,7 +1423,7 @@ l_46d1:
 	move.w	#0xd366,d2
 	.endif
 	lea	table_d366,a2                  	| [$46d4: ldx   #table_d366]
-	JMP_A_INDEXED	A2                   	| [$46d7: jmp    [a,x]] [jump_table]
+	JMP_A_INDEXED	A2                   	| [$46d7: jra    [a,x]] [jump_table]
 
 l_46d9:
 	
@@ -1432,7 +1433,7 @@ l_46d9:
 	lea	table_d36c,a2                  	| [$46d9: ldx   #table_d36c]
 	OP_R_ON_DP_ADDRESS	move,event_sub_state_2a,d0| [$46dc: lda    event_sub_state_2a]
 	asl.b	#1,d0                            	| [$46de: asla]
-	JMP_A_INDEXED	A2                   	| [$46df: jmp    [a,x]] [jump_table]
+	JMP_A_INDEXED	A2                   	| [$46df: jra    [a,x]] [jump_table]
 
 l_46e1:
 	OP_1_ON_DP_ADDRESS	tst,game_playing_00  | [$46e1: tst    game_playing_00]
@@ -1595,7 +1596,7 @@ l_47c0:
 	jbsr	l_5742                            	| [$47c6: jsr    $5742]
 	move.b	#0x01,d0                        	| [$47c9: lda    #$01]
 	OP_W_ON_DP_ADDRESS	move,0x75,d0         | [$47cb: sta    $75]
-	jmp	l_43fc                             	| [$47cd: jmp    $43fc]
+	jra	l_43fc                             	| [$47cd: jra    $43fc]
 l_47d0:
 	jbsr	l_582c                            	| [$47d0: jsr    $582c]
 	jbsr	l_52cc                            	| [$47d3: jsr    $52cc]
@@ -1607,7 +1608,7 @@ l_47d0:
 	move.w	#0xd377,d2
 	.endif
 	lea	table_d377,a2                  	| [$47dc: ldx   #table_d377]
-	JMP_A_INDEXED	A2                   	| [$47df: jmp    [a,x]] [jump_table]
+	JMP_A_INDEXED	A2                   	| [$47df: jra    [a,x]] [jump_table]
 l_47e1:
 	moveq	#0,d0                            	| [$47e1: clra]
 	moveq	#0,d1                            	| [$47e2: clrb]
@@ -1710,7 +1711,7 @@ l_486c:
 	lea	table_d387,a2                  	| [$486c: ldx   #table_d387]
 	OP_R_ON_DP_ADDRESS	move,event_sub_state_2a,d0| [$486f: lda    event_sub_state_2a]
 	asl.b	#1,d0                            	| [$4871: asla]
-	JMP_A_INDEXED	A2                   	| [$4872: jmp    [a,x]] [jump_table]
+	JMP_A_INDEXED	A2                   	| [$4872: jra    [a,x]] [jump_table]
 l_4874:
 	
 	.ifndef	RELEASE
@@ -1750,28 +1751,28 @@ l_489a:
 	jbsr	l_afc1                            	| [$489a: jsr    $afc1]
 l_489d:
 	jbsr	l_5c4d                            	| [$489d: jsr    $5c4d]
-	jmp	l_5d63                             	| [$48a0: jmp    $5d63]
+	jra	l_5d63                             	| [$48a0: jra    $5d63]
 l_48a3:
-	jmp	l_5f76                             	| [$48a3: jmp    $5f76]
+	jra	l_5f76                             	| [$48a3: jra    $5f76]
 l_48a6:
 	OP_1_ON_DP_ADDRESS	clr,0x65             | [$48a6: clr    $65]
 	jbsr	l_5c4d                            	| [$48a8: jsr    $5c4d]
-	jmp	l_5dff                             	| [$48ab: jmp    $5dff]
+	jra	l_5dff                             	| [$48ab: jra    $5dff]
 l_48ae:
 	move.b	#0x01,d0                        	| [$48ae: lda    #$01]
 	OP_W_ON_DP_ADDRESS	move,0x65,d0         | [$48b0: sta    $65]
 	jbsr	l_5e53                            	| [$48b2: jsr    $5e53]
-	jmp	l_5e03                             	| [$48b5: jmp    $5e03]
+	jra	l_5e03                             	| [$48b5: jra    $5e03]
 l_48b8:
 	OP_1_ON_DP_ADDRESS	clr,0x65             | [$48b8: clr    $65]
 	jbsr	l_5e53                            	| [$48ba: jsr    $5e53]
-	jmp	l_5e03                             	| [$48bd: jmp    $5e03]
+	jra	l_5e03                             	| [$48bd: jra    $5e03]
 l_48c0:
 	rts                                    	| [$48c0: rts]
 
 l_48c1:
 	jbsr	l_5e53                            	| [$48c1: jsr    $5e53]
-	jmp	l_5da5                             	| [$48c4: jmp    $5da5]
+	jra	l_5da5                             	| [$48c4: jra    $5da5]
 l_48c7:
 	OP_R_ON_DP_ADDRESS	move,current_event_69,d0| [$48c7: lda    current_event_69]
 	cmp.b	#0x03,d0                         	| [$48c9: cmpa   #$03]
@@ -1965,7 +1966,7 @@ l_49f3:
 	move.w	#0xd3b7,d2
 	.endif
 	lea	event_table_d3b7,a2            	| [$4a02: ldx   #event_table_d3b7]
-	JMP_A_INDEXED	A2                   	| [$4a05: jmp    [a,x]] [jump_table]
+	JMP_A_INDEXED	A2                   	| [$4a05: jra    [a,x]] [jump_table]
 
 l_4a07:
 	jbsr	l_582c                            	| [$4a07: jsr    $582c]
@@ -1978,7 +1979,7 @@ l_4a07:
 	lea	table_d3c5,a2                  	| [$4a10: ldx   #table_d3c5]
 	OP_R_ON_DP_ADDRESS	move,event_sub_state_28,d0| [$4a13: lda    event_sub_state_28]
 	asl.b	#1,d0                            	| [$4a15: asla]
-	JMP_A_INDEXED	A2                   	| [$4a16: jmp    [a,x]] [jump_table]
+	JMP_A_INDEXED	A2                   	| [$4a16: jra    [a,x]] [jump_table]
 l_4a18:
 	move.b	#0x30,d0                        	| [$4a18: lda    #$30]
 	OP_W_ON_DP_ADDRESS	move,0x29,d0         | [$4a1a: sta    $29]
@@ -2448,7 +2449,7 @@ l_4d08:
 	lea	table_d3df,a2                  	| [$4d08: ldx   #table_d3df]
 	OP_R_ON_DP_ADDRESS	move,event_sub_state_28,d0| [$4d0b: lda    event_sub_state_28]
 	asl.b	#1,d0                            	| [$4d0d: asla]
-	JMP_A_INDEXED	A2                   	| [$4d0e: jmp    [a,x]] [jump_table]
+	JMP_A_INDEXED	A2                   	| [$4d0e: jra    [a,x]] [jump_table]
 l_4d10:
 	jbsr	l_5244                            	| [$4d10: jsr    $5244]
 	move.w	#0x3380,d2                      	| [$4d13: ldx    #$3380]
@@ -2490,7 +2491,7 @@ l_4d43:
 	lea	table_d3ed,a2                  	| [$4d43: ldx   #table_d3ed]
 	OP_R_ON_DP_ADDRESS	move,event_sub_state_2a,d0| [$4d46: lda    event_sub_state_2a]
 	asl.b	#1,d0                            	| [$4d48: asla]
-	JMP_A_INDEXED	A2                   	| [$4d49: jmp    [a,x]] [jump_table]
+	JMP_A_INDEXED	A2                   	| [$4d49: jra    [a,x]] [jump_table]
 l_4d4b:
 	jbsr	l_574d                            	| [$4d4b: jsr    $574d]
 	OP_1_ON_DP_ADDRESS	tst,0x6b             | [$4d4e: tst    $6b]
@@ -2658,7 +2659,7 @@ l_4e36:
 	lea	table_d3f1,a2                  	| [$4e36: ldx   #table_d3f1]
 	OP_R_ON_DP_ADDRESS	move,event_sub_state_28,d0| [$4e39: lda    event_sub_state_28]
 	asl.b	#1,d0                            	| [$4e3b: asla]
-	JMP_A_INDEXED	A2                   	| [$4e3c: jmp    [a,x]] [jump_table]
+	JMP_A_INDEXED	A2                   	| [$4e3c: jra    [a,x]] [jump_table]
 l_4e3e:
 	move.w	#0x3502,d2                      	| [$4e3e: ldx    #$3502]
 	move.b	#0x04,d0                        	| [$4e41: lda    #$04]
@@ -2949,45 +2950,56 @@ l_4fb0:
 	and.b	(a0),d0                          	| [...]
 	rts                                    	| [$4fbc: rts]
 
-l_4fbd:
-	move.w	#0x3600,d2                      	| [$4fbd: ldx    #$3600]
-	move.w	#0x1000,d4                      	| [$4fc0: ldu    #$1000]
-l_4fc3:
-	GET_REG_ADDRESS	0,d2                   	| [$4fc3: ldd    ,x++]
-	addq.w	#2,d2                           	| [...]
-	LOAD_D                                 	| [$4fc3: ldd    ,x++]
-	GET_REG_ADDRESS	0,d4                   	| [$4fc5: std    ,u++]
-	addq.w	#2,d4                           	| [...]
-	MOVE_W_FROM_REG	d1,a0                         	| [...]
-	GET_REG_ADDRESS	0,d2                   	| [$4fc7: ldd    ,x++]
-	addq.w	#2,d2                           	| [...]
-	LOAD_D                                 	| [$4fc7: ldd    ,x++]
-	GET_REG_ADDRESS	0,d4                   	| [$4fc9: std    ,u++]
-	addq.w	#2,d4                           	| [...]
-	MOVE_W_FROM_REG	d1,a0                         	| [...]
-	cmp.w	#0x1090,d4                       	| [$4fcb: cmpu   #$1090]
-	jne	l_4fc3                             	| [$4fcf: bne    $4fc3]
-	rts                                    	| [$4fd1: rts]
+* update shadow sprite ram => sprite ram
+* completely rewritten for faster speed on 68000
+update_sprites_4fbd:
+	move.w	#sprite_shadow_ram_3600,d2                      	| [$4fbd: ldx    #$3600]
+	move.w	#sprite_ram_1000,d4                      	| [$4fc0: ldu    #$1000]
+	GET_REG_ADDRESS	0,d4
+	move.l	a0,a1
+	GET_REG_ADDRESS 	0,d2
+	move.w	#0x9-1,d0
+0:
+	move.l	(a0)+,(a1)+
+	move.l	(a0)+,(a1)+
+	move.l	(a0)+,(a1)+
+	move.l	(a0)+,(a1)+
+	dbf		d0,0b
+	rts
 
-l_4fd2:
-	move.w	#0x36c0,d2                      	| [$4fd2: ldx    #$36c0]
+
+* completely rewritten for faster speed on 68000
+update_scroll_registers_4fd2:
+	move.w	#sprite_shadow_ram_3600+0xC0,d2                      	| [$4fd2: ldx    #$36c0]
 	move.w	#scroll_registers_10c0,d4       	| [$4fd5: ldu    #scroll_registers_10c0]
-l_4fd8:
-	GET_REG_ADDRESS	0,d2                   	| [$4fd8: ldd    ,x++]
-	addq.w	#2,d2                           	| [...]
-	LOAD_D                                 	| [$4fd8: ldd    ,x++]
-	GET_REG_ADDRESS	0,d4                   	| [$4fda: std    ,u++]
-	addq.w	#2,d4                           	| [...]
-	MOVE_W_FROM_REG	d1,a0                         	| [...]
-	GET_REG_ADDRESS	0,d2                   	| [$4fdc: ldd    ,x++]
-	addq.w	#2,d2                           	| [...]
-	LOAD_D                                 	| [$4fdc: ldd    ,x++]
-	GET_REG_ADDRESS	0,d4                   	| [$4fde: std    ,u++]
-	addq.w	#2,d4                           	| [...]
-	MOVE_W_FROM_REG	d1,a0                         	| [...]
-	cmp.w	#0x1100,d4                       	| [$4fe0: cmpu   #$1100]
-	jne	l_4fd8                             	| [$4fe4: bne    $4fd8]
-	rts                                    	| [$4fe6: rts]
+	GET_REG_ADDRESS	0,d4
+	move.l	a0,a1
+	GET_REG_ADDRESS 	0,d2
+	move.w	#0x4-1,d0
+0:
+	move.l	(a0)+,(a1)+
+	move.l	(a0)+,(a1)+
+	move.l	(a0)+,(a1)+
+	move.l	(a0)+,(a1)+
+	dbf		d0,0b
+	rts
+	
+*l_4fd8:
+*	GET_REG_ADDRESS	0,d2                   	| [$4fd8: ldd    ,x++]
+*	addq.w	#2,d2                           	| [...]
+*	LOAD_D                                 	| [$4fd8: ldd    ,x++]
+*	GET_REG_ADDRESS	0,d4                   	| [$4fda: std    ,u++]
+*	addq.w	#2,d4                           	| [...]
+*	MOVE_W_FROM_REG	d1,a0                         	| [...]
+*	GET_REG_ADDRESS	0,d2                   	| [$4fdc: ldd    ,x++]
+*	addq.w	#2,d2                           	| [...]
+*	LOAD_D                                 	| [$4fdc: ldd    ,x++]
+*	GET_REG_ADDRESS	0,d4                   	| [$4fde: std    ,u++]
+*	addq.w	#2,d4                           	| [...]
+*	MOVE_W_FROM_REG	d1,a0                         	| [...]
+*	cmp.w	#0x1100,d4                       	| [$4fe0: cmpu   #$1100]
+*	jne	l_4fd8                             	| [$4fe4: bne    $4fd8]
+*	rts                                    	| [$4fe6: rts]
 
 l_4fe7:
 	move.w	#0xd8e6,d2                      	| [$4fe7: ldx    #$d8e6]
@@ -3636,7 +3648,7 @@ l_52d1:
 	jbsr	queue_event_4e9a                  	| [$52e0: jsr    queue_event_4e9a]
 	move.b	#0x02,d0                        	| [$52e3: ldd    #$020b]
 	move.w	#0x020b,d1                      	| [$52e3: ldd    #$020b]
-	jmp	queue_event_4e9a                   	| [$52e6: jmp    queue_event_4e9a]
+	jra	queue_event_4e9a                   	| [$52e6: jra    queue_event_4e9a]
 l_52e9:
 	move.w	#0x210b,d4                      	| [$52e9: ldu    #$210b]
 	move.b	#0x04,d1                        	| [$52ec: ldb    #$04]
@@ -3766,7 +3778,7 @@ l_5380:
 	GET_REG_ADDRESS	0,d3                   	| [$5397: lda    ,y+]
 	addq.w	#1,d3                           	| [...]
 	move.b	(a0),d0                         	| [...]
-	jmp	l_422d                             	| [$5399: jmp    $422d]
+	jra	l_422d                             	| [$5399: jra    $422d]
 l_539c:
 	OP_R_ON_DP_ADDRESS	move,game_playing_00,d0| [$539c: lda    game_playing_00]
 	jeq	l_53b3                             	| [$539e: beq    $53b3]
@@ -3864,7 +3876,7 @@ l_5429:
 	GET_REG_ADDRESS	0,d2                   	| [$542c: lda    ,x+]
 	addq.w	#1,d2                           	| [...]
 	move.b	(a0),d0                         	| [...]
-	jmp	write_char_and_move_cursor_422c    	| [$542e: jmp    write_char_and_move_cursor_422c]
+	jra	write_char_and_move_cursor_422c    	| [$542e: jra    write_char_and_move_cursor_422c]
 l_5431:
 	OP_R_ON_DP_ADDRESS	move,current_event_69,d0| [$5431: lda    current_event_69]
 	cmp.b	#0x02,d0                         	| [$5433: cmpa   #$02]
@@ -3896,7 +3908,7 @@ l_544f:
 	jne	l_544f                             	| [$545f: bne    $544f]
 l_5461:
 	move.b	#0x05,d1                        	| [$5461: ldb    #$05]
-	jmp	l_52f5                             	| [$5463: jmp    $52f5]
+	jra	l_52f5                             	| [$5463: jra    $52f5]
 
 l_5466:
 	move.w	#0x3380,d2                      	| [$5466: ldx    #$3380]
@@ -4174,9 +4186,9 @@ l_55b4:
 	lea	table_d405,a4                  	| [$55b7: ldu   #table_d405]
 	OP_R_ON_DP_ADDRESS	move,current_event_69,d0| [$55ba: lda    current_event_69]
 	asl.b	#1,d0                            	| [$55bc: asla]
-	JMP_A_INDEXED	A4                   	| [$55bd: jmp    [a,u]] [jump_table]
+	JMP_A_INDEXED	A4                   	| [$55bd: jra    [a,u]] [jump_table]
 l_55bf:
-	jmp	l_82a7                             	| [$55bf: jmp    $82a7]
+	jra	l_82a7                             	| [$55bf: jra    $82a7]
 l_55c2:
 	move.b	#0x04,d0                        	| [$55c2: lda    #$04]
 	OP_W_ON_DP_ADDRESS	move,0x48,d0         | [$55c4: sta    $48]
@@ -4370,7 +4382,7 @@ l_56f4:
 
 l_56fe:
 	move.b	#0x05,d1                        	| [$56fe: ldb    #$05]
-	jmp	l_52f5                             	| [$5700: jmp    $52f5]
+	jra	l_52f5                             	| [$5700: jra    $52f5]
 l_5703:
 	move.w	#0x3800,d2                      	| [$5703: ldx    #$3800]
 	OP_R_ON_DP_ADDRESS	move,current_event_69,d0| [$5706: lda    current_event_69]
@@ -4570,7 +4582,7 @@ l_5817:
 	addq.b	#1,d0                           	| [$5823: inca]
 	jbsr	l_422d                            	| [$5824: jsr    $422d]
 	move.b	#0x20,d0                        	| [$5827: lda    #$20]
-	jmp	l_422d                             	| [$5829: jmp    $422d]
+	jra	l_422d                             	| [$5829: jra    $422d]
 l_582c:
 	OP_R_ON_DP_ADDRESS	move,game_playing_00,d0| [$582c: lda    game_playing_00]
 	jeq	l_5854                             	| [$582e: beq    $5854]
@@ -4696,7 +4708,7 @@ l_58c6:
 	move.b	#0x80,d0                        	| [$58dc: lda    #$80]
 	GET_REG_ADDRESS	0x2,d2                 	| [$58de: sta    $2,x]
 	move.b	d0,(a0)                         	| [...]
-	jmp	l_590e                             	| [$58e0: jmp    $590e]
+	jra	l_590e                             	| [$58e0: jra    $590e]
 l_58e3:
 	GET_REG_ADDRESS	0x20,d2                	| [$58e3: lda    $20,x]
 	move.b	(a0),d0                         	| [...]
@@ -6172,7 +6184,7 @@ triple_jump_609c:
 	lea	table_d4df,a2                  	| [$609c: ldx   #table_d4df]
 	OP_R_ON_DP_ADDRESS	move,event_sub_state_28,d0| [$609f: lda    event_sub_state_28]
 	asl.b	#1,d0                            	| [$60a1: asla]
-	JMP_A_INDEXED	A2                   	| [$60a2: jmp    [a,x]] [jump_table]
+	JMP_A_INDEXED	A2                   	| [$60a2: jra    [a,x]] [jump_table]
 
 l_60a4:
 	
@@ -6182,7 +6194,7 @@ l_60a4:
 	lea	table_d4f3,a2                  	| [$60a4: ldx   #table_d4f3]
 	OP_R_ON_DP_ADDRESS	move,event_sub_state_2a,d0| [$60a7: lda    event_sub_state_2a]
 	asl.b	#1,d0                            	| [$60a9: asla]
-	JMP_A_INDEXED	A2                   	| [$60aa: jmp    [a,x]] [jump_table]
+	JMP_A_INDEXED	A2                   	| [$60aa: jra    [a,x]] [jump_table]
 
 l_60ac:
 	move.w	#0x30a0,d2                      	| [$60ac: ldx    #$30a0]
@@ -6454,7 +6466,7 @@ l_623d:
 	lea	table_d4f7,a4                  	| [$6240: ldu   #table_d4f7]
 	OP_R_ON_DP_ADDRESS	move,event_sub_state_2a,d0| [$6243: lda    event_sub_state_2a]
 	asl.b	#1,d0                            	| [$6245: asla]
-	JMP_A_INDEXED	A4                   	| [$6246: jmp    [a,u]] [jump_table]
+	JMP_A_INDEXED	A4                   	| [$6246: jra    [a,u]] [jump_table]
 l_6248:
 	OP_R_ON_DP_ADDRESS	move,0xbc,d0         | [$6248: lda    $bc]
 	jeq	l_6289                             	| [$624a: beq    $6289]
@@ -6514,7 +6526,7 @@ l_628e:
 	jbsr	l_5120                            	| [$62a0: jsr    $5120]
 	OP_R_ON_DP_ADDRESS	move,0x49,d0         | [$62a3: lda    $49]
 	OP_W_ON_DP_ADDRESS	move,0x48,d0         | [$62a5: sta    $48]
-	jmp	l_510f                             	| [$62a7: jmp    $510f]
+	jra	l_510f                             	| [$62a7: jra    $510f]
 	rts                                    	| [$62aa: rts]
 
 l_62ab:
@@ -6526,7 +6538,7 @@ l_62ab:
 	lea	table_d507,a4                  	| [$62ae: ldu   #table_d507]
 	OP_R_ON_DP_ADDRESS	move,event_sub_state_2a,d0| [$62b1: lda    event_sub_state_2a]
 	asl.b	#1,d0                            	| [$62b3: asla]
-	JMP_A_INDEXED	A4                   	| [$62b4: jmp    [a,u]] [jump_table]
+	JMP_A_INDEXED	A4                   	| [$62b4: jra    [a,u]] [jump_table]
 l_62b6:
 	OP_R_ON_DP_ADDRESS	move,0xbc,d0         | [$62b6: lda    $bc]
 	jeq	l_62fa                             	| [$62b8: beq    $62fa]
@@ -6595,7 +6607,7 @@ l_631b:
 	lea	table_d50b,a4                  	| [$631e: ldu   #table_d50b]
 	OP_R_ON_DP_ADDRESS	move,event_sub_state_2a,d0| [$6321: lda    event_sub_state_2a]
 	asl.b	#1,d0                            	| [$6323: asla]
-	JMP_A_INDEXED	A4                   	| [$6324: jmp    [a,u]] [jump_table]
+	JMP_A_INDEXED	A4                   	| [$6324: jra    [a,u]] [jump_table]
 l_6326:
 	moveq	#0,d0                            	| [$6326: clra]
 	jbsr	queue_sound_event_4ead            	| [$6327: jsr    queue_sound_event_4ead]
@@ -6657,7 +6669,7 @@ l_6376:
 	lea	table_d50f,a4                  	| [$6379: ldu   #table_d50f]
 	OP_R_ON_DP_ADDRESS	move,event_sub_state_2a,d0| [$637c: lda    event_sub_state_2a]
 	asl.b	#1,d0                            	| [$637e: asla]
-	JMP_A_INDEXED	A4                   	| [$637f: jmp    [a,u]] [jump_table]
+	JMP_A_INDEXED	A4                   	| [$637f: jra    [a,u]] [jump_table]
 l_6381:
 	OP_W_ON_DP_ADDRESS	subq,0x29,#1         | [$6381: dec    $29]
 	jne	l_63a7                             	| [$6383: bne    $63a7]
@@ -6822,7 +6834,7 @@ l_6455:
 	lea	table_d515,a4                  	| [$6458: ldu   #table_d515]
 	OP_R_ON_DP_ADDRESS	move,event_sub_state_2a,d0| [$645b: lda    event_sub_state_2a]
 	asl.b	#1,d0                            	| [$645d: asla]
-	JMP_A_INDEXED	A4                   	| [$645e: jmp    [a,u]] [jump_table]
+	JMP_A_INDEXED	A4                   	| [$645e: jra    [a,u]] [jump_table]
 l_6460:
 	move.b	#0x06,d0                        	| [$6460: lda    #$06]
 	GET_REG_ADDRESS	0,d2                   	| [$6462: sta    ,x]
@@ -6990,7 +7002,7 @@ l_6536:
 	lea	table_d523,a4                  	| [$6539: ldu   #table_d523]
 	OP_R_ON_DP_ADDRESS	move,event_sub_state_2a,d0| [$653c: lda    event_sub_state_2a]
 	asl.b	#1,d0                            	| [$653e: asla]
-	JMP_A_INDEXED	A4                   	| [$653f: jmp    [a,u]] [jump_table]
+	JMP_A_INDEXED	A4                   	| [$653f: jra    [a,u]] [jump_table]
 l_6541:
 	GET_REG_ADDRESS	0x2,d2                 	| [$6541: lda    $2,x]
 	move.b	(a0),d0                         	| [...]
@@ -7052,7 +7064,7 @@ l_6588:
 	move.b	#0x1e,d0                        	| [$6588: lda    #$1e]
 	jbsr	l_4eb3                            	| [$658a: jsr    $4eb3]
 	move.b	#0x1f,d0                        	| [$658d: lda    #$1f]
-	jmp	l_4eb3                             	| [$658f: jmp    $4eb3]
+	jra	l_4eb3                             	| [$658f: jra    $4eb3]
 l_6592:
 	OP_W_ON_DP_ADDRESS	subq,0x65,#1         | [$6592: dec    $65]
 	jne	l_65b4                             	| [$6594: bne    $65b4]
@@ -7077,7 +7089,7 @@ l_65b4:
 	rts                                    	| [$65b4: rts]
 
 l_65b5:
-	jmp	l_64fc                             	| [$65b5: jmp    $64fc]
+	jra	l_64fc                             	| [$65b5: jra    $64fc]
 
 free_style_65b8:
 	
@@ -7087,7 +7099,7 @@ free_style_65b8:
 	lea	table_d52b,a2                  	| [$65b8: ldx   #table_d52b]
 	OP_R_ON_DP_ADDRESS	move,event_sub_state_28,d0| [$65bb: lda    event_sub_state_28]
 	asl.b	#1,d0                            	| [$65bd: asla]
-	JMP_A_INDEXED	A2                   	| [$65be: jmp    [a,x]] [jump_table]
+	JMP_A_INDEXED	A2                   	| [$65be: jra    [a,x]] [jump_table]
 
 l_65c0:
 	
@@ -7097,7 +7109,7 @@ l_65c0:
 	lea	table_d535,a2                  	| [$65c0: ldx   #table_d535]
 	OP_R_ON_DP_ADDRESS	move,event_sub_state_2a,d0| [$65c3: lda    event_sub_state_2a]
 	asl.b	#1,d0                            	| [$65c5: asla]
-	JMP_A_INDEXED	A2                   	| [$65c6: jmp    [a,x]] [jump_table]
+	JMP_A_INDEXED	A2                   	| [$65c6: jra    [a,x]] [jump_table]
 
 l_65c8:
 	move.b	#0x01,d0                        	| [$65c8: lda    #$01]
@@ -7166,7 +7178,7 @@ l_6620:
 	lea	table_d539,a4                  	| [$6625: ldu   #table_d539]
 	OP_R_ON_DP_ADDRESS	move,event_sub_state_2a,d0| [$6628: lda    event_sub_state_2a]
 	asl.b	#1,d0                            	| [$662a: asla]
-	JMP_A_INDEXED	A4                   	| [$662b: jmp    [a,u]] [jump_table]
+	JMP_A_INDEXED	A4                   	| [$662b: jra    [a,u]] [jump_table]
 l_662d:
 	move.b	#0x80,d0                        	| [$662d: lda    #$80]
 	jbsr	queue_sound_event_4ead            	| [$662f: jsr    queue_sound_event_4ead]
@@ -7779,11 +7791,11 @@ l_69c5:
 	GET_REG_ADDRESS	0x2,d2                 	| [$69e0: sta    $2,x]
 	move.b	d0,(a0)                         	| [...]
 	jbsr	l_783e                            	| [$69e2: jsr    $783e]
-	jmp	l_84a3                             	| [$69e5: jmp    $84a3]
+	jra	l_84a3                             	| [$69e5: jra    $84a3]
 l_69e8:
 	GET_REG_ADDRESS	0x2,d2                 	| [$69e8: sta    $2,x]
 	move.b	d0,(a0)                         	| [...]
-	jmp	l_783e                             	| [$69ea: jmp    $783e]
+	jra	l_783e                             	| [$69ea: jra    $783e]
 l_69ed:
 	jbsr	l_7455                            	| [$69ed: jsr    $7455]
 	GET_REG_ADDRESS	0x1c,d2                	| [$69f0: lda    $1c,x]
@@ -7955,7 +7967,7 @@ l_6ac2:
 	OP_R_ON_DP_ADDRESS	move,0x77,d0         | [$6ad3: lda    $77]
 	OP_W_ON_DP_ADDRESS	move,0x19,d0         | [$6ad5: sta    $19]
 	movem.l	(sp)+,d2/d4                    	| [$6ad7: puls   x,u]
-	jmp	l_84a3                             	| [$6ad9: jmp    $84a3]
+	jra	l_84a3                             	| [$6ad9: jra    $84a3]
 
 l_6adc:
 	GET_REG_ADDRESS	0x20,d2                	| [$6adc: clr    $20,x]
@@ -7992,7 +8004,7 @@ l_6b02:
 	lea	table_d565,a2                  	| [$6b02: ldx   #table_d565]
 	OP_R_ON_DP_ADDRESS	move,event_sub_state_2a,d0| [$6b05: lda    event_sub_state_2a]
 	asl.b	#1,d0                            	| [$6b07: asla]
-	JMP_A_INDEXED	A2                   	| [$6b08: jmp    [a,x]] [jump_table]
+	JMP_A_INDEXED	A2                   	| [$6b08: jra    [a,x]] [jump_table]
 l_6b0a:
 	move.w	#0x3290,d2                      	| [$6b0a: ldx    #$3290]
 	move.w	#0xd569,d4                      	| [$6b0d: ldu    #$d569]
@@ -8116,7 +8128,7 @@ long_horse_6bcc:
 	lea	table_d571,a4                  	| [$6bcf: ldu   #table_d571]
 	OP_R_ON_DP_ADDRESS	move,event_sub_state_28,d0| [$6bd2: lda    event_sub_state_28]
 	asl.b	#1,d0                            	| [$6bd4: asla]
-	JMP_A_INDEXED	A4                   	| [$6bd5: jmp    [a,u]] [jump_table]
+	JMP_A_INDEXED	A4                   	| [$6bd5: jra    [a,u]] [jump_table]
 
 l_6bd7:
 	
@@ -8126,7 +8138,7 @@ l_6bd7:
 	lea	table_d58d,a4                  	| [$6bd7: ldu   #table_d58d]
 	OP_R_ON_DP_ADDRESS	move,event_sub_state_2a,d0| [$6bda: lda    event_sub_state_2a]
 	asl.b	#1,d0                            	| [$6bdc: asla]
-	JMP_A_INDEXED	A4                   	| [$6bdd: jmp    [a,u]] [jump_table]
+	JMP_A_INDEXED	A4                   	| [$6bdd: jra    [a,u]] [jump_table]
 
 l_6bdf:
 	jbsr	l_82a7                            	| [$6bdf: jsr    $82a7]
@@ -8164,7 +8176,7 @@ l_6c0d:
 	lea	table_d591,a4                  	| [$6c0d: ldu   #table_d591]
 	OP_R_ON_DP_ADDRESS	move,event_sub_state_2a,d0| [$6c10: lda    event_sub_state_2a]
 	asl.b	#1,d0                            	| [$6c12: asla]
-	JMP_A_INDEXED	A4                   	| [$6c13: jmp    [a,u]] [jump_table]
+	JMP_A_INDEXED	A4                   	| [$6c13: jra    [a,u]] [jump_table]
 l_6c15:
 	OP_1_ON_DP_ADDRESS	tst,game_playing_00  | [$6c15: tst    game_playing_00]
 	jeq	l_6c20                             	| [$6c17: beq    $6c20]
@@ -8355,7 +8367,7 @@ l_6d38:
 	lea	table_d599,a4                  	| [$6d38: ldu   #table_d599]
 	OP_R_ON_DP_ADDRESS	move,event_sub_state_2a,d0| [$6d3b: lda    event_sub_state_2a]
 	asl.b	#1,d0                            	| [$6d3d: asla]
-	JMP_A_INDEXED	A4                   	| [$6d3e: jmp    [a,u]] [jump_table]
+	JMP_A_INDEXED	A4                   	| [$6d3e: jra    [a,u]] [jump_table]
 l_6d40:
 	move.w	#0xd59f,d4                      	| [$6d40: ldu    #$d59f]
 	OP_R_ON_DP_ADDRESS	move,0xeb,d0         | [$6d43: lda    $eb]
@@ -8785,7 +8797,7 @@ l_6fbc:
 l_6fc7:
 	jbsr	write_char_and_move_cursor_422c   	| [$6fc7: jsr    write_char_and_move_cursor_422c]
 	OP_R_ON_DP_ADDRESS	move,0x48,d0         | [$6fca: lda    $48]
-	jmp	write_char_and_move_cursor_422c    	| [$6fcc: jmp    write_char_and_move_cursor_422c]
+	jra	write_char_and_move_cursor_422c    	| [$6fcc: jra    write_char_and_move_cursor_422c]
 l_6fcf:
 	moveq	#0,d0                            	| [$6fcf: clra]
 	jbsr	queue_sound_event_4ead            	| [$6fd0: jsr    queue_sound_event_4ead]
@@ -8833,7 +8845,7 @@ l_7006:
 	lea	table_d5e8,a4                  	| [$7006: ldu   #table_d5e8]
 	OP_R_ON_DP_ADDRESS	move,event_sub_state_2a,d0| [$7009: lda    event_sub_state_2a]
 	asl.b	#1,d0                            	| [$700b: asla]
-	JMP_A_INDEXED	A4                   	| [$700c: jmp    [a,u]] [jump_table]
+	JMP_A_INDEXED	A4                   	| [$700c: jra    [a,u]] [jump_table]
 
 l_700e:
 	jbsr	l_c027                            	| [$700e: jsr    $c027]
@@ -8854,7 +8866,7 @@ l_7021:
 l_7025:
 	GET_REG_ADDRESS	0x1,d2                 	| [$7025: stb    $1,x]
 	move.b	d1,(a0)                         	| [...]
-	jmp	l_85c3                             	| [$7027: jmp    $85c3]
+	jra	l_85c3                             	| [$7027: jra    $85c3]
 
 l_702a:
 	move.b	#0x5c,d0                        	| [$702a: lda    #$5c]
@@ -8921,7 +8933,7 @@ l_7074:
 	lea	table_d5ec,a4                  	| [$707a: ldu   #table_d5ec]
 	OP_R_ON_DP_ADDRESS	move,event_sub_state_2a,d0| [$707d: lda    event_sub_state_2a]
 	asl.b	#1,d0                            	| [$707f: asla]
-	JMP_A_INDEXED	A4                   	| [$7080: jmp    [a,u]] [jump_table]
+	JMP_A_INDEXED	A4                   	| [$7080: jra    [a,u]] [jump_table]
 l_7082:
 	move.b	#0x5c,d0                        	| [$7082: lda    #$5c]
 	GET_REG_ADDRESS	0x1,d2                 	| [$7084: sta    $1,x]
@@ -9024,7 +9036,7 @@ l_710b:
 	lea	table_d605,a4                  	| [$710b: ldu   #table_d605]
 	OP_R_ON_DP_ADDRESS	move,event_sub_state_2a,d0| [$710e: lda    event_sub_state_2a]
 	asl.b	#1,d0                            	| [$7110: asla]
-	JMP_A_INDEXED	A4                   	| [$7111: jmp    [a,u]] [jump_table]
+	JMP_A_INDEXED	A4                   	| [$7111: jra    [a,u]] [jump_table]
 l_7113:
 	move.b	#0x56,d0                        	| [$7113: lda    #$56]
 	GET_REG_ADDRESS	0x1,d2                 	| [$7115: sta    $1,x]
@@ -9100,7 +9112,7 @@ l_7181:
 	lea	table_d609,a4                  	| [$7181: ldu   #table_d609]
 	OP_R_ON_DP_ADDRESS	move,event_sub_state_2a,d0| [$7184: lda    event_sub_state_2a]
 	asl.b	#1,d0                            	| [$7186: asla]
-	JMP_A_INDEXED	A4                   	| [$7187: jmp    [a,u]] [jump_table]
+	JMP_A_INDEXED	A4                   	| [$7187: jra    [a,u]] [jump_table]
 l_7189:
 	OP_W_ON_DP_ADDRESS	subq,0x29,#1         | [$7189: dec    $29]
 	jne	l_718f                             	| [$718b: bne    $718f]
@@ -9123,7 +9135,7 @@ l_7199:
 	lea	table_d613,a4                  	| [$7199: ldu   #table_d613]
 	OP_R_ON_DP_ADDRESS	move,event_sub_state_2a,d0| [$719c: lda    event_sub_state_2a]
 	asl.b	#1,d0                            	| [$719e: asla]
-	JMP_A_INDEXED	A4                   	| [$719f: jmp    [a,u]] [jump_table]
+	JMP_A_INDEXED	A4                   	| [$719f: jra    [a,u]] [jump_table]
 l_71a1:
 	OP_W_ON_DP_ADDRESS	subq,0x29,#1         | [$71a1: dec    $29]
 	jne	l_71a7                             	| [$71a3: bne    $71a7]
@@ -9537,7 +9549,7 @@ l_73df:
 	move.b	(a0),d0                         	| [...]
 	OP_W_ON_DP_ADDRESS	move,0x48,d0         | [$73e6: sta    $48]
 	move.w	#0x30b0,d4                      	| [$73e8: ldu    #$30b0]
-	jmp	l_50d1                             	| [$73eb: jmp    $50d1]
+	jra	l_50d1                             	| [$73eb: jra    $50d1]
 l_73ee:
 	move.w	#0xd627,d4                      	| [$73ee: ldu    #$d627]
 	OP_R_ON_DP_ADDRESS	move,0xa0,d1         | [$73f1: ldb    $a0]
@@ -9575,11 +9587,11 @@ l_7409:
 	jbsr	l_510f                            	| [$7416: jsr    $510f]
 	OP_R_ON_DP_ADDRESS	move,0x49,d0         | [$7419: lda    $49]
 	OP_W_ON_DP_ADDRESS	move,0x48,d0         | [$741b: sta    $48]
-	jmp	l_5120                             	| [$741d: jmp    $5120]
+	jra	l_5120                             	| [$741d: jra    $5120]
 l_7420:
 	move.b	#0x03,d0                        	| [$7420: lda    #$03]
 	OP_W_ON_DP_ADDRESS	move,0x48,d0         | [$7422: sta    $48]
-	jmp	l_50d1                             	| [$7424: jmp    $50d1]
+	jra	l_50d1                             	| [$7424: jra    $50d1]
 l_7427:
 	
 	.ifndef	RELEASE
@@ -9589,7 +9601,7 @@ l_7427:
 	OP_R_ON_DP_ADDRESS	move,0xa0,d0         | [$742a: lda    $a0]
 	sub.b	#0x02,d0                         	| [$742c: suba   #$02]
 	asl.b	#1,d0                            	| [$742e: asla]
-	JMP_A_INDEXED	A4                   	| [$742f: jmp    [a,u]] [jump_table]
+	JMP_A_INDEXED	A4                   	| [$742f: jra    [a,u]] [jump_table]
 l_7431:
 	GET_DP_ADDRESS	speed_msb_b0            	| [$7431: ldd    speed_msb_b0]
 	LOAD_D                                 	| [$7431: ldd    speed_msb_b0]
@@ -10305,7 +10317,7 @@ l_7832:
 	cmp.b	#0x03,d0                         	| [$7837: cmpa   #$03]
 	jcc	l_783e                             	| [$7839: bcc    $783e]
 	asl.b	#1,d0                            	| [$783b: asla]
-	JMP_A_INDEXED	A4                   	| [$783c: jmp    [a,u]] [jump_table]
+	JMP_A_INDEXED	A4                   	| [$783c: jra    [a,u]] [jump_table]
 l_783e:
 	GET_REG_ADDRESS	0x58,d2                	| [$783e: tst    $58,x]
 	tst.b	(a0)                             	| [...]
@@ -10322,7 +10334,7 @@ l_7851:
 	rts                                    	| [$7851: rts]
 
 l_7852:
-	jmp	l_8411                             	| [$7852: jmp    $8411]
+	jra	l_8411                             	| [$7852: jra    $8411]
 l_7855:
 	move.l	d2,-(sp)                        	| [$7855: pshs   x]
 	move.w	#0x3260,d2                      	| [$7857: ldx    #$3260]
@@ -10618,7 +10630,7 @@ l_79e2:
 	jbsr	l_79eb                            	| [$79e2: bsr    $79eb]
 	jbsr	l_7a10                            	| [$79e4: bsr    $7a10]
 	jbsr	l_7a44                            	| [$79e6: bsr    $7a44]
-	jmp	l_7a78                             	| [$79e8: jmp    $7a78]
+	jra	l_7a78                             	| [$79e8: jra    $7a78]
 l_79eb:
 	move.w	#0x2585,d4                      	| [$79eb: ldu    #$2585]
 	OP_R_ON_DP_ADDRESS	move,0x1a,d0         | [$79ee: lda    $1a]
@@ -10627,7 +10639,7 @@ l_79eb:
 	jbsr	l_7a9a                            	| [$79f5: jsr    $7a9a]
 	moveq	#0,d0                            	| [$79f8: clra]
 	OP_W_ON_DP_ADDRESS	move,0x48,d0         | [$79f9: sta    $48]
-	jmp	l_7aae                             	| [$79fb: jmp    $7aae]
+	jra	l_7aae                             	| [$79fb: jra    $7aae]
 l_79fe:
 	move.w	#0xd64d,d2                      	| [$79fe: ldx    #$d64d]
 	jbsr	l_7a9a                            	| [$7a01: jsr    $7a9a]
@@ -10637,7 +10649,7 @@ l_79fe:
 	moveq	#0,d0                            	| [$7a0a: clra]
 l_7a0b:
 	OP_W_ON_DP_ADDRESS	move,0x48,d0         | [$7a0b: sta    $48]
-	jmp	l_7aae                             	| [$7a0d: jmp    $7aae]
+	jra	l_7aae                             	| [$7a0d: jra    $7aae]
 l_7a10:
 	move.w	#0x2485,d4                      	| [$7a10: ldu    #$2485]
 	OP_R_ON_DP_ADDRESS	move,0x1a,d0         | [$7a13: lda    $1a]
@@ -10744,7 +10756,7 @@ l_7aae:
 	OP_W_ON_DP_ADDRESS	move,0x19,d0         | [$7ab3: sta    $19]
 	move.b	#0x0d,d0                        	| [$7ab5: lda    #$0d]
 	OP_W_ON_DP_ADDRESS	move,0x50,d0         | [$7ab7: sta    $50]
-	jmp	l_5380                             	| [$7ab9: jmp    $5380]
+	jra	l_5380                             	| [$7ab9: jra    $5380]
 l_7abc:
 	move.w	#0xd64a,d2                      	| [$7abc: ldx    #$d64a]
 	jra	l_7a9a                             	| [$7abf: bra    $7a9a]
@@ -10918,7 +10930,7 @@ l_7b96:
 	lea	table_d6a8,a2                  	| [$7b96: ldx   #table_d6a8]
 	OP_R_ON_DP_ADDRESS	move,0x24,d0         | [$7b99: lda    $24]
 	asl.b	#1,d0                            	| [$7b9b: asla]
-	JMP_A_INDEXED	A2                   	| [$7b9c: jmp    [a,x]] [jump_table]
+	JMP_A_INDEXED	A2                   	| [$7b9c: jra    [a,x]] [jump_table]
 l_7b9e:
 	OP_R_ON_DP_ADDRESS	move,0x0c,d0         | [$7b9e: lda    $0c]
 	and.b	#0x0f,d0                         	| [$7ba0: anda   #$0f]
@@ -10926,7 +10938,7 @@ l_7b9e:
 	jeq	l_7bad                             	| [$7ba4: beq    $7bad]
 	OP_R_ON_DP_ADDRESS	move,0x03,d0         | [$7ba6: lda    $03]
 	jeq	l_7bb4                             	| [$7ba8: beq    $7bb4]
-	jmp	l_7c20                             	| [$7baa: jmp    $7c20]
+	jra	l_7c20                             	| [$7baa: jra    $7c20]
 l_7bad:
 	jbsr	l_5869                            	| [$7bad: jsr    $5869]
 	tst.b	d0                               	| [$7bb0: tsta]
@@ -10973,7 +10985,7 @@ l_7bdf:
 	jeq	l_7bee                             	| [$7be5: beq    $7bee]
 	OP_R_ON_DP_ADDRESS	move,0x03,d0         | [$7be7: lda    $03]
 	jeq	l_7bf5                             	| [$7be9: beq    $7bf5]
-	jmp	l_7c20                             	| [$7beb: jmp    $7c20]
+	jra	l_7c20                             	| [$7beb: jra    $7c20]
 l_7bee:
 	jbsr	l_5869                            	| [$7bee: jsr    $5869]
 	tst.b	d0                               	| [$7bf1: tsta]
@@ -10988,7 +11000,7 @@ l_7bf5:
 	lea	table_d6b1,a2                  	| [$7bf5: ldx   #table_d6b1]
 	OP_R_ON_DP_ADDRESS	move,0x26,d0         | [$7bf8: lda    $26]
 	asl.b	#1,d0                            	| [$7bfa: asla]
-	JMP_A_INDEXED	A2                   	| [$7bfb: jmp    [a,x]] [jump_table]
+	JMP_A_INDEXED	A2                   	| [$7bfb: jra    [a,x]] [jump_table]
 l_7bfd:
 	move.w	#0x3500,d2                      	| [$7bfd: ldx    #$3500]
 	moveq	#0,d0                            	| [$7c00: clra]
@@ -11166,7 +11178,7 @@ l_7ce9:
 l_7cf5:
 	move.b	#0x02,d0                        	| [$7cf5: ldd    #$0220]
 	move.w	#0x0220,d1                      	| [$7cf5: ldd    #$0220]
-	jmp	queue_event_4e9a                   	| [$7cf8: jmp    queue_event_4e9a]
+	jra	queue_event_4e9a                   	| [$7cf8: jra    queue_event_4e9a]
 l_7cfb:
 	move.b	#0x02,d0                        	| [$7cfb: ldd    #$0221]
 	move.w	#0x0221,d1                      	| [$7cfb: ldd    #$0221]
@@ -11178,14 +11190,14 @@ l_7cfb:
 	jbsr	queue_event_4e9a                  	| [$7d08: jsr    queue_event_4e9a]
 	move.b	#0x02,d0                        	| [$7d0b: ldd    #$0222]
 	move.w	#0x0222,d1                      	| [$7d0b: ldd    #$0222]
-	jmp	queue_event_4e9a                   	| [$7d0e: jmp    queue_event_4e9a]
+	jra	queue_event_4e9a                   	| [$7d0e: jra    queue_event_4e9a]
 l_7d11:
 	move.b	#0x02,d0                        	| [$7d11: ldd    #$0223]
 	move.w	#0x0223,d1                      	| [$7d11: ldd    #$0223]
 	jbsr	queue_event_4e9a                  	| [$7d14: jsr    queue_event_4e9a]
 	move.b	#0x02,d0                        	| [$7d17: ldd    #$0224]
 	move.w	#0x0224,d1                      	| [$7d17: ldd    #$0224]
-	jmp	queue_event_4e9a                   	| [$7d1a: jmp    queue_event_4e9a]
+	jra	queue_event_4e9a                   	| [$7d1a: jra    queue_event_4e9a]
 l_7d1d:
 	OP_W_ON_DP_ADDRESS	addq,0x65,#1         | [$7d1d: inc    $65]
 	move.w	#0xd6bb,d2                      	| [$7d1f: ldx    #$d6bb]
@@ -11448,7 +11460,7 @@ l_7e76:
 	MOVE_W_FROM_REG	d1,a0                         	| [...]
 	GET_REG_ADDRESS	0,d4                   	| [$7e7a: clr    ,u]
 	clr.b	(a0)                         	| [...]
-	jmp	l_7f0a                             	| [$7e7c: jmp    $7f0a]
+	jra	l_7f0a                             	| [$7e7c: jra    $7f0a]
 l_7e7f:
 	move.w	#0x309c,d2                      	| [$7e7f: ldx    #$309c]
 	jbsr	l_7ee6                            	| [$7e82: bsr    $7ee6]
@@ -11558,7 +11570,7 @@ l_7f0a:
 	jbsr	l_7f21                            	| [$7f17: bsr    $7f21]
 	jbsr	l_553c                            	| [$7f19: jsr    $553c]
 	move.b	#0x07,d0                        	| [$7f1c: lda    #$07]
-	jmp	queue_event_4e9a                   	| [$7f1e: jmp    queue_event_4e9a]
+	jra	queue_event_4e9a                   	| [$7f1e: jra    queue_event_4e9a]
 l_7f21:
 	GET_REG_ADDRESS	0x2,d2                 	| [$7f21: lda    $2,x]
 	move.b	(a0),d0                         	| [...]
@@ -11725,7 +11737,7 @@ l_7fcf:
 	move.b	d0,d6                           	| [...] as byte
 	DO_EXTB	d6                             	| [...] with sign extension
 	add.w	d6,d3                            	| [$7fda: leay   a,y]
-	jmp	l_894b                             	| [$7fdc: jmp    $894b]
+	jra	l_894b                             	| [$7fdc: jra    $894b]
 
 l_8000:
 	OP_R_ON_DP_ADDRESS	move,current_event_69,d0| [$8000: lda    current_event_69]
@@ -11795,7 +11807,7 @@ l_8053:
 	move.w	d4,d3                           	| [$805b: leay   d,u]
 	add.w	d1,d3                            	| [$805b: leay   d,u]
 	move.w	#0x3600,d4                      	| [$805d: ldu    #$3600]
-	jmp	l_890f                             	| [$8060: jmp    $890f]
+	jra	l_890f                             	| [$8060: jra    $890f]
 l_8063:
 	move.w	#0x3250,d2                      	| [$8063: ldx    #$3250]
 	GET_REG_ADDRESS	0,d2                   	| [$8066: clr    ,x]
@@ -11827,7 +11839,7 @@ l_8077:
 	GET_REG_ADDRESS	0,d2                   	| [$8082: lda    ,x]
 	move.b	(a0),d0                         	| [...]
 	asl.b	#1,d0                            	| [$8084: asla]
-	JMP_A_INDEXED	A4                   	| [$8085: jmp    [a,u]] [jump_table]
+	JMP_A_INDEXED	A4                   	| [$8085: jra    [a,u]] [jump_table]
 l_8087:
 	GET_REG_ADDRESS	0x1,d2                 	| [$8087: dec    $1,x]
 	subq.b	#1,(a0)                         	| [...]
@@ -11893,7 +11905,7 @@ l_80c8:
 l_80d8:
 	move.w	#0x3600,d4                      	| [$80d8: ldu    #$3600]
 	move.w	#0xd83a,d3                      	| [$80db: ldy    #$d83a]
-	jmp	l_894b                             	| [$80df: jmp    $894b]
+	jra	l_894b                             	| [$80df: jra    $894b]
 l_80e2:
 	move.w	#0x3258,d2                      	| [$80e2: ldx    #$3258]
 	GET_ADDRESS	0x3251                     	| [$80e5: ldd    $3251]
@@ -11904,7 +11916,7 @@ l_80e2:
 	MOVE_W_FROM_REG	d1,a0                         	| [...]
 	move.w	#0x3604,d4                      	| [$80ec: ldu    #$3604]
 	move.w	#0xd83c,d3                      	| [$80ef: ldy    #$d83c]
-	jmp	l_894b                             	| [$80f3: jmp    $894b]
+	jra	l_894b                             	| [$80f3: jra    $894b]
 l_80f6:
 	move.w	#0x3480,d2                      	| [$80f6: ldx    #$3480]
 	OP_R_ON_DP_ADDRESS	move,0x77,d0         | [$80f9: lda    $77]
@@ -11985,7 +11997,7 @@ l_816a:
 	GET_ADDRESS	0x3263                     	| [$816a: inc    $3263]
 	addq.b	#1,(a0)                         	| [...]
 	move.w	#0x3260,d2                      	| [$816d: ldx    #$3260]
-	jmp	l_7fcf                             	| [$8170: jmp    $7fcf]
+	jra	l_7fcf                             	| [$8170: jra    $7fcf]
 l_8173:
 	move.w	#0x3263,d2                      	| [$8173: ldx    #$3263]
 	jra	l_818d                             	| [$8176: bra    $818d]
@@ -12017,7 +12029,7 @@ l_818d:
 	move.b	#0x03,d1                        	| [$8198: ldb    #$03]
 	jbsr	multiply_ab                       	| [$819a: mul]
 	add.w	d1,d3                            	| [$819b: leay   d,y]
-	jmp	l_890f                             	| [$819d: jmp    $890f]
+	jra	l_890f                             	| [$819d: jra    $890f]
 l_81a0:
 	OP_1_ON_DP_ADDRESS	tst,0x1a             | [$81a0: tst    $1a]
 	jne	l_81f1                             	| [$81a2: bne    $81f1]
@@ -12138,7 +12150,7 @@ l_8242:
 	move.b	d0,d6                           	| [...] as byte
 	DO_EXTB	d6                             	| [...] with sign extension
 	add.w	d6,d4                            	| [$824e: leau   a,u]
-	jmp	l_894b                             	| [$8250: jmp    $894b]
+	jra	l_894b                             	| [$8250: jra    $894b]
 l_8253:
 	move.w	#0xd84a,d3                      	| [$8253: ldy    #$d84a]
 	OP_1_ON_DP_ADDRESS	tst,0x1a             | [$8257: tst    $1a]
@@ -12160,7 +12172,7 @@ l_8268:
 	move.b	d0,d6                           	| [...] as byte
 	DO_EXTB	d6                             	| [...] with sign extension
 	add.w	d6,d4                            	| [$826f: leau   a,u]
-	jmp	l_894b                             	| [$8271: jmp    $894b]
+	jra	l_894b                             	| [$8271: jra    $894b]
 l_8274:
 	move.w	#0xd878,d4                      	| [$8274: ldu    #$d878]
 	GET_REG_ADDRESS	0,d2                   	| [$8277: lda    ,x]
@@ -12298,7 +12310,7 @@ l_8335:
 l_833d:
 	move.w	#0xde10,d3                      	| [$833d: ldy    #$de10]
 	move.w	#0x366c,d4                      	| [$8341: ldu    #$366c]
-	jmp	l_894b                             	| [$8344: jmp    $894b]
+	jra	l_894b                             	| [$8344: jra    $894b]
 l_8347:
 	move.w	#0xde3d,d3                      	| [$8347: ldy    #$de3d]
 	jra	l_8359                             	| [$834b: bra    $8359]
@@ -12342,7 +12354,7 @@ l_8387:
 	jbsr	multiply_ab                       	| [$838f: mul]
 	add.w	d1,d3                            	| [$8390: leay   d,y]
 	move.w	#0x367c,d4                      	| [$8392: ldu    #$367c]
-	jmp	l_889d                             	| [$8395: jmp    $889d]
+	jra	l_889d                             	| [$8395: jra    $889d]
 l_8398:
 	move.b	#0x04,d0                        	| [$8398: lda    #$04]
 	OP_W_ON_DP_ADDRESS	move,0x67,d0         | [$839a: sta    $67]
@@ -12350,7 +12362,7 @@ l_8398:
 	OP_W_ON_DP_ADDRESS	move,0x48,d0         | [$839e: sta    $48]
 	jbsr	l_86b1                            	| [$83a0: jsr    $86b1]
 	move.w	#0x362c,d4                      	| [$83a3: ldu    #$362c]
-	jmp	l_87fb                             	| [$83a6: jmp    $87fb]
+	jra	l_87fb                             	| [$83a6: jra    $87fb]
 l_83a9:
 	move.w	#0xde0e,d3                      	| [$83a9: ldy    #$de0e]
 	move.w	#0x3660,d4                      	| [$83ad: ldu    #$3660]
@@ -12363,7 +12375,7 @@ l_83a9:
 	move.b	d0,d6                           	| [...] as byte
 	DO_EXTB	d6                             	| [...] with sign extension
 	add.w	d6,d4                            	| [$83b6: leau   a,u]
-	jmp	l_894b                             	| [$83b8: jmp    $894b]
+	jra	l_894b                             	| [$83b8: jra    $894b]
 l_83bb:
 	GET_REG_ADDRESS	0x5,d2                 	| [$83bb: dec    $5,x]
 	subq.b	#1,(a0)                         	| [...]
@@ -12424,7 +12436,7 @@ l_8407:
 l_840b:
 	GET_REG_ADDRESS	0xb,d2                 	| [$840b: ldy    $b,x]
 	MOVE_W_TO_REG	a0,d3                         	| [...]
-	jmp	l_84d0                             	| [$840e: jmp    $84d0]
+	jra	l_84d0                             	| [$840e: jra    $84d0]
 l_8411:
 	GET_REG_ADDRESS	0x55,d2                	| [$8411: lda    $55,x]
 	move.b	(a0),d0                         	| [...]
@@ -12451,7 +12463,7 @@ l_8437:
 	jne	l_843d                             	| [$8439: bne    $843d]
 	addq.w	#0x4,d4                         	| [$843b: leau   $4,u]
 l_843d:
-	jmp	l_84ce                             	| [$843d: jmp    $84ce]
+	jra	l_84ce                             	| [$843d: jra    $84ce]
 l_8440:
 	GET_REG_ADDRESS	0,d2                   	| [$8440: lda    ,x]
 	move.b	(a0),d0                         	| [...]
@@ -12558,7 +12570,7 @@ l_84ce:
 	move.w	d4,d3                           	| [$84ce: tfr    u,y]
 l_84d0:
 	jbsr	l_86a6                            	| [$84d0: jsr    $86a6]
-	jmp	l_87fb                             	| [$84d3: jmp    $87fb]
+	jra	l_87fb                             	| [$84d3: jra    $87fb]
 l_84d6:
 	move.w	#0xdbb9,d4                      	| [$84d6: ldu    #$dbb9]
 	jra	l_84ce                             	| [$84d9: bra    $84ce]
@@ -12593,7 +12605,7 @@ l_84fd:
 	jra	l_84d0                             	| [$8505: bra    $84d0]
 l_8507:
 	jbsr	l_86a6                            	| [$8507: jsr    $86a6]
-	jmp	l_8971                             	| [$850a: jmp    $8971]
+	jra	l_8971                             	| [$850a: jra    $8971]
 l_850d:
 	GET_REG_ADDRESS	0,d2                   	| [$850d: lda    ,x]
 	move.b	(a0),d0                         	| [...]
@@ -12605,7 +12617,7 @@ l_8514:
 	jbsr	l_86a6                            	| [$8514: jsr    $86a6]
 	move.b	#0x10,d0                        	| [$8517: lda    #$10]
 	OP_W_ON_DP_ADDRESS	move,0x67,d0         | [$8519: sta    $67]
-	jmp	l_87db                             	| [$851b: jmp    $87db]
+	jra	l_87db                             	| [$851b: jra    $87db]
 l_851e:
 	move.w	#0x3600,d4                      	| [$851e: ldu    #$3600]
 	OP_R_ON_DP_ADDRESS	move,0x19,d0         | [$8521: lda    $19]
@@ -12619,7 +12631,7 @@ l_851e:
 	move.b	d0,(a0)                         	| [...]
 	GET_REG_ADDRESS	0,d3                   	| [$8530: lda    ,y]
 	move.b	(a0),d0                         	| [...]
-	jmp	l_8836                             	| [$8532: jmp    $8836]
+	jra	l_8836                             	| [$8532: jra    $8836]
 l_8535:
 	move.w	#0xdc4f,d3                      	| [$8535: ldy    #$dc4f]
 	jra	l_853f                             	| [$8539: bra    $853f]
@@ -12627,7 +12639,7 @@ l_853b:
 	move.w	#0xdc52,d3                      	| [$853b: ldy    #$dc52]
 l_853f:
 	move.w	#0x3660,d4                      	| [$853f: ldu    #$3660]
-	jmp	l_890f                             	| [$8542: jmp    $890f]
+	jra	l_890f                             	| [$8542: jra    $890f]
 l_8545:
 	move.w	#0xdd30,d4                      	| [$8545: ldu    #$dd30]
 	OP_R_ON_DP_ADDRESS	move,0xbc,d0         | [$8548: lda    $bc]
@@ -12642,7 +12654,7 @@ l_8555:
 	move.w	d4,d3                           	| [$8558: leay   d,u]
 	add.w	d1,d3                            	| [$8558: leay   d,u]
 	jbsr	l_86a0                            	| [$855a: jsr    $86a0]
-	jmp	l_82fd                             	| [$855d: jmp    $82fd]
+	jra	l_82fd                             	| [$855d: jra    $82fd]
 l_8560:
 	move.w	#0xdd45,d4                      	| [$8560: ldu    #$dd45]
 	OP_R_ON_DP_ADDRESS	move,0xbc,d0         | [$8563: lda    $bc]
@@ -12670,7 +12682,7 @@ l_8560:
 	GET_DP_ADDRESS	0x51                    	| [$8585: std    $51]
 	MOVE_W_FROM_REG	d1,a0                         	| [...]
 	move.w	#0x362c,d4                      	| [$8587: ldu    #$362c]
-	jmp	l_8952                             	| [$858a: jmp    $8952]
+	jra	l_8952                             	| [$858a: jra    $8952]
 l_858d:
 	move.w	#0xdced,d4                      	| [$858d: ldu    #$dced]
 	OP_R_ON_DP_ADDRESS	move,0xe6,d0         | [$8590: lda    $e6]
@@ -12680,7 +12692,7 @@ l_858d:
 	add.w	d1,d3                            	| [$8595: leay   d,u]
 	move.w	#0x361c,d4                      	| [$8597: ldu    #$361c]
 	jbsr	l_87b4                            	| [$859a: jsr    $87b4]
-	jmp	l_82fd                             	| [$859d: jmp    $82fd]
+	jra	l_82fd                             	| [$859d: jra    $82fd]
 l_85a0:
 	move.w	#0xdd72,d3                      	| [$85a0: ldy    #$dd72]
 	move.w	#0x3260,d4                      	| [$85a4: ldu    #$3260]
@@ -12700,7 +12712,7 @@ l_85b6:
 	move.b	#0x08,d1                        	| [$85bb: ldb    #$08]
 	jbsr	multiply_ab                       	| [$85bd: mul]
 	add.w	d1,d4                            	| [$85be: leau   d,u]
-	jmp	l_889d                             	| [$85c0: jmp    $889d]
+	jra	l_889d                             	| [$85c0: jra    $889d]
 l_85c3:
 	move.w	#0xdd64,d3                      	| [$85c3: ldy    #$dd64]
 	jra	l_85d3                             	| [$85c7: bra    $85d3]
@@ -12711,7 +12723,7 @@ l_85cf:
 	move.w	#0xdd5d,d3                      	| [$85cf: ldy    #$dd5d]
 l_85d3:
 	jbsr	l_86a0                            	| [$85d3: jsr    $86a0]
-	jmp	l_82fd                             	| [$85d6: jmp    $82fd]
+	jra	l_82fd                             	| [$85d6: jra    $82fd]
 l_85d9:
 	move.w	#0xdd75,d4                      	| [$85d9: ldu    #$dd75]
 	OP_R_ON_DP_ADDRESS	move,0xf5,d0         | [$85dc: lda    $f5]
@@ -12734,7 +12746,7 @@ l_85e6:
 	OP_W_ON_DP_ADDRESS	move,0x48,d0         | [$85f4: sta    $48]
 	jbsr	l_86b1                            	| [$85f6: jsr    $86b1]
 	move.w	#0x3628,d4                      	| [$85f9: ldu    #$3628]
-	jmp	l_af13                             	| [$85fc: jmp    $af13]
+	jra	l_af13                             	| [$85fc: jra    $af13]
 l_85ff:
 	move.w	#0x3420,d2                      	| [$85ff: ldx    #$3420]
 	OP_R_ON_DP_ADDRESS	move,0x19,d0         | [$8602: lda    $19]
@@ -12826,9 +12838,9 @@ l_8683:
 	OP_R_ON_DP_ADDRESS	move,0x0f,d0         | [$868c: lda    $0f]
 	and.b	#0x10,d0                         	| [$868e: anda   #$10]
 	jeq	l_8695                             	| [$8690: beq    $8695]
-	jmp	l_894b                             	| [$8692: jmp    $894b]
+	jra	l_894b                             	| [$8692: jra    $894b]
 l_8695:
-	jmp	l_89c9                             	| [$8695: jmp    $89c9]
+	jra	l_89c9                             	| [$8695: jra    $89c9]
 l_8698:
 	PUSH_SR
 	MAKE_D                                 	| [...]
@@ -12836,10 +12848,10 @@ l_8698:
 	POP_SR
 l_869a:
 	move.w	#0x361c,d4                      	| [$869a: ldu    #$361c]
-	jmp	l_86ee                             	| [$869d: jmp    $86ee]
+	jra	l_86ee                             	| [$869d: jra    $86ee]
 l_86a0:
 	move.w	#0x361c,d4                      	| [$86a0: ldu    #$361c]
-	jmp	l_be6d                             	| [$86a3: jmp    $be6d]
+	jra	l_be6d                             	| [$86a3: jra    $be6d]
 l_86a6:
 	move.w	#0x3630,d4                      	| [$86a6: ldu    #$3630]
 	OP_R_ON_DP_ADDRESS	move,0x19,d0         | [$86a9: lda    $19]
@@ -13080,7 +13092,7 @@ l_879e:
 	move.b	d0,(a0)                         	| [...]
 	OP_R_ON_DP_ADDRESS	move,0x02,d0         | [$87ab: lda    $02]
 	jne	l_87b2                             	| [$87ad: bne    $87b2]
-	jmp	l_8701                             	| [$87af: jmp    $8701]
+	jra	l_8701                             	| [$87af: jra    $8701]
 l_87b2:
 	jra	l_8755                             	| [$87b2: bra    $8755]
 l_87b4:
@@ -13111,9 +13123,9 @@ l_87c4:
 	move.b	d0,(a0)                         	| [...]
 	OP_R_ON_DP_ADDRESS	move,0x02,d0         | [$87d1: lda    $02]
 	jne	l_87d8                             	| [$87d3: bne    $87d8]
-	jmp	l_8701                             	| [$87d5: jmp    $8701]
+	jra	l_8701                             	| [$87d5: jra    $8701]
 l_87d8:
-	jmp	l_8755                             	| [$87d8: jmp    $8755]
+	jra	l_8755                             	| [$87d8: jra    $8755]
 l_87db:
 	GET_REG_ADDRESS	0xb,d2                 	| [$87db: ldy    $b,x]
 	MOVE_W_TO_REG	a0,d3                         	| [...]
@@ -13175,6 +13187,7 @@ l_8822:
 	jcs	l_8836                             	| [$882a: bcs    $8836]
 	BIT	#0x80,d0                           	| [$882c: bita   #$80]
 	jne	l_8834                             	| [$882e: bne    $8834]
+	* set flip bit
 	or.b	#0x80,d0                          	| [$8830: ora    #$80]
 	jra	l_8836                             	| [$8832: bra    $8836]
 l_8834:
@@ -13418,7 +13431,7 @@ l_8944:
 l_894b:
 	OP_R_ON_DP_ADDRESS	move,0x02,d0         | [$894b: lda    $02]
 	jne	l_88f1                             	| [$894d: bne    $88f1]
-	jmp	l_88bc                             	| [$894f: jmp    $88bc]
+	jra	l_88bc                             	| [$894f: jra    $88bc]
 l_8952:
 	GET_REG_ADDRESS	0,d3                   	| [$8952: lda    ,y]
 	move.b	(a0),d0                         	| [...]
@@ -13630,7 +13643,7 @@ l_8a2d:
 	lea	table_d89a,a2                  	| [$8a2d: ldx   #table_d89a]
 	OP_R_ON_DP_ADDRESS	move,0x26,d0         | [$8a30: lda    $26]
 	asl.b	#1,d0                            	| [$8a32: asla]
-	JMP_A_INDEXED	A2                   	| [$8a33: jmp    [a,x]] [jump_table]
+	JMP_A_INDEXED	A2                   	| [$8a33: jra    [a,x]] [jump_table]
 l_8a35:
 	moveq	#0,d0                            	| [$8a35: clra]
 	moveq	#0,d1                            	| [$8a36: clrb]
@@ -13740,7 +13753,7 @@ skeet_shooting_8aaf:
 	move.w	#0xecea,d2
 	.endif
 	lea	table_ecea,a2                  	| [$8ab2: ldx   #table_ecea]
-	JMP_A_INDEXED	A2                   	| [$8ab5: jmp    [a,x]] [jump_table]
+	JMP_A_INDEXED	A2                   	| [$8ab5: jra    [a,x]] [jump_table]
 
 l_8ab7:
 	move.w	#0x31c0,d2                      	| [$8ab7: ldx    #$31c0]
@@ -13940,7 +13953,7 @@ l_8bd7:
 	jbsr	l_90cc                            	| [$8bd7: jsr    $90cc]
 	OP_1_ON_DP_ADDRESS	tst,0xd7             | [$8bda: tst    $d7]
 	jeq	l_8be1                             	| [$8bdc: beq    $8be1]
-	jmp	l_922c                             	| [$8bde: jmp    $922c]
+	jra	l_922c                             	| [$8bde: jra    $922c]
 l_8be1:
 	OP_1_ON_DP_ADDRESS	tst,0xf1             | [$8be1: tst    $f1]
 	jne	l_8c0c                             	| [$8be3: bne    $8c0c]
@@ -14233,7 +14246,7 @@ l_8d87:
 	GET_REG_ADDRESS	0x3,d3                 	| [$8d8f: sta    $3,y]
 	move.b	d0,(a0)                         	| [...]
 l_8d91:
-	jmp	l_8ccf                             	| [$8d91: jmp    $8ccf]
+	jra	l_8ccf                             	| [$8d91: jra    $8ccf]
 l_8d94:
 	OP_1_ON_DP_ADDRESS	tst,0x2d             | [$8d94: tst    $2d]
 	jeq	l_8e07                             	| [$8d96: beq    $8e07]
@@ -14603,7 +14616,7 @@ l_8fad:
 	OP_W_ON_DP_ADDRESS	addq,0x26,#1         | [$8fad: inc    $26]
 	move.b	#0x08,d0                        	| [$8faf: lda    #$08]
 	move.w	#0x3028,d2                      	| [$8fb1: ldx    #$3028]
-	jmp	l_96eb                             	| [$8fb4: jmp    $96eb]
+	jra	l_96eb                             	| [$8fb4: jra    $96eb]
 	rts                                    	| [$8fb7: rts]
 
 l_8fb8:
@@ -14879,7 +14892,7 @@ l_90f5:
 	addq.w	#0x4,d4                         	| [$9135: leau   $4,u]
 	OP_W_ON_DP_ADDRESS	subq,0x2e,#1         | [$9137: dec    $2e]
 	jmi	l_913e                             	| [$9139: bmi    $913e]
-	jmp	l_90d3                             	| [$913b: jmp    $90d3]
+	jra	l_90d3                             	| [$913b: jra    $90d3]
 l_913e:
 	move.w	#0x30a0,d2                      	| [$913e: ldx    #$30a0]
 	move.w	#0x362c,d4                      	| [$9141: ldu    #$362c]
@@ -15109,11 +15122,11 @@ l_926c:
 	MOVE_W_FROM_REG	d3,a0                         	| [...]
 l_9270:
 	jbsr	l_894b                            	| [$9270: jsr    $894b]
-	jmp	l_8ccb                             	| [$9273: jmp    $8ccb]
+	jra	l_8ccb                             	| [$9273: jra    $8ccb]
 l_9276:
 	OP_1_ON_DP_ADDRESS	tst,game_playing_00  | [$9276: tst    game_playing_00]
 	jne	l_927d                             	| [$9278: bne    $927d]
-	jmp	l_a37f                             	| [$927a: jmp    $a37f]
+	jra	l_a37f                             	| [$927a: jra    $a37f]
 l_927d:
 	OP_R_ON_DP_ADDRESS	move,0x24,d0         | [$927d: lda    $24]
 	asl.b	#1,d0                            	| [$927f: asla]
@@ -15126,7 +15139,7 @@ l_927d:
 	OP_R_ON_DP_ADDRESS	move,0x24,d0         | [$9285: lda    $24]
 	cmp.b	#0x01,d0                         	| [$9287: cmpa   #$01]
 	jls	l_928e                             	| [$9289: bls    $928e]
-	jmp	l_5869                             	| [$928b: jmp    $5869]
+	jra	l_5869                             	| [$928b: jra    $5869]
 l_928e:
 	rts                                    	| [$928e: rts]
 
@@ -15962,7 +15975,7 @@ l_96f1:
 	move.w	#0xef15,d2
 	.endif
 	lea	table_ef15,a2                  	| [$96f4: ldx   #table_ef15]
-	JMP_A_INDEXED	A2                   	| [$96f7: jmp    [a,x]] [jump_table]
+	JMP_A_INDEXED	A2                   	| [$96f7: jra    [a,x]] [jump_table]
 l_96f9:
 	moveq	#0,d0                            	| [$96f9: clra]
 	jbsr	queue_event_4e9a                  	| [$96fa: jsr    queue_event_4e9a]
@@ -16093,7 +16106,7 @@ l_97cd:
 	addq.w	#0x3,d4                         	| [$97cd: leau   $3,u]
 	GET_ADDRESS	0x3401                     	| [$97cf: stu    $3401]
 	MOVE_W_FROM_REG	d4,a0                         	| [...]
-	jmp	l_9861                             	| [$97d2: jmp    $9861]
+	jra	l_9861                             	| [$97d2: jra    $9861]
 l_97d5:
 	jbsr	l_4fa1                            	| [$97d5: jsr    $4fa1]
 	and.b	#0x05,d0                         	| [$97d8: anda   #$05]
@@ -16159,7 +16172,7 @@ l_982b:
 	MOVE_W_FROM_REG	d2,a0                         	| [...]
 	jra	l_9888                             	| [$983d: bra    $9888]
 l_983f:
-	jmp	l_97a9                             	| [$983f: jmp    $97a9]
+	jra	l_97a9                             	| [$983f: jra    $97a9]
 l_9842:
 	OP_1_ON_DP_ADDRESS	tst,0x29             | [$9842: tst    $29]
 	jne	l_9848                             	| [$9844: bne    $9848]
@@ -16467,7 +16480,7 @@ archery_9a12:
 	move.w	#0xefb8,d2
 	.endif
 	lea	table_efb8,a2                  	| [$9a15: ldx   #table_efb8]
-	JMP_A_INDEXED	A2                   	| [$9a18: jmp    [a,x]] [jump_table]
+	JMP_A_INDEXED	A2                   	| [$9a18: jra    [a,x]] [jump_table]
 
 l_9a1a:
 	jbsr	l_afaf                            	| [$9a1a: jsr    $afaf]
@@ -17576,7 +17589,7 @@ l_a07b:
 	OP_W_ON_DP_ADDRESS	addq,0x26,#1         | [$a086: inc    $26]
 	move.b	#0x08,d0                        	| [$a088: lda    #$08]
 	move.w	#0x3028,d2                      	| [$a08a: ldx    #$3028]
-	jmp	l_96eb                             	| [$a08d: jmp    $96eb]
+	jra	l_96eb                             	| [$a08d: jra    $96eb]
 	rts                                    	| [$a090: rts]
 
 l_a091:
@@ -17592,11 +17605,11 @@ l_a091:
 	and.b	#0x0f,d0                         	| [$a09b: anda   #$0f]
 	cmp.b	#0x0f,d0                         	| [$a09d: cmpa   #$0f]
 	jne	l_a0a4                             	| [$a09f: bne    $a0a4]
-	jmp	l_5869                             	| [$a0a1: jmp    $5869]
+	jra	l_5869                             	| [$a0a1: jra    $5869]
 l_a0a4:
 	OP_R_ON_DP_ADDRESS	move,0x03,d0         | [$a0a4: lda    $03]
 	jeq	l_a0ab                             	| [$a0a6: beq    $a0ab]
-	jmp	l_7c20                             	| [$a0a8: jmp    $7c20]
+	jra	l_7c20                             	| [$a0a8: jra    $7c20]
 l_a0ab:
 	rts                                    	| [$a0ab: rts]
 
@@ -17906,7 +17919,7 @@ l_a27f:
 	add.w	#0x2c,d2                         	| [$a284: leax   $2c,x]
 	OP_W_ON_DP_ADDRESS	subq,0x50,#1         | [$a287: dec    $50]
 	jne	l_a27f                             	| [$a289: bne    $a27f]
-	jmp	l_a0ea                             	| [$a28b: jmp    $a0ea]
+	jra	l_a0ea                             	| [$a28b: jra    $a0ea]
 l_a28e:
 	move.w	#0x26c0,d2                      	| [$a28e: ldx    #$26c0]
 	move.w	#0xeba0,d4                      	| [$a291: ldu    #$eba0]
@@ -17941,7 +17954,7 @@ l_a29c:
 	move.w	#0x2f10,d2                      	| [$a2cb: ldx    #$2f10]
 	move.b	#0x0d,d0                        	| [$a2ce: lda    #$0d]
 	jbsr	l_96c4                            	| [$a2d0: jsr    $96c4]
-	jmp	l_a168                             	| [$a2d3: jmp    $a168]
+	jra	l_a168                             	| [$a2d3: jra    $a168]
 	move.w	#0x26c0,d2                      	| [$a2d6: ldx    #$26c0]
 	move.w	#0xf1f8,d4                      	| [$a2d9: ldu    #$f1f8]
 	move.b	#0x03,d0                        	| [$a2dc: lda    #$03]
@@ -18054,11 +18067,11 @@ l_a37f:
 	and.b	#0x0f,d0                         	| [$a389: anda   #$0f]
 	cmp.b	#0x0f,d0                         	| [$a38b: cmpa   #$0f]
 	jne	l_a392                             	| [$a38d: bne    $a392]
-	jmp	l_5869                             	| [$a38f: jmp    $5869]
+	jra	l_5869                             	| [$a38f: jra    $5869]
 l_a392:
 	OP_R_ON_DP_ADDRESS	move,0x03,d0         | [$a392: lda    $03]
 	jeq	l_a399                             	| [$a394: beq    $a399]
-	jmp	l_7c20                             	| [$a396: jmp    $7c20]
+	jra	l_7c20                             	| [$a396: jra    $7c20]
 l_a399:
 	rts                                    	| [$a399: rts]
 
@@ -18481,7 +18494,7 @@ l_a5fd:
 l_a5fe:
 	OP_W_ON_DP_ADDRESS	addq,0x22,#1         | [$a5fe: inc    $22]
 	move.w	#0x3024,d2                      	| [$a600: ldx    #$3024]
-	jmp	l_96e9                             	| [$a603: jmp    $96e9]
+	jra	l_96e9                             	| [$a603: jra    $96e9]
 l_a606:
 	subq.w	#1,d5                           	| [...]
 	GET_REG_ADDRESS	0,d5                   	| [$a606: clr    ,-s]
@@ -18695,7 +18708,7 @@ pole_vault_a6d4:
 	move.w	#0xf2ff,d2
 	.endif
 	lea	table_f2ff,a2                  	| [$a6d7: ldx   #table_f2ff]
-	JMP_A_INDEXED	A2                   	| [$a6da: jmp    [a,x]] [jump_table]
+	JMP_A_INDEXED	A2                   	| [$a6da: jra    [a,x]] [jump_table]
 
 l_a6dc:
 	OP_R_ON_DP_ADDRESS	move,event_sub_state_2a,d0| [$a6dc: lda    event_sub_state_2a]
@@ -18705,7 +18718,7 @@ l_a6dc:
 	move.w	#0xf30d,d2
 	.endif
 	lea	table_f30d,a2                  	| [$a6df: ldx   #table_f30d]
-	JMP_A_INDEXED	A2                   	| [$a6e2: jmp    [a,x]] [jump_table]
+	JMP_A_INDEXED	A2                   	| [$a6e2: jra    [a,x]] [jump_table]
 l_a6e4:
 	move.b	#0x01,d0                        	| [$a6e4: ldd    #$0100]
 	move.w	#0x0100,d1                      	| [$a6e4: ldd    #$0100]
@@ -19200,7 +19213,7 @@ l_a98b:
 	move.w	#0xf311,d2
 	.endif
 	lea	table_f311,a2                  	| [$a98e: ldx   #table_f311]
-	JMP_A_INDEXED	A2                   	| [$a991: jmp    [a,x]] [jump_table]
+	JMP_A_INDEXED	A2                   	| [$a991: jra    [a,x]] [jump_table]
 l_a993:
 	jbsr	l_b109                            	| [$a993: jsr    $b109]
 	OP_R_ON_DP_ADDRESS	move,0x0f,d0         | [$a996: lda    $0f]
@@ -20291,7 +20304,7 @@ l_afc6:
 
 l_afd3:
 	move.b	#0x20,d1                        	| [$afd3: ldb    #$20]
-	jmp	l_afe0                             	| [$afd5: jmp    $afe0]
+	jra	l_afe0                             	| [$afd5: jra    $afe0]
 l_afd8:
 	move.b	#0x20,d1                        	| [$afd8: ldb    #$20]
 	OP_R_ON_DP_ADDRESS	move,0x0f,d0         | [$afda: lda    $0f]
@@ -21044,7 +21057,7 @@ l_b3ab:
 	GET_ADDRESS	0x3429                     	| [$b3d2: std    $3429]
 	MOVE_W_FROM_REG	d1,a0                         	| [...]
 	move.w	#0xf383,d3                      	| [$b3d5: ldy    #$f383]
-	jmp	l_b096                             	| [$b3d9: jmp    $b096]
+	jra	l_b096                             	| [$b3d9: jra    $b096]
 
 weight_lifting_b3dc:
 	OP_R_ON_DP_ADDRESS	move,event_sub_state_2a,d0| [$b3dc: lda    event_sub_state_2a]
@@ -21054,7 +21067,7 @@ weight_lifting_b3dc:
 	move.w	#0xf533,d2
 	.endif
 	lea	table_f533,a2                  	| [$b3df: ldx   #table_f533]
-	JMP_A_INDEXED	A2                   	| [$b3e2: jmp    [a,x]] [jump_table]
+	JMP_A_INDEXED	A2                   	| [$b3e2: jra    [a,x]] [jump_table]
 
 l_b3e4:
 	OP_R_ON_DP_ADDRESS	move,0x2c,d0         | [$b3e4: lda    $2c]
@@ -21064,7 +21077,7 @@ l_b3e4:
 	.endif
 	lea	table_f53f,a2                  	| [$b3e6: ldx   #table_f53f]
 	asl.b	#1,d0                            	| [$b3e9: asla]
-	JMP_A_INDEXED	A2                   	| [$b3ea: jmp    [a,x]] [jump_table]
+	JMP_A_INDEXED	A2                   	| [$b3ea: jra    [a,x]] [jump_table]
 
 l_b3ec:
 	move.b	#0x01,d0                        	| [$b3ec: ldd    #$0100]
@@ -21309,7 +21322,7 @@ l_b544:
 
 l_b545:
 	jbsr	l_b5bb                            	| [$b545: jsr    $b5bb]
-	jmp	l_b523                             	| [$b548: jmp    $b523]
+	jra	l_b523                             	| [$b548: jra    $b523]
 l_b54b:
 	GET_ADDRESS	0x3436                     	| [$b54b: lda    $3436]
 	move.b	(a0),d0                         	| [...]
@@ -21708,7 +21721,7 @@ l_b762:
 	move.b	(a0),d0                         	| [...]
 	GET_ADDRESS	0x3425                     	| [$b765: clr    $3425]
 	clr.b	(a0)                         	| [...]
-	jmp	l_b6e0                             	| [$b768: jmp    $b6e0]
+	jra	l_b6e0                             	| [$b768: jra    $b6e0]
 l_b76b:
 	jbsr	l_579f                            	| [$b76b: jsr    $579f]
 	GET_ADDRESS	0x34f2                     	| [$b76e: lda    $34f2]
@@ -21832,7 +21845,7 @@ l_b81c:
 	move.w	#0xf68c,d3
 	.endif
 	lea	table_f68c,a3                  	| [$b81f: ldy   #table_f68c]
-	JMP_A_INDEXED	A3                   	| [$b823: jmp    [a,y]] [jump_table]
+	JMP_A_INDEXED	A3                   	| [$b823: jra    [a,y]] [jump_table]
 l_b825:
 	GET_ADDRESS	0x3444                     	| [$b825: dec    $3444]
 	subq.b	#1,(a0)                         	| [...]
@@ -22444,7 +22457,7 @@ l_bb9c:
 	GET_ADDRESS	0x3048                     	| [$bba2: dec    $3048]
 	subq.b	#1,(a0)                         	| [...]
 	jne	l_bb9c                             	| [$bba5: bne    $bb9c]
-	jmp	l_cb16                             	| [$bba7: jmp    $cb16]
+	jra	l_cb16                             	| [$bba7: jra    $cb16]
 	rts                                    	| [$bbaa: rts]
 
 l_bbab:
@@ -23057,7 +23070,7 @@ l_be97:
 	move.w	#0x3400,d4                      	| [$be97: ldu    #$3400]
 	move.b	#0x11,d0                        	| [$be9a: lda    #$11]
 	OP_W_ON_DP_ADDRESS	move,0x48,d0         | [$be9c: sta    $48]
-	jmp	l_b138                             	| [$be9e: jmp    $b138]
+	jra	l_b138                             	| [$be9e: jra    $b138]
 l_bea1:
 	move.w	#0xf816,d2                      	| [$bea1: ldx    #$f816]
 	jbsr	l_bf3a                            	| [$bea4: jsr    $bf3a]
@@ -23091,7 +23104,7 @@ l_bea1:
 	add.w	d6,d4                            	| [$becc: leau   a,u]
 	GET_ADDRESS	0x32a3                     	| [$bece: stu    $32a3]
 	MOVE_W_FROM_REG	d4,a0                         	| [...]
-	jmp	l_bf6b                             	| [$bed1: jmp    $bf6b]
+	jra	l_bf6b                             	| [$bed1: jra    $bf6b]
 l_bed4:
 	move.w	#0xf84c,d2                      	| [$bed4: ldx    #$f84c]
 	jbsr	l_bf3a                            	| [$bed7: jsr    $bf3a]
@@ -23125,7 +23138,7 @@ l_bed4:
 	add.w	d6,d4                            	| [$beff: leau   a,u]
 	GET_ADDRESS	0x3233                     	| [$bf01: stu    $3233]
 	MOVE_W_FROM_REG	d4,a0                         	| [...]
-	jmp	l_bf6b                             	| [$bf04: jmp    $bf6b]
+	jra	l_bf6b                             	| [$bf04: jra    $bf6b]
 l_bf07:
 	move.w	#0xf831,d2                      	| [$bf07: ldx    #$f831]
 	jbsr	l_bf3a                            	| [$bf0a: jsr    $bf3a]
@@ -23159,7 +23172,7 @@ l_bf07:
 	add.w	d6,d4                            	| [$bf32: leau   a,u]
 	GET_ADDRESS	0x3233                     	| [$bf34: stu    $3233]
 	MOVE_W_FROM_REG	d4,a0                         	| [...]
-	jmp	l_bf6b                             	| [$bf37: jmp    $bf6b]
+	jra	l_bf6b                             	| [$bf37: jra    $bf6b]
 l_bf3a:
 	move.w	#0x3220,d3                      	| [$bf3a: ldy    #$3220]
 	GET_REG_ADDRESS	0x1,d3                 	| [$bf3e: ldd    $1,y]
@@ -23170,7 +23183,7 @@ l_bf3a:
 	LOAD_D                                 	| [$bf42: ldd    $00a1,y]
 	GET_DP_ADDRESS	0x52                    	| [$bf46: std    $52]
 	MOVE_W_FROM_REG	d1,a0                         	| [...]
-	jmp	l_bc2b                             	| [$bf48: jmp    $bc2b]
+	jra	l_bc2b                             	| [$bf48: jra    $bc2b]
 l_bf4b:
 	moveq	#0,d1                            	| [$bf4b: clrb]
 	GET_ADDRESS	0x3428                     	| [$bf4c: lda    $3428]
@@ -23198,7 +23211,7 @@ l_bf4b:
 	move.b	#0x06,d0                        	| [$bf61: lda    #$06]
 	OP_W_ON_DP_ADDRESS	move,0x48,d0         | [$bf63: sta    $48]
 	move.w	#0x3400,d4                      	| [$bf65: ldu    #$3400]
-	jmp	l_b138                             	| [$bf68: jmp    $b138]
+	jra	l_b138                             	| [$bf68: jra    $b138]
 l_bf6b:
 	GET_DP_ADDRESS	0x50                    	| [$bf6b: ldd    $50]
 	LOAD_D                                 	| [$bf6b: ldd    $50]
@@ -23235,11 +23248,11 @@ l_bf8f:
 	move.w	#0xf810,d3
 	.endif
 	lea	table_f810,a3                  	| [$bf93: ldy   #table_f810]
-	JMP_A_INDEXED	A3                   	| [$bf97: jmp    [a,y]] [jump_table]
+	JMP_A_INDEXED	A3                   	| [$bf97: jra    [a,y]] [jump_table]
 l_bf99:
 	move.w	#0xf694,d2                      	| [$bf99: ldx    #$f694]
 	jbsr	l_bc2b                            	| [$bf9c: jsr    $bc2b]
-	jmp	l_bd7e                             	| [$bf9f: jmp    $bd7e]
+	jra	l_bd7e                             	| [$bf9f: jra    $bd7e]
 l_bfa2:
 	move.w	#0x342c,d2                      	| [$bfa2: ldx    #$342c]
 	GET_REG_ADDRESS	0,d2                   	| [$bfa5: ldd    ,x++]
@@ -23251,7 +23264,7 @@ l_bfa2:
 	LOAD_D                                 	| [$bfa9: ldd    ,x]
 	GET_DP_ADDRESS	0x9d                    	| [$bfab: std    $9d]
 	MOVE_W_FROM_REG	d1,a0                         	| [...]
-	jmp	l_5466                             	| [$bfad: jmp    $5466]
+	jra	l_5466                             	| [$bfad: jra    $5466]
 l_bfb0:
 	move.w	#0x3380,d2                      	| [$bfb0: ldx    #$3380]
 	OP_R_ON_DP_ADDRESS	move,0x19,d0         | [$bfb3: lda    $19]
@@ -23282,13 +23295,13 @@ l_bfb0:
 	OP_W_ON_DP_ADDRESS	move,0x98,d0         | [$bfd1: sta    $98]
 	jbsr	l_7f0a                            	| [$bfd3: jsr    $7f0a]
 	jbsr	l_7f0a                            	| [$bfd6: jsr    $7f0a]
-	jmp	l_7f0a                             	| [$bfd9: jmp    $7f0a]
+	jra	l_7f0a                             	| [$bfd9: jra    $7f0a]
 l_bfdc:
 	move.w	#0x2aa0,d3                      	| [$bfdc: ldy    #$2aa0]
 	jbsr	l_afd8                            	| [$bfe0: jsr    $afd8]
 	GET_ADDRESS	0x3434                     	| [$bfe3: ldy    $3434]
 	MOVE_W_TO_REG	a0,d3                         	| [...]
-	jmp	l_afd8                             	| [$bfe7: jmp    $afd8]
+	jra	l_afd8                             	| [$bfe7: jra    $afd8]
 
 l_c000:
 	move.b	#0x06,d0                        	| [$c000: lda    #$06]
@@ -23590,7 +23603,7 @@ l_c14d:
 	lea	table_f8d5,a2                  	| [$c14d: ldx   #table_f8d5]
 	OP_R_ON_DP_ADDRESS	move,event_sub_state_2a,d0| [$c150: lda    event_sub_state_2a]
 	asl.b	#1,d0                            	| [$c152: asla]
-	JMP_A_INDEXED	A2                   	| [$c153: jmp    [a,x]] [jump_table]
+	JMP_A_INDEXED	A2                   	| [$c153: jra    [a,x]] [jump_table]
 
 l_c155:
 	OP_R_ON_DP_ADDRESS	move,0x01,d0         | [$c155: lda    $01]
@@ -23933,13 +23946,13 @@ l_c342:
 	lea	table_f8eb,a4                  	| [$c354: ldu   #table_f8eb]
 	OP_R_ON_DP_ADDRESS	move,current_event_69,d0| [$c357: lda    current_event_69]
 	asl.b	#1,d0                            	| [$c359: asla]
-	JMP_A_INDEXED	A4                   	| [$c35a: jmp    [a,u]] [jump_table]
+	JMP_A_INDEXED	A4                   	| [$c35a: jra    [a,u]] [jump_table]
 l_c35c:
 	move.b	#0xa2,d0                        	| [$c35c: lda    #$a2]
 	jbsr	l_4eb3                            	| [$c35e: jsr    $4eb3]
 	move.b	#0x84,d0                        	| [$c361: lda    #$84]
 	jbsr	l_4eb3                            	| [$c363: jsr    $4eb3]
-	jmp	l_c465                             	| [$c366: jmp    $c465]
+	jra	l_c465                             	| [$c366: jra    $c465]
 l_c369:
 	OP_R_ON_DP_ADDRESS	move,current_event_69,d0| [$c369: lda    current_event_69]
 	cmp.b	#0x02,d0                         	| [$c36b: cmpa   #$02]
@@ -23966,7 +23979,7 @@ l_c37f:
 	move.b	#0x83,d0                        	| [$c390: lda    #$83]
 	jbsr	l_4eb3                            	| [$c392: jsr    $4eb3]
 	move.b	#0xff,d0                        	| [$c395: lda    #$ff]
-	jmp	l_4eb3                             	| [$c397: jmp    $4eb3]
+	jra	l_4eb3                             	| [$c397: jra    $4eb3]
 l_c39a:
 	move.w	#0x33d1,d2                      	| [$c39a: ldx    #$33d1]
 l_c39d:
@@ -24051,7 +24064,7 @@ l_c409:
 l_c410:
 	jbsr	l_4eb3                            	| [$c410: jsr    $4eb3]
 	move.b	#0xff,d0                        	| [$c413: lda    #$ff]
-	jmp	l_4eb3                             	| [$c415: jmp    $4eb3]
+	jra	l_4eb3                             	| [$c415: jra    $4eb3]
 l_c418:
 	subq.w	#0x1,d2                         	| [$c418: leax   -$1,x]
 	GET_REG_ADDRESS	0x1,d2                 	| [$c41a: lda    $1,x]
@@ -24083,7 +24096,7 @@ l_c443:
 	move.b	#0xb2,d0                        	| [$c445: lda    #$b2]
 	jbsr	l_4eb3                            	| [$c447: jsr    $4eb3]
 	move.b	#0xff,d0                        	| [$c44a: lda    #$ff]
-	jmp	l_4eb3                             	| [$c44c: jmp    $4eb3]
+	jra	l_4eb3                             	| [$c44c: jra    $4eb3]
 l_c44f:
 	addq.w	#0x1,d2                         	| [$c44f: leax   $1,x]
 	GET_REG_ADDRESS	0x1,d2                 	| [$c451: lda    $1,x]
@@ -24126,7 +24139,7 @@ l_c489:
 	jbsr	l_4eb3                            	| [$c48e: jsr    $4eb3]
 l_c491:
 	move.b	#0xff,d0                        	| [$c491: lda    #$ff]
-	jmp	l_4eb3                             	| [$c493: jmp    $4eb3]
+	jra	l_4eb3                             	| [$c493: jra    $4eb3]
 l_c496:
 	GET_REG_ADDRESS	0x4,d2                 	| [$c496: lda    $4,x]
 	move.b	(a0),d0                         	| [...]
@@ -24185,7 +24198,7 @@ l_c4d3:
 	move.w	#0xf903,d4
 	.endif
 	lea	table_f903,a4                  	| [$c4d6: ldu   #table_f903]
-	JMP_A_INDEXED	A4                   	| [$c4d9: jmp    [a,u]] [jump_table]
+	JMP_A_INDEXED	A4                   	| [$c4d9: jra    [a,u]] [jump_table]
 l_c4db:
 	move.b	#0x00,d0                        	| [$c4db: ldd    #$0000]
 	move.w	#0x0000,d1                      	| [$c4db: ldd    #$0000]
@@ -24249,7 +24262,7 @@ l_c50d:
 	move.b	#0x01,d0                        	| [$c525: lda    #$01]
 	GET_ADDRESS	0x342a                     	| [$c527: sta    $342a]
 	move.b	d0,(a0)                         	| [...]
-	jmp	l_c52d                             	| [$c52a: jmp    $c52d]
+	jra	l_c52d                             	| [$c52a: jra    $c52d]
 l_c52d:
 	move.w	#0x3500,d2                      	| [$c52d: ldx    #$3500]
 	move.b	#0x04,d1                        	| [$c530: ldb    #$04]
@@ -24338,7 +24351,7 @@ l_c58a:
 	and.b	#0x03,d0                         	| [$c58f: anda   #$03]
 	asl.b	#1,d0                            	| [$c591: asla]
 	OP_W_ON_DP_ADDRESS	addq,0x2b,#1         | [$c592: inc    $2b]
-	JMP_A_INDEXED	A4                   	| [$c594: jmp    [a,u]] [jump_table]
+	JMP_A_INDEXED	A4                   	| [$c594: jra    [a,u]] [jump_table]
 l_c596:
 	OP_W_ON_DP_ADDRESS	addq,event_sub_state_2a,#1| [$c596: inc    event_sub_state_2a]
 	OP_1_ON_DP_ADDRESS	clr,0x2b             | [$c598: clr    $2b]
@@ -24346,7 +24359,7 @@ l_c596:
 	jbsr	l_cc31                            	| [$c59d: jsr    $cc31]
 	move.b	#0x03,d0                        	| [$c5a0: lda    #$03]
 	jbsr	l_cc4b                            	| [$c5a2: jsr    $cc4b]
-	jmp	l_bbab                             	| [$c5a5: jmp    $bbab]
+	jra	l_bbab                             	| [$c5a5: jra    $bbab]
 l_c5a8:
 	move.w	#0x3400,d2                      	| [$c5a8: ldx    #$3400]
 	GET_ADDRESS	0x3420                     	| [$c5ab: ldb    $3420]
@@ -24405,11 +24418,11 @@ l_c5c4:
 	lea	table_f915,a4                  	| [$c5ed: ldu   #table_f915]
 	OP_R_ON_DP_ADDRESS	move,0x2c,d0         | [$c5f0: lda    $2c]
 	asl.b	#1,d0                            	| [$c5f2: asla]
-	JMP_A_INDEXED	A4                   	| [$c5f3: jmp    [a,u]] [jump_table]
+	JMP_A_INDEXED	A4                   	| [$c5f3: jra    [a,u]] [jump_table]
 l_c5f5:
 	OP_W_ON_DP_ADDRESS	addq,event_sub_state_2a,#1| [$c5f5: inc    event_sub_state_2a]
 	OP_W_ON_DP_ADDRESS	move,0x2c,d0         | [$c5f7: sta    $2c]
-	jmp	l_c6e8                             	| [$c5f9: jmp    $c6e8]
+	jra	l_c6e8                             	| [$c5f9: jra    $c6e8]
 l_c5fc:
 	jbsr	l_c617                            	| [$c5fc: jsr    $c617]
 	jbsr	l_57b0                            	| [$c5ff: jsr    $57b0]
@@ -24425,7 +24438,7 @@ l_c5fc:
 	OP_R_ON_DP_ADDRESS	move,0x2c,d0         | [$c60f: lda    $2c]
 	asl.b	#1,d0                            	| [$c611: asla]
 	JSR_A_INDEXED	A4                   	| [$c612: jsr    [a,u]] [jump_table]
-	jmp	l_bbab                             	| [$c614: jmp    $bbab]
+	jra	l_bbab                             	| [$c614: jra    $bbab]
 l_c617:
 	GET_ADDRESS	0x342a                     	| [$c617: lda    $342a]
 	move.b	(a0),d0                         	| [...]
@@ -24571,7 +24584,7 @@ l_c6c3:
 	DO_EXTB	d6                             	| [...] with sign extension
 	GET_REG_ADDRESS_FROM_REG	d6,d4         	| [$c6d1: ldu    a,u]
 	MOVE_W_TO_REG	a0,d4                         	| [...]
-	jmp	l_87b4                             	| [$c6d3: jmp    $87b4]
+	jra	l_87b4                             	| [$c6d3: jra    $87b4]
 l_c6d6:
 	GET_ADDRESS	0x342e                     	| [$c6d6: lda    $342e]
 	move.b	(a0),d0                         	| [...]
@@ -24653,7 +24666,7 @@ l_c730:
 l_c73e:
 	GET_ADDRESS	0x3421                     	| [$c73e: ldx    $3421]
 	MOVE_W_TO_REG	a0,d2                         	| [...]
-	jmp	l_cb55                             	| [$c741: jmp    $cb55]
+	jra	l_cb55                             	| [$c741: jra    $cb55]
 l_c744:
 	GET_INDIRECT_ADDRESS	0x3421            	| [$c744: inc    [$3421]]
 	addq.b	#1,(a0)                         	| [...]
@@ -24757,7 +24770,7 @@ l_c7bf:
 	move.w	#0xf93b,d4
 	.endif
 	lea	table_f93b,a4                  	| [$c7c2: ldu   #table_f93b]
-	JMP_A_INDEXED	A4                   	| [$c7c5: jmp    [a,u]] [jump_table]
+	JMP_A_INDEXED	A4                   	| [$c7c5: jra    [a,u]] [jump_table]
 l_c7c7:
 	GET_ADDRESS	0x3420                     	| [$c7c7: lda    $3420]
 	move.b	(a0),d0                         	| [...]
@@ -24820,7 +24833,7 @@ l_c7fc:
 	jeq	l_c821                             	| [$c817: beq    $c821]
 	cmp.b	#0x40,d0                         	| [$c819: cmpa   #$40]
 	jeq	l_c839                             	| [$c81b: beq    $c839]
-	jmp	l_cb55                             	| [$c81d: jmp    $cb55]
+	jra	l_cb55                             	| [$c81d: jra    $cb55]
 	rts                                    	| [$c820: rts]
 
 l_c821:
@@ -24918,7 +24931,7 @@ l_c87e:
 	jeq	l_c8bc                             	| [$c899: beq    $c8bc]
 	tst.b	d0                               	| [$c89b: tsta]
 	jeq	l_c8a1                             	| [$c89c: beq    $c8a1]
-	jmp	l_cb55                             	| [$c89e: jmp    $cb55]
+	jra	l_cb55                             	| [$c89e: jra    $cb55]
 l_c8a1:
 	OP_R_ON_DP_ADDRESS	move,0x2c,d0         | [$c8a1: lda    $2c]
 	cmp.b	#0x01,d0                         	| [$c8a3: cmpa   #$01]
@@ -25002,7 +25015,7 @@ l_c910:
 	GET_ADDRESS	0x3426                     	| [$c910: sta    $3426]
 	move.b	d0,(a0)                         	| [...]
 	jbsr	l_cb55                            	| [$c913: jsr    $cb55]
-	jmp	l_bb7f                             	| [$c916: jmp    $bb7f]
+	jra	l_bb7f                             	| [$c916: jra    $bb7f]
 	move.b	#0x00,d0                        	| [$c919: ldd    #$0000]
 	move.w	#0x0000,d1                      	| [$c919: ldd    #$0000]
 	MAKE_D                                 	| [...]
@@ -25026,7 +25039,7 @@ l_c92b:
 	MOVE_W_FROM_REG	d1,a0                         	| [...]
 	cmp.w	#0x3100,d4                       	| [$c92d: cmpu   #$3100]
 	jcs	l_c92b                             	| [$c931: bcs    $c92b]
-	jmp	l_afaf                             	| [$c933: jmp    $afaf]
+	jra	l_afaf                             	| [$c933: jra    $afaf]
 l_c936:
 	GET_ADDRESS	0x3421                     	| [$c936: ldx    $3421]
 	MOVE_W_TO_REG	a0,d2                         	| [...]
@@ -25071,7 +25084,7 @@ l_c94d:
 	move.b	d0,(a0)                         	| [...]
 	cmp.b	#0x40,d0                         	| [$c969: cmpa   #$40]
 	jeq	l_c970                             	| [$c96b: beq    $c970]
-	jmp	l_cb55                             	| [$c96d: jmp    $cb55]
+	jra	l_cb55                             	| [$c96d: jra    $cb55]
 l_c970:
 	GET_ADDRESS	0x3424                     	| [$c970: dec    $3424]
 	subq.b	#1,(a0)                         	| [...]
@@ -25117,7 +25130,7 @@ l_c993:
 	.endif
 	lea	table_f94f,a4                  	| [$c99d: ldu   #table_f94f]
 	asl.b	#1,d0                            	| [$c9a0: asla]
-	JMP_A_INDEXED	A4                   	| [$c9a1: jmp    [a,u]] [jump_table]
+	JMP_A_INDEXED	A4                   	| [$c9a1: jra    [a,u]] [jump_table]
 l_c9a3:
 	jra	l_ca0b                             	| [$c9a3: bra    $ca0b]
 l_c9a5:
@@ -25143,7 +25156,7 @@ l_c9b4:
 	sub.b	#0x02,d0                         	| [$c9c3: suba   #$02]
 	GET_REG_ADDRESS	0x1,d2                 	| [$c9c5: sta    $1,x]
 	move.b	d0,(a0)                         	| [...]
-	jmp	l_cb55                             	| [$c9c7: jmp    $cb55]
+	jra	l_cb55                             	| [$c9c7: jra    $cb55]
 l_c9ca:
 	GET_REG_ADDRESS	0x1,d2                 	| [$c9ca: lda    $1,x]
 	move.b	(a0),d0                         	| [...]
@@ -25179,7 +25192,7 @@ l_c9e5:
 	GET_REG_ADDRESS	0x1,d2                 	| [$c9f6: sta    $1,x]
 	move.b	d0,(a0)                         	| [...]
 	move.w	#0xfa77,d3                      	| [$c9f8: ldy    #$fa77]
-	jmp	l_cb47                             	| [$c9fc: jmp    $cb47]
+	jra	l_cb47                             	| [$c9fc: jra    $cb47]
 l_c9ff:
 	GET_REG_ADDRESS	0x1,d2                 	| [$c9ff: lda    $1,x]
 	move.b	(a0),d0                         	| [...]
@@ -25212,7 +25225,7 @@ l_ca0b:
 	GET_ADDRESS	0x3426                     	| [$ca20: dec    $3426]
 	subq.b	#1,(a0)                         	| [...]
 	jeq	l_c942                             	| [$ca23: lbeq   $c942]
-	jmp	l_cb55                             	| [$ca27: jmp    $cb55]
+	jra	l_cb55                             	| [$ca27: jra    $cb55]
 l_ca2a:
 	OP_R_ON_DP_ADDRESS	move,0x2d,d0         | [$ca2a: lda    $2d]
 	subq.b	#1,d0                           	| [$ca2c: deca]
@@ -25222,7 +25235,7 @@ l_ca2a:
 	move.w	#0xf959,d4
 	.endif
 	lea	table_f959,a4                  	| [$ca2e: ldu   #table_f959]
-	JMP_A_INDEXED	A4                   	| [$ca31: jmp    [a,u]] [jump_table]
+	JMP_A_INDEXED	A4                   	| [$ca31: jra    [a,u]] [jump_table]
 l_ca33:
 	GET_ADDRESS	0x3426                     	| [$ca33: lda    $3426]
 	move.b	(a0),d0                         	| [...]
@@ -25292,7 +25305,7 @@ l_ca79:
 	cmp.b	#0x0f,d0                         	| [$ca8b: cmpa   #$0f]
 	jcc	l_cb47                             	| [$ca8d: lbcc   $cb47]
 	move.w	#0xfa96,d3                      	| [$ca91: ldy    #$fa96]
-	jmp	l_cb47                             	| [$ca95: jmp    $cb47]
+	jra	l_cb47                             	| [$ca95: jra    $cb47]
 l_ca98:
 	GET_ADDRESS	0x3421                     	| [$ca98: ldx    $3421]
 	MOVE_W_TO_REG	a0,d2                         	| [...]
@@ -25307,7 +25320,7 @@ l_ca98:
 	cmp.b	#0x0f,d0                         	| [$caaa: cmpa   #$0f]
 	jcc	l_cb47                             	| [$caac: lbcc   $cb47]
 	move.w	#0xf9f2,d3                      	| [$cab0: ldy    #$f9f2]
-	jmp	l_cb47                             	| [$cab4: jmp    $cb47]
+	jra	l_cb47                             	| [$cab4: jra    $cb47]
 l_cab7:
 	move.b	#0x04,d0                        	| [$cab7: ldd    #$0440]
 	move.w	#0x0440,d1                      	| [$cab7: ldd    #$0440]
@@ -25382,7 +25395,7 @@ l_cac9:
 	cmp.b	#0x07,d0                         	| [$cb08: cmpa   #$07]
 	jcc	l_87b4                             	| [$cb0a: lbcc   $87b4]
 	move.w	#0xfaa0,d3                      	| [$cb0e: ldy    #$faa0]
-	jmp	l_87b4                             	| [$cb12: jmp    $87b4]
+	jra	l_87b4                             	| [$cb12: jra    $87b4]
 l_cb15:
 	rts                                    	| [$cb15: rts]
 
@@ -25424,7 +25437,7 @@ l_cb47:
 	DO_EXTB	d6                             	| [...] with sign extension
 	GET_REG_ADDRESS_FROM_REG	d6,d4         	| [$cb50: ldu    a,u]
 	MOVE_W_TO_REG	a0,d4                         	| [...]
-	jmp	l_cc07                             	| [$cb52: jmp    $cc07]
+	jra	l_cc07                             	| [$cb52: jra    $cc07]
 l_cb55:
 	GET_REG_ADDRESS	0x5,d2                 	| [$cb55: dec    $5,x]
 	subq.b	#1,(a0)                         	| [...]
@@ -25485,7 +25498,7 @@ l_cb8a:
 	DO_EXTB	d6                             	| [...] with sign extension
 	GET_REG_ADDRESS_FROM_REG	d6,d4         	| [$cb98: ldu    a,u]
 	MOVE_W_TO_REG	a0,d4                         	| [...]
-	jmp	l_cc07                             	| [$cb9a: jmp    $cc07]
+	jra	l_cc07                             	| [$cb9a: jra    $cc07]
 l_cb9d:
 	move.w	#0x30a0,d4                      	| [$cb9d: ldu    #$30a0]
 	clr.w	d3                               	| [$cba0: ldy    #$0000]
@@ -25782,7 +25795,7 @@ l_cce2:
 	lea	table_fe73,a2                  	| [$cce2: ldx   #table_fe73]
 	OP_R_ON_DP_ADDRESS	move,0x22,d0         | [$cce5: lda    $22]
 	asl.b	#1,d0                            	| [$cce7: asla]
-	JMP_A_INDEXED	A2                   	| [$cce8: jmp    [a,x]] [jump_table]
+	JMP_A_INDEXED	A2                   	| [$cce8: jra    [a,x]] [jump_table]
 l_ccea:
 	moveq	#0,d0                            	| [$ccea: clra]
 	jbsr	queue_event_4e9a                  	| [$cceb: jsr    queue_event_4e9a]
