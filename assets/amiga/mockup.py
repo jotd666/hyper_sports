@@ -81,6 +81,9 @@ def process(the_dump,name_filter=None,hide_named_sprite=None):
             if flipx:
                 im = ImageOps.mirror(im)
 
+            if not flipx:
+                continue
+
             name = sprite_names.get(code,"unknown")
             print(f"offs:{offs:02x}, name: {name}, code:{code:02x}, flipx: {flipx}, flipy: {flipy}, color:{color:02x}, X:{sx}, Y:{sy}")
             result.paste(im,(sx,sy))
@@ -90,5 +93,5 @@ def process(the_dump,name_filter=None,hide_named_sprite=None):
     print(f"nb active: {nb_active}")
 
 
-process(r"sprites_mame")
+process(r"sprites")
 

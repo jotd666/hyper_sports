@@ -62,6 +62,7 @@ audio_register_w_1500 = 0x1500
 video_ram_2000 = 0x2000
 color_ram_2800 = 0x2800
 swimmer_19 = 0x19   | 3019 index of swimmer (0: bottom, 3: top)
+screen_straight_1a = 0x1a   | set from DSW
 
 *	PORT_START("SYSTEM")
 *	PORT_BIT( 0x01, IP_ACTIVE_LOW, IPT_COIN1 )
@@ -218,7 +219,8 @@ l_405b:
 	OP_W_ON_DP_ADDRESS	move,dsw2_copy_0d,d0 | [$407a: sta    dsw2_copy_0d]
 	BIT	#0x02,d0                           	| [$407c: bita   #$02]
 	jeq	l_4082                             	| [$407e: beq    $4082]
-	OP_W_ON_DP_ADDRESS	addq,0x1a,#1         | [$4080: inc    $1a]
+	* enable cocktail!
+	OP_W_ON_DP_ADDRESS	addq,screen_straight_1a,#1         | [$4080: inc    $1a]
 l_4082:
 	and.b	#0xf0,d0                         	| [$4082: anda   #$f0]
                                          | [$4084: lsra]
@@ -851,7 +853,7 @@ l_4375:
 	move.w	#0x1981,d1                      	| [$4394: ldd    #$1981]
 	jra	l_439c                             	| [$4397: bra    $439c]
 l_4399:
-	move.b	#0x1a,d0                        	| [$4399: ldd    #$1a83]
+	move.b	#screen_straight_1a,d0                        	| [$4399: ldd    #$1a83]
 	move.w	#0x1a83,d1                      	| [$4399: ldd    #$1a83]
 l_439c:
 	GET_REG_UNCHECKED_ADDRESS	0x0800,d4              	| [$439c: stb    $0800,u]  [video_address]
@@ -1526,7 +1528,7 @@ l_4744:
 	move.b	d0,(a0)                         	| [...]
 	subq.b	#1,d1                           	| [$474e: decb]
 	jne	l_4744                             	| [$474f: bne    $4744]
-	OP_R_ON_DP_ADDRESS	move,0x1a,d0         | [$4751: lda    $1a]
+	OP_R_ON_DP_ADDRESS	move,screen_straight_1a,d0         | [$4751: lda    $1a]
 	jeq	l_4765                             	| [$4753: beq    $4765]
 	move.w	#0x3500,d2                      	| [$4755: ldx    #$3500]
 	OP_1_ON_DP_ADDRESS	clr,0x1b             | [$4758: clr    $1b]
@@ -1668,7 +1670,7 @@ l_4811:
 	MOVE_W_FROM_REG	d1,a0                         	| [...]
 	jbsr	l_5027                            	| [$481e: jsr    $5027]
 	moveq	#0,d0                            	| [$4821: clra]
-	OP_R_ON_DP_ADDRESS	move,0x1a,d1         | [$4822: ldb    $1a]
+	OP_R_ON_DP_ADDRESS	move,screen_straight_1a,d1         | [$4822: ldb    $1a]
 	jne	l_4834                             	| [$4824: bne    $4834]
 	OP_R_ON_DP_ADDRESS	move,current_event_69,d1| [$4826: ldb    current_event_69]
 	cmp.b	#0x03,d1                         	| [$4828: cmpb   #$03]
@@ -1795,7 +1797,7 @@ l_48c7:
 
 l_48ed:
 	jbsr	l_607f                            	| [$48ed: jsr    $607f]
-	OP_R_ON_DP_ADDRESS	move,0x1a,d0         | [$48f0: lda    $1a]
+	OP_R_ON_DP_ADDRESS	move,screen_straight_1a,d0         | [$48f0: lda    $1a]
 	jeq	l_4903                             	| [$48f2: beq    $4903]
 	moveq	#0,d0                            	| [$48f4: clra]
 	OP_R_ON_DP_ADDRESS	move,0x1b,d1         | [$48f5: ldb    $1b]
@@ -2154,7 +2156,7 @@ l_4b39:
 	jne	l_4b66                             	| [$4b3f: bne    $4b66]
 	and.b	#0x0f,d0                         	| [$4b41: anda   #$0f]
 	subq.b	#1,d0                           	| [$4b43: deca]
-	OP_R_ON_DP_ADDRESS	move,0x1a,d1         | [$4b44: ldb    $1a]
+	OP_R_ON_DP_ADDRESS	move,screen_straight_1a,d1         | [$4b44: ldb    $1a]
 	jeq	l_4b5d                             	| [$4b46: beq    $4b5d]
 	OP_R_ON_DP_ADDRESS	move,0x1b,d1         | [$4b48: ldb    $1b]
 	jne	l_4b56                             	| [$4b4a: bne    $4b56]
@@ -2194,7 +2196,7 @@ l_4b79:
 
 l_4b80:
 	OP_1_ON_DP_ADDRESS	clr,0x49             | [$4b80: clr    $49]
-	OP_R_ON_DP_ADDRESS	move,0x1a,d0         | [$4b82: lda    $1a]
+	OP_R_ON_DP_ADDRESS	move,screen_straight_1a,d0         | [$4b82: lda    $1a]
 	jeq	l_4bf6                             	| [$4b84: beq    $4bf6]
 	move.b	#0xdc,d0                        	| [$4b86: ldd    #$dc59]
 	move.w	#0xdc59,d1                      	| [$4b86: ldd    #$dc59]
@@ -2238,7 +2240,7 @@ l_4ba8:
 l_4bc2:
 	OP_R_ON_DP_ADDRESS	move,0xd9,d0         | [$4bc2: lda    $d9]
 	subq.b	#1,d0                           	| [$4bc4: deca]
-	OP_R_ON_DP_ADDRESS	move,0x1a,d1         | [$4bc5: ldb    $1a]
+	OP_R_ON_DP_ADDRESS	move,screen_straight_1a,d1         | [$4bc5: ldb    $1a]
 	jeq	l_4bd0                             	| [$4bc7: beq    $4bd0]
 	subq.b	#1,d0                           	| [$4bc9: deca]
 	OP_R_ON_DP_ADDRESS	move,0x1b,d1         | [$4bca: ldb    $1b]
@@ -2583,7 +2585,7 @@ l_4dca:
 l_4dd1:
 	OP_1_ON_DP_ADDRESS	clr,swimmer_19             | [$4dd1: clr    $19]
 	move.b	#0x04,d0                        	| [$4dd3: lda    #$04]
-	OP_R_ON_DP_ADDRESS	move,0x1a,d1         | [$4dd5: ldb    $1a]
+	OP_R_ON_DP_ADDRESS	move,screen_straight_1a,d1         | [$4dd5: ldb    $1a]
 	jeq	l_4de1                             	| [$4dd7: beq    $4de1]
 	move.b	#0x02,d0                        	| [$4dd9: lda    #$02]
 	OP_R_ON_DP_ADDRESS	move,0x1b,d1         | [$4ddb: ldb    $1b]
@@ -2629,7 +2631,7 @@ l_4e09:
 	rts                                    	| [$4e13: rts]
 
 l_4e14:
-	OP_R_ON_DP_ADDRESS	move,0x1a,d0         | [$4e14: lda    $1a]
+	OP_R_ON_DP_ADDRESS	move,screen_straight_1a,d0         | [$4e14: lda    $1a]
 	jeq	l_4e31                             	| [$4e16: beq    $4e31]
 	OP_R_ON_DP_ADDRESS	move,0x1b,d0         | [$4e18: lda    $1b]
 	jne	l_4e31                             	| [$4e1a: bne    $4e31]
@@ -2776,7 +2778,7 @@ l_4eca:
 	OP_R_ON_DP_ADDRESS	move,current_event_69,d0| [$4ed4: lda    current_event_69]
 	cmp.b	#0x03,d0                         	| [$4ed6: cmpa   #$03]
 	jne	l_4ee2                             	| [$4ed8: bne    $4ee2]
-	OP_R_ON_DP_ADDRESS	move,0x1a,d0         | [$4eda: lda    $1a]
+	OP_R_ON_DP_ADDRESS	move,screen_straight_1a,d0         | [$4eda: lda    $1a]
 	jeq	l_4ee2                             	| [$4edc: beq    $4ee2]
 	addq.w	#0x3,d4                         	| [$4ede: leau   $3,u]
 	OP_W_ON_DP_ADDRESS	subq,0x48,#1         | [$4ee0: dec    $48]
@@ -2919,7 +2921,7 @@ l_4f8a:
 	OP_R_ON_DP_ADDRESS	move,swimmer_19,d0         | [$4f8d: lda    $19]
 	OP_R_ON_DP_ADDRESS	move,0x6b,d1         | [$4f8f: ldb    $6b]
 	jne	l_4f99                             	| [$4f91: bne    $4f99]
-	OP_R_ON_DP_ADDRESS	move,0x1a,d1         | [$4f93: ldb    $1a]
+	OP_R_ON_DP_ADDRESS	move,screen_straight_1a,d1         | [$4f93: ldb    $1a]
 	jeq	l_4f99                             	| [$4f95: beq    $4f99]
 	and.b	#0x01,d0                         	| [$4f97: anda   #$01]
 l_4f99:
@@ -2935,7 +2937,7 @@ l_4fa1:
 	OP_R_ON_DP_ADDRESS	move,swimmer_19,d0         | [$4fa4: lda    $19]
 	OP_R_ON_DP_ADDRESS	move,0x6b,d1         | [$4fa6: ldb    $6b]
 	jne	l_4fb0                             	| [$4fa8: bne    $4fb0]
-	OP_R_ON_DP_ADDRESS	move,0x1a,d1         | [$4faa: ldb    $1a]
+	OP_R_ON_DP_ADDRESS	move,screen_straight_1a,d1         | [$4faa: ldb    $1a]
 	jeq	l_4fb0                             	| [$4fac: beq    $4fb0]
 	and.b	#0x01,d0                         	| [$4fae: anda   #$01]
 l_4fb0:
@@ -3713,7 +3715,7 @@ l_532d:
 l_5338:
 	move.w	#0x3500,d2                      	| [$5338: ldx    #$3500]
 	move.w	#0x30a0,d4                      	| [$533b: ldu    #$30a0]
-	OP_R_ON_DP_ADDRESS	move,0x1a,d0         | [$533e: lda    $1a]
+	OP_R_ON_DP_ADDRESS	move,screen_straight_1a,d0         | [$533e: lda    $1a]
 	jeq	l_5355                             	| [$5340: beq    $5355]
 	OP_W_ON_DP_ADDRESS	addq,0xad,#1         | [$5342: inc    $ad]
 	GET_ADDRESS	0x31cd                     	| [$5344: inc    $31cd]
@@ -3970,7 +3972,7 @@ l_54ae:
 	move.w	#0x3400,d2                      	| [$54ae: ldx    #$3400]
 	move.w	#0xd3fd,d4                      	| [$54b1: ldu    #$d3fd]
 	OP_R_ON_DP_ADDRESS	move,swimmer_19,d0         | [$54b4: lda    $19]
-	OP_R_ON_DP_ADDRESS	move,0x1a,d1         | [$54b6: ldb    $1a]
+	OP_R_ON_DP_ADDRESS	move,screen_straight_1a,d1         | [$54b6: ldb    $1a]
 	jeq	l_54bd                             	| [$54b8: beq    $54bd]
 	and.b	#0x01,d0                         	| [$54ba: anda   #$01]
 	addq.b	#1,d0                           	| [$54bc: inca]
@@ -4234,7 +4236,7 @@ l_5600:
 	move.w	#0x2644,d4                      	| [$5606: ldu    #$2644]
 	move.w	#0x3500,d2                      	| [$5609: ldx    #$3500]
 	move.b	#0x04,d0                        	| [$560c: lda    #$04]
-	OP_R_ON_DP_ADDRESS	move,0x1a,d1         | [$560e: ldb    $1a]
+	OP_R_ON_DP_ADDRESS	move,screen_straight_1a,d1         | [$560e: ldb    $1a]
 	jeq	l_5628                             	| [$5610: beq    $5628]
 	move.b	#0x02,d0                        	| [$5612: lda    #$02]
 	OP_R_ON_DP_ADDRESS	move,0x1b,d1         | [$5614: ldb    $1b]
@@ -6021,7 +6023,7 @@ l_5fde:
 	rts                                    	| [$5fe2: rts]
 
 l_5fe3:
-	GET_REG_ADDRESS	0x1a,d2                	| [$5fe3: lda    $1a,x]
+	GET_REG_ADDRESS	screen_straight_1a,d2                	| [$5fe3: lda    $1a,x]
 	move.b	(a0),d0                         	| [...]
 	and.b	#0x07,d0                         	| [$5fe6: anda   #$07]
 	jne	l_6010                             	| [$5fe8: bne    $6010]
@@ -6069,7 +6071,7 @@ l_6010:
 	rts                                    	| [$6010: rts]
 
 l_6011:
-	GET_REG_ADDRESS	0x1a,d2                	| [$6011: lda    $1a,x]
+	GET_REG_ADDRESS	screen_straight_1a,d2                	| [$6011: lda    $1a,x]
 	move.b	(a0),d0                         	| [...]
 	and.b	#0x07,d0                         	| [$6014: anda   #$07]
 	jne	l_6061                             	| [$6016: bne    $6061]
@@ -6369,7 +6371,7 @@ l_6188:
 	jbsr	queue_sound_event_4ead            	| [$61bb: jsr    queue_sound_event_4ead]
 	move.b	#swimmer_19,d0                        	| [$61be: lda    #$19]
 	jbsr	queue_sound_event_4ead            	| [$61c0: jsr    queue_sound_event_4ead]
-	move.b	#0x1a,d0                        	| [$61c3: lda    #$1a]
+	move.b	#screen_straight_1a,d0                        	| [$61c3: lda    #$1a]
 	jbsr	queue_sound_event_4ead            	| [$61c5: jsr    queue_sound_event_4ead]
 	OP_W_ON_DP_ADDRESS	addq,0xfb,#1         | [$61c8: inc    $fb]
 	jbsr	l_5145                            	| [$61ca: jsr    $5145]
@@ -6492,7 +6494,7 @@ l_625d:
 	jbsr	queue_sound_event_4ead            	| [$6269: jsr    queue_sound_event_4ead]
 	move.b	#0x0e,d0                        	| [$626c: lda    #$0e]
 	jbsr	queue_sound_event_4ead            	| [$626e: jsr    queue_sound_event_4ead]
-	move.b	#0x1a,d0                        	| [$6271: lda    #$1a]
+	move.b	#screen_straight_1a,d0                        	| [$6271: lda    #$1a]
 	jbsr	queue_sound_event_4ead            	| [$6273: jsr    queue_sound_event_4ead]
 	move.b	#0x1c,d0                        	| [$6276: lda    #$1c]
 	jbsr	queue_sound_event_4ead            	| [$6278: jsr    queue_sound_event_4ead]
@@ -7327,7 +7329,7 @@ l_670a:
 	GET_DP_ADDRESS	0xfe                    	| [$670e: stx    $fe]
 	MOVE_W_FROM_REG	d2,a0                         	| [...]
 	OP_R_ON_DP_ADDRESS	move,swimmer_19,d0         | [$6710: lda    $19]
-	OP_R_ON_DP_ADDRESS	move,0x1a,d1         | [$6712: ldb    $1a]
+	OP_R_ON_DP_ADDRESS	move,screen_straight_1a,d1         | [$6712: ldb    $1a]
 	jeq	l_671d                             	| [$6714: beq    $671d]
 	subq.b	#1,d0                           	| [$6716: deca]
 	OP_R_ON_DP_ADDRESS	move,0x1b,d1         | [$6717: ldb    $1b]
@@ -7488,7 +7490,7 @@ l_6814:
 l_6815:
 	move.w	#0x3500,d2                      	| [$6815: ldx    #$3500]
 	move.b	#0x04,d0                        	| [$6818: lda    #$04]
-	OP_R_ON_DP_ADDRESS	move,0x1a,d1         | [$681a: ldb    $1a]
+	OP_R_ON_DP_ADDRESS	move,screen_straight_1a,d1         | [$681a: ldb    $1a]
 	jeq	l_6827                             	| [$681c: beq    $6827]
 	move.b	#0x02,d0                        	| [$681e: lda    #$02]
 	OP_R_ON_DP_ADDRESS	move,0x1b,d1         | [$6820: ldb    $1b]
@@ -7507,7 +7509,7 @@ l_6831:
 	add.w	#0x20,d2                         	| [$6831: leax   $20,x]
 	OP_W_ON_DP_ADDRESS	subq,0x48,#1         | [$6834: dec    $48]
 	jne	l_6829                             	| [$6836: bne    $6829]
-	OP_R_ON_DP_ADDRESS	move,0x1a,d0         | [$6838: lda    $1a]
+	OP_R_ON_DP_ADDRESS	move,screen_straight_1a,d0         | [$6838: lda    $1a]
 	jeq	l_684b                             	| [$683a: beq    $684b]
 	OP_R_ON_DP_ADDRESS	move,0x1b,d0         | [$683c: lda    $1b]
 	jne	l_684b                             	| [$683e: bne    $684b]
@@ -7748,7 +7750,7 @@ l_6979:
 	GET_REG_ADDRESS	0x20,d2                	| [$6999: sta    $20,x]
 	move.b	d0,(a0)                         	| [...]
 	move.b	#0xe0,d0                        	| [$699c: lda    #$e0]
-	GET_REG_ADDRESS	0x1a,d2                	| [$699e: suba   $1a,x]
+	GET_REG_ADDRESS	screen_straight_1a,d2                	| [$699e: suba   $1a,x]
 	sub.b	(a0),d0                          	| [...]
 	jcs	l_69a8                             	| [$69a1: bcs    $69a8]
 	jbsr	l_779d                            	| [$69a3: jsr    $779d]
@@ -7931,7 +7933,7 @@ l_6a7f:
 	move.b	d0,(a0)                         	| [...]
 	* reached when a player finishes (swimming event)
 	jbsr	select_arriving_swimming_sprite_84ea                            	| [$6a9d: jsr    $84ea]
-	GET_REG_ADDRESS	0x1a,d2                	| [$6aa0: lda    $1a,x]
+	GET_REG_ADDRESS	screen_straight_1a,d2                	| [$6aa0: lda    $1a,x]
 	move.b	(a0),d0                         	| [...]
 	jmi	l_6aaa                             	| [$6aa3: bmi    $6aaa]
 	jbsr	l_7806                            	| [$6aa5: jsr    $7806]
@@ -8026,7 +8028,7 @@ l_6b14:
 	move.w	#0x3508,d2                      	| [$6b21: ldx    #$3508]
 	move.w	#0x3290,d4                      	| [$6b24: ldu    #$3290]
 	move.b	#0x04,d1                        	| [$6b27: ldb    #$04]
-	OP_1_ON_DP_ADDRESS	tst,0x1a             | [$6b29: tst    $1a]
+	OP_1_ON_DP_ADDRESS	tst,screen_straight_1a             | [$6b29: tst    $1a]
 	jeq	l_6b39                             	| [$6b2b: beq    $6b39]
 	move.b	#0x02,d1                        	| [$6b2d: ldb    #$02]
 	add.w	#0x20,d4                         	| [$6b2f: leau   $20,u]
@@ -9357,7 +9359,7 @@ l_72bf:
 	OP_R_ON_DP_ADDRESS	move,0xa0,d0         | [$72ee: lda    $a0]
 	cmp.b	#0x04,d0                         	| [$72f0: cmpa   #$04]
 	jeq	l_72fd                             	| [$72f2: beq    $72fd]
-	move.b	#0x1a,d0                        	| [$72f4: lda    #$1a]
+	move.b	#screen_straight_1a,d0                        	| [$72f4: lda    #$1a]
 	jbsr	queue_sound_event_4ead            	| [$72f6: jsr    queue_sound_event_4ead]
 	move.b	#0x1c,d0                        	| [$72f9: lda    #$1c]
 	jra	l_7304                             	| [$72fb: bra    $7304]
@@ -10218,7 +10220,7 @@ l_77b5:
 	GET_REG_ADDRESS	0x2,d3                 	| [$77b5: cmpu   $2,y]
 	CMP_W_TO_REG	a0,d4                          	| [...]
 	jne	l_77af                             	| [$77b8: bne    $77af]
-	GET_REG_ADDRESS	0x1a,d2                	| [$77ba: inc    $1a,x]
+	GET_REG_ADDRESS	screen_straight_1a,d2                	| [$77ba: inc    $1a,x]
 	addq.b	#1,(a0)                         	| [...]
 	move.l	d3,-(sp)                        	| [$77bd: pshs   y]
 	jbsr	l_5fe3                            	| [$77bf: jsr    $5fe3]
@@ -10298,7 +10300,7 @@ l_781c:
 	GET_REG_ADDRESS	0x2,d3                 	| [$781e: cmpu   $2,y]
 	CMP_W_TO_REG	a0,d4                          	| [...]
 	jne	l_7816                             	| [$7821: bne    $7816]
-	GET_REG_ADDRESS	0x1a,d2                	| [$7823: dec    $1a,x]
+	GET_REG_ADDRESS	screen_straight_1a,d2                	| [$7823: dec    $1a,x]
 	subq.b	#1,(a0)                         	| [...]
 	move.l	d3,-(sp)                        	| [$7826: pshs   y]
 	jbsr	l_6011                            	| [$7828: jsr    $6011]
@@ -10561,7 +10563,7 @@ l_7980:
 	move.l	d2,-(sp)                        	| [$7984: pshs   x]
 	move.w	#0x3380,d2                      	| [$7986: ldx    #$3380]
 	OP_R_ON_DP_ADDRESS	move,swimmer_19,d0         | [$7989: lda    $19]
-	OP_R_ON_DP_ADDRESS	move,0x1a,d1         | [$798b: ldb    $1a]
+	OP_R_ON_DP_ADDRESS	move,screen_straight_1a,d1         | [$798b: ldb    $1a]
 	jeq	l_799d                             	| [$798d: beq    $799d]
 	tst.b	d0                               	| [$798f: tsta]
 	jeq	l_79db                             	| [$7990: beq    $79db]
@@ -10635,7 +10637,7 @@ l_79e2:
 	jra	l_7a78                             	| [$79e8: jra    $7a78]
 l_79eb:
 	move.w	#0x2585,d4                      	| [$79eb: ldu    #$2585]
-	OP_R_ON_DP_ADDRESS	move,0x1a,d0         | [$79ee: lda    $1a]
+	OP_R_ON_DP_ADDRESS	move,screen_straight_1a,d0         | [$79ee: lda    $1a]
 	jeq	l_79fe                             	| [$79f0: beq    $79fe]
 	move.w	#0xd659,d2                      	| [$79f2: ldx    #$d659]
 	jbsr	l_7a9a                            	| [$79f5: jsr    $7a9a]
@@ -10654,7 +10656,7 @@ l_7a0b:
 	jra	l_7aae                             	| [$7a0d: jra    $7aae]
 l_7a10:
 	move.w	#0x2485,d4                      	| [$7a10: ldu    #$2485]
-	OP_R_ON_DP_ADDRESS	move,0x1a,d0         | [$7a13: lda    $1a]
+	OP_R_ON_DP_ADDRESS	move,screen_straight_1a,d0         | [$7a13: lda    $1a]
 	jeq	l_7a33                             	| [$7a15: beq    $7a33]
 	move.w	#0xd64d,d2                      	| [$7a17: ldx    #$d64d]
 	move.b	#0x01,d0                        	| [$7a1a: lda    #$01]
@@ -10685,7 +10687,7 @@ l_7a40:
 	jra	l_7aae                             	| [$7a42: bra    $7aae]
 l_7a44:
 	move.w	#0x2385,d4                      	| [$7a44: ldu    #$2385]
-	OP_R_ON_DP_ADDRESS	move,0x1a,d0         | [$7a47: lda    $1a]
+	OP_R_ON_DP_ADDRESS	move,screen_straight_1a,d0         | [$7a47: lda    $1a]
 	jeq	l_7a67                             	| [$7a49: beq    $7a67]
 	move.w	#0xd650,d2                      	| [$7a4b: ldx    #$d650]
 	move.b	#0x02,d0                        	| [$7a4e: lda    #$02]
@@ -10716,7 +10718,7 @@ l_7a74:
 	jra	l_7aae                             	| [$7a76: bra    $7aae]
 l_7a78:
 	move.w	#0x2285,d4                      	| [$7a78: ldu    #$2285]
-	OP_R_ON_DP_ADDRESS	move,0x1a,d0         | [$7a7b: lda    $1a]
+	OP_R_ON_DP_ADDRESS	move,screen_straight_1a,d0         | [$7a7b: lda    $1a]
 	jeq	l_7a89                             	| [$7a7d: beq    $7a89]
 	move.w	#0xd659,d2                      	| [$7a7f: ldx    #$d659]
 	jbsr	l_7a9a                            	| [$7a82: bsr    $7a9a]
@@ -11357,7 +11359,7 @@ l_7dbd:
 	move.w	#0x3380,d2                      	| [$7dbd: ldx    #$3380]
 	OP_1_ON_DP_ADDRESS	clr,swimmer_19             | [$7dc0: clr    $19]
 	move.b	#0x04,d0                        	| [$7dc2: lda    #$04]
-	OP_R_ON_DP_ADDRESS	move,0x1a,d1         | [$7dc4: ldb    $1a]
+	OP_R_ON_DP_ADDRESS	move,screen_straight_1a,d1         | [$7dc4: ldb    $1a]
 	jeq	l_7dd3                             	| [$7dc6: beq    $7dd3]
 	move.b	#0x02,d0                        	| [$7dc8: lda    #$02]
 	OP_R_ON_DP_ADDRESS	move,0x1b,d1         | [$7dca: ldb    $1b]
@@ -12033,7 +12035,7 @@ l_818d:
 	add.w	d1,d3                            	| [$819b: leay   d,y]
 	jra	l_890f                             	| [$819d: jra    $890f]
 l_81a0:
-	OP_1_ON_DP_ADDRESS	tst,0x1a             | [$81a0: tst    $1a]
+	OP_1_ON_DP_ADDRESS	tst,screen_straight_1a             | [$81a0: tst    $1a]
 	jne	l_81f1                             	| [$81a2: bne    $81f1]
 	move.w	#0x33d1,d2                      	| [$81a4: ldx    #$33d1]
 	jbsr	l_52a3                            	| [$81a7: jsr    $52a3]
@@ -12131,7 +12133,7 @@ l_8230:
 	tst.b	(a0)                             	| [...]
 	jeq	l_822f                             	| [$8232: beq    $822f]
 	move.w	#0xd83e,d4                      	| [$8234: ldu    #$d83e]
-	OP_1_ON_DP_ADDRESS	tst,0x1a             | [$8237: tst    $1a]
+	OP_1_ON_DP_ADDRESS	tst,screen_straight_1a             | [$8237: tst    $1a]
 	jne	l_8242                             	| [$8239: bne    $8242]
 	cmp.w	#0x32d0,d2                       	| [$823b: cmpx   #$32d0]
 	jcs	l_8242                             	| [$823e: bcs    $8242]
@@ -12155,7 +12157,7 @@ l_8242:
 	jra	l_894b                             	| [$8250: jra    $894b]
 l_8253:
 	move.w	#0xd84a,d3                      	| [$8253: ldy    #$d84a]
-	OP_1_ON_DP_ADDRESS	tst,0x1a             | [$8257: tst    $1a]
+	OP_1_ON_DP_ADDRESS	tst,screen_straight_1a             | [$8257: tst    $1a]
 	jne	l_8268                             	| [$8259: bne    $8268]
 	cmp.w	#0x32c0,d2                       	| [$825b: cmpx   #$32c0]
 	jcs	l_8268                             	| [$825e: bcs    $8268]
@@ -12504,7 +12506,7 @@ l_846b:
 	GET_REG_ADDRESS	0x1,d2                 	| [$8473: sta    $1,x]
 	move.b	d0,(a0)                         	| [...]
 	move.w	#0xdc7a,d3                      	| [$8475: ldy    #$dc7a]
-	OP_1_ON_DP_ADDRESS	tst,0x1a             | [$8479: tst    $1a]
+	OP_1_ON_DP_ADDRESS	tst,screen_straight_1a             | [$8479: tst    $1a]
 	jne	l_848d                             	| [$847b: bne    $848d]
 	OP_R_ON_DP_ADDRESS	move,swimmer_19,d0         | [$847d: lda    $19]
 	cmp.b	#0x02,d0                         	| [$847f: cmpa   #$02]
@@ -12588,6 +12590,7 @@ select_diving_sprite_84e5:
 	move.w	#0xdbc5,d4                      	| [$84e5: ldu    #$dbc5] fully extended
 	jra	select_sprite_84ce                             	| [$84e8: bra    $84ce]
 select_arriving_swimming_sprite_84ea:
+	ENABLE_LOG_REGS
 	move.w	#0xdc4b,d4                      	| [$84ea: ldu    #$dc4b]
 	jra	select_sprite_84ce                             	| [$84ed: bra    $84ce]
 l_84ef:
@@ -12766,7 +12769,7 @@ l_85ff:
 	OP_R_ON_DP_ADDRESS	move,swimmer_19,d0         | [$8618: lda    $19]
 	OP_R_ON_DP_ADDRESS	move,0x6b,d1         | [$861a: ldb    $6b]
 	jeq	l_8622                             	| [$861c: beq    $8622]
-	OP_R_ON_DP_ADDRESS	move,0x1a,d1         | [$861e: ldb    $1a]
+	OP_R_ON_DP_ADDRESS	move,screen_straight_1a,d1         | [$861e: ldb    $1a]
 	jeq	l_8626                             	| [$8620: beq    $8626]
 l_8622:
 	and.b	#0x01,d0                         	| [$8622: anda   #$01]
@@ -13180,7 +13183,7 @@ l_87fb:
 l_8813:
 	GET_DP_ADDRESS	swimmer_19                    	| [$8813: ora    $19]
 	or.b	(a0),d0                           	| [...]
-	OP_R_ON_DP_ADDRESS	move,0x1a,d1         | [$8815: ldb    $1a]
+	OP_R_ON_DP_ADDRESS	move,screen_straight_1a,d1         | [$8815: ldb    $1a]
 	jeq	l_8821                             	| [$8817: beq    $8821]
 	OP_R_ON_DP_ADDRESS	move,0x1b,d1         | [$8819: ldb    $1b]
 	jeq	l_8822                             	| [$881b: beq    $8822]
@@ -13189,7 +13192,7 @@ l_8813:
 l_8821:
 	addq.b	#1,d0                           	| [$8821: inca]
 l_8822:
-	OP_1_ON_DP_ADDRESS	tst,0x1a             | [$8822: tst    $1a]
+	OP_1_ON_DP_ADDRESS	tst,screen_straight_1a             | [$8822: tst    $1a]
 	jne	l_8836                             	| [$8824: bne    $8836]
 	OP_R_ON_DP_ADDRESS	move,swimmer_19,d1         | [$8826: ldb    $19]
 	cmp.b	#0x02,d1                         	| [$8828: cmpb   #$02]
@@ -17222,7 +17225,7 @@ l_9e70:
 	OP_R_ON_DP_ADDRESS	move,0xc6,d1         | [$9e84: ldb    $c6]
 	cmp.b	#0x06,d1                         	| [$9e86: cmpb   #$06]
 	jls	l_9ec9                             	| [$9e88: bls    $9ec9]
-	sub.b	#0x1a,d1                         	| [$9e8a: subb   #$1a]
+	sub.b	#screen_straight_1a,d1                         	| [$9e8a: subb   #$1a]
 	jpl	l_9e8f                             	| [$9e8c: bpl    $9e8f]
 	neg.b	d1                               	| [$9e8e: negb]
 l_9e8f:
@@ -22856,7 +22859,7 @@ l_bd86:
                                          | [$bd93: inca]
 	addq.b	#2,d0                           	| [$bd94: inca]
 	OP_W_ON_DP_ADDRESS	move,0x2e,d0         | [$bd95: sta    $2e]
-	cmp.b	#0x1a,d0                         	| [$bd97: cmpa   #$1a]
+	cmp.b	#screen_straight_1a,d0                         	| [$bd97: cmpa   #$1a]
 	jne	l_bd86                             	| [$bd99: bne    $bd86]
 	rts                                    	| [$bd9b: rts]
 
@@ -23662,7 +23665,7 @@ l_c1a1:
 	jbsr	l_afc1                            	| [$c1a5: jsr    $afc1]
 	OP_R_ON_DP_ADDRESS	move,0x29,d0         | [$c1a8: lda    $29]
 	moveq	#0,d1                            	| [$c1aa: clrb]
-	OP_1_ON_DP_ADDRESS	tst,0x1a             | [$c1ab: tst    $1a]
+	OP_1_ON_DP_ADDRESS	tst,screen_straight_1a             | [$c1ab: tst    $1a]
 	jne	l_c1b4                             	| [$c1ad: bne    $c1b4]
 	cmp.b	#0x03,d0                         	| [$c1af: cmpa   #$03]
 	jcs	l_c1b4                             	| [$c1b1: bcs    $c1b4]
@@ -23989,7 +23992,7 @@ l_c39d:
 	jeq	l_c3b7                             	| [$c39f: beq    $c3b7]
 	BIT	#0x10,d0                           	| [$c3a1: bita   #$10]
 	jne	l_c3b7                             	| [$c3a3: bne    $c3b7]
-	OP_1_ON_DP_ADDRESS	tst,0x1a             | [$c3a5: tst    $1a]
+	OP_1_ON_DP_ADDRESS	tst,screen_straight_1a             | [$c3a5: tst    $1a]
 	jeq	l_c3bb                             	| [$c3a7: beq    $c3bb]
 	OP_R_ON_DP_ADDRESS	move,0x1b,d1         | [$c3a9: ldb    $1b]
 	jne	l_c3b3                             	| [$c3ab: bne    $c3b3]
@@ -24377,7 +24380,7 @@ l_c5a8:
 	move.b	(a0),d0                         	| [...]
 	GET_ADDRESS	0x3423                     	| [$c5b7: sta    $3423]
 	move.b	d0,(a0)                         	| [...]
-	OP_1_ON_DP_ADDRESS	tst,0x1a             | [$c5ba: tst    $1a]
+	OP_1_ON_DP_ADDRESS	tst,screen_straight_1a             | [$c5ba: tst    $1a]
 	jne	l_c5c4                             	| [$c5bc: bne    $c5c4]
 	lsr.b	#1,d0                            	| [$c5be: lsra]
 	GET_ADDRESS	flip_screen_set_1480       	| [$c5bf: sta    flip_screen_set_1480]

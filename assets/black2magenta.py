@@ -10,17 +10,19 @@ this_dir = pathlib.Path(__file__).absolute().parent
 src_sprite_dir = this_dir / "sheets" / "sprites_black"
 dst_sprite_dir = this_dir / "sheets" / "sprites"
 
-yellow_image = Image.open(src_sprite_dir / "pal_0D.png")
 
 yellow_pixels = set()
 
-# this palette has the nice property of having black not merged with background
-# black colors in other palettes are there yellow, so we can backport the black color in other palettes
-for x in range(yellow_image.size[0]):
-    for y in range(yellow_image.size[1]):
-        p = yellow_image.getpixel((x,y))
-        if p == (255,255,0):
-            yellow_pixels.add((x,y))
+for idx in [0xD,0xE]:
+    yellow_image = Image.open(src_sprite_dir / f"pal_{idx:02X}.png")
+
+    # this palette has the nice property of having black not merged with background
+    # black colors in other palettes are there yellow, so we can backport the black color in other palettes
+    for x in range(yellow_image.size[0]):
+        for y in range(yellow_image.size[1]):
+            p = yellow_image.getpixel((x,y))
+            if p == (255,255,0):
+                yellow_pixels.add((x,y))
 
 for i in range(16):
     imgname = f"pal_{i:02X}.png"
@@ -37,7 +39,7 @@ for i in range(16):
                 if (x,y) in yellow_pixels:
                     pass
                 else:
-                    p = (254,0,254)  # bkack => magenta but not full magenta to avoid conflicts
+                    p = (254,0,254)  # black => magenta but not full magenta to avoid conflicts
             dst_image.putpixel((x,y),p)
 
     dst_image.save(dst)

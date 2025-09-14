@@ -101,27 +101,17 @@ get_address:
 	.endm
 
 	.macro CLR_XC_FLAGS
-	move.w	d7,-(a7)
-	moveq	#0,d6
-	roxl.b	#1,d6
-	movem.w	(a7)+,d6
+	and.b	#0xEE,ccr		| bit 4 = X, bit 0 = C
 	.endm
-
+	
 	.macro SET_XC_FLAGS
-	move.w	d6,-(a7)
-	st	d6
-	roxl.b	#1,d6
-	movem.w	(a7)+,d6
+	or.b	#0x11,ccr		| bit 4 = X, bit 0 = C
 	.endm
 
 
 
 	.macro INVERT_XC_FLAGS
-	PUSH_SR
-	move.w	(sp),d6
-	eor.b	#0x11,d6
-	move.w	d6,(sp)
-	POP_SR
+	eor.b	#0x11,ccr
 	.endm
 
 	.macro	ABX

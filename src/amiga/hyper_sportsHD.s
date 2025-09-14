@@ -48,7 +48,9 @@ _config
 	ENDC
 	dc.b	"C3:L:start level:Free Style,Skeet Shooting,Long Horse,"
 	dc.b	"Archery,Triple Jump,Weightlifting,Pole Vault;"
-;	dc.b	"C5:L:difficulty level:1 (easiest),2,3,4,5 (average),6,7,8 (hardest);"
+	dc.b	"C5:L:difficulty level:Easy 1,Easy 2,Easy 3,Easy 4,"
+	dc.b	"Normal 1,Normal 2,Normal 3,Normal 4,Normal 5,Normal 6,Normal 7,Normal 8,"
+	dc.b	"Difficult 1,Difficult 2,Difficult 3,Difficult 4;"
 	dc.b	0
 
 	IFD BARFLY
