@@ -3163,13 +3163,13 @@ queue_sound_event_4ead:
 57CE: C1 8C          CMPB   #$04
 57D0: 27 3C          BEQ    $57F0
 57D2: CE A9 62       LDU    #$2B40
-57D5: A7 42          STA    ,U+
+57D5: A7 42          STA    ,U+		; [video_address]
 57D7: 11 83 04 C8    CMPU   #$2C40
 57DB: 26 D0          BNE    $57D5
 57DD: CE A3 20       LDU    #$2BA8
 57E0: 86 21          LDA    #$03
 57E2: C6 85          LDB    #$07
-57E4: 6F E2          CLR    ,U+
+57E4: 6F E2          CLR    ,U+		; [video_address]
 57E6: 5A             DECB
 57E7: 26 D3          BNE    $57E4
 57E9: 33 40 B1       LEAU   $39,U

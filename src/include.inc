@@ -117,7 +117,7 @@ get_address:
 	.macro	ABX
 	moveq	#0,d6
 	move.b	d1,d6
-	add.w	d1,d2
+	add.w	d6,d2
 	.endm
 
 * useful to recall C from X (add then move then bcx)
@@ -331,7 +331,6 @@ get_address:
 	.endm
 
 	.macro	GET_REG_REG_INDIRECT_ADDRESS reg1,reg2
-	BREAKPOINT	"debug GET_REG_REG_INDIRECT_ADDRESS!!!"
 	GET_INDIRECT_ADDRESS_REGS	\reg1,\reg2,d6
 	and.l	#0xFFFF,d6
 	move.l	d6,a0
@@ -418,6 +417,7 @@ do_jmp_0e_x:
 	JUMP_IF_KNOWN	85a0
 	JUMP_IF_KNOWN	8387
 	JUMP_IF_KNOWN	b1a0
+	JUMP_IF_KNOWN	83a9
 	BREAKPOINT	"unknown dynamic jump address in D6"
 	illegal
 	rts

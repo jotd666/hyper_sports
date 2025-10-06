@@ -30,7 +30,9 @@ def convert():
     EMPTY_SND = "EMPTY_SND"
     sound_dict = {
 
-    "CREDIT_SND"               :{"index":0x34,"channel":3,"sample_rate":hq_sample_rate,"priority":40},
+    "CREDIT_SND"               :{"index":0x3A,"channel":3,"sample_rate":hq_sample_rate,"priority":40},
+    "CURSOR_MOVE_SND"            :{"index":0x17,"channel":3,"sample_rate":hq_sample_rate,"priority":40},
+    "LETTER_ENTERED_SND"            :{"index":0x18,"channel":3,"sample_rate":hq_sample_rate,"priority":40},
     #"LEVEL_1_COMPLETED_TUNE_SND"                :{"index":0x1E,"pattern":0x14,"volume":32,"loops":False,"ticks":480},
 
 
