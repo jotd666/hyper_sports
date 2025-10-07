@@ -36,8 +36,17 @@ def convert():
     "GUNSHOT_SND"            :{"index":0x10,"channel":3,"sample_rate":hq_sample_rate,"priority":40},
     "SPLASH_SND"            :{"index":0x15,"channel":3,"sample_rate":hq_sample_rate,"priority":40},
     "SWIM_SND"            :{"index":0x14,"channel":3,"sample_rate":hq_sample_rate,"priority":40},
+    "STEP_01_SND"            :{"index":0x1,"channel":3,"sample_rate":hq_sample_rate,"priority":40},
+    "SOUND_2A_SND"            :{"index":0x2A,"channel":3,"sample_rate":hq_sample_rate,"priority":40},
     "SFX_11_SND"            :{"index":0x11,"channel":3,"sample_rate":hq_sample_rate,"priority":40},
     "SFX_12_SND"            :{"index":0x12,"channel":3,"sample_rate":hq_sample_rate,"priority":40},
+    "ZAP_0A_SND"            :{"index":0x0A,"channel":3,"sample_rate":hq_sample_rate,"priority":40},
+    "ZAP_09_SND"            :{"index":0x09,"channel":3,"sample_rate":hq_sample_rate,"priority":40},
+    "PING_65_SND"            :{"index":0x65,"channel":3,"sample_rate":hq_sample_rate,"priority":40},
+    "PING_65_SND"            :{"index":0x65,"channel":3,"sample_rate":hq_sample_rate,"priority":40},
+    "CHEERING_SND"            :{"index":0x41,"channel":3,"sample_rate":lq_sample_rate,"priority":40},
+    "BLAST_BLOW_02_SND"            :{"index":0x02,"channel":3,"sample_rate":hq_sample_rate,"priority":40},
+    "BLAST_ZAP_03_SND"            :{"index":0x03,"channel":3,"sample_rate":hq_sample_rate,"priority":40},
     #"LEVEL_1_COMPLETED_TUNE_SND"                :{"index":0x1E,"pattern":0x14,"volume":32,"loops":False,"ticks":480},
 
 
