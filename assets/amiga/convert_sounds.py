@@ -33,30 +33,55 @@ def convert():
     "CREDIT_SND"               :{"index":0x3A,"channel":3,"sample_rate":hq_sample_rate,"priority":40},
     "CURSOR_MOVE_SND"            :{"index":0x17,"channel":3,"sample_rate":hq_sample_rate,"priority":40},
     "LETTER_ENTERED_SND"            :{"index":0x18,"channel":3,"sample_rate":hq_sample_rate,"priority":40},
-    "GUNSHOT_SND"            :{"index":0x10,"channel":3,"sample_rate":hq_sample_rate,"priority":40},
-    "SPLASH_SND"            :{"index":0x15,"channel":3,"sample_rate":hq_sample_rate,"priority":40},
-    "SWIM_SND"            :{"index":0x14,"channel":3,"sample_rate":hq_sample_rate,"priority":40},
-    "STEP_01_SND"            :{"index":0x1,"channel":3,"sample_rate":hq_sample_rate,"priority":40},
-    "SOUND_2A_SND"            :{"index":0x2A,"channel":3,"sample_rate":hq_sample_rate,"priority":40},
-    "SFX_11_SND"            :{"index":0x11,"channel":3,"sample_rate":hq_sample_rate,"priority":40},
-    "SFX_12_SND"            :{"index":0x12,"channel":3,"sample_rate":hq_sample_rate,"priority":40},
-    "ZAP_0A_SND"            :{"index":0x0A,"channel":3,"sample_rate":hq_sample_rate,"priority":40},
-    "ZAP_09_SND"            :{"index":0x09,"channel":3,"sample_rate":hq_sample_rate,"priority":40},
-    "PING_65_SND"            :{"index":0x65,"channel":3,"sample_rate":hq_sample_rate,"priority":40},
-    "PING_65_SND"            :{"index":0x65,"channel":3,"sample_rate":hq_sample_rate,"priority":40},
-    "CHEERING_SND"            :{"index":0x41,"channel":3,"sample_rate":lq_sample_rate,"priority":40},
-    "BLAST_BLOW_02_SND"            :{"index":0x02,"channel":3,"sample_rate":hq_sample_rate,"priority":40},
-    "BLAST_ZAP_03_SND"            :{"index":0x03,"channel":3,"sample_rate":hq_sample_rate,"priority":40},
+
+    "BOUNCE_SND"            :{"index":0x23,"channel":2,"sample_rate":hq_sample_rate,"priority":40},
+    "SOUND_24_SND"            :{"index":0x24,"channel":2,"sample_rate":hq_sample_rate,"priority":40},
+    "HURRY_SND"            :{"index":0x38,"channel":3,"sample_rate":hq_sample_rate,"priority":40},
+
+    "SOUND_3f_SND"            :{"index":0x3f,"sample_rate":hq_sample_rate,"priority":40},
+     "SOUND_64_SND"            :{"index":0x64,"sample_rate":hq_sample_rate,"priority":40},
+    "GUNSHOT_SND"            :{"index":0x10,"sample_rate":hq_sample_rate,"priority":40},
+    "SPLASH_SND"            :{"index":0x15,"sample_rate":hq_sample_rate,"priority":40},
+    "SWIM_SND"            :{"index":0x14,"sample_rate":hq_sample_rate,"priority":40},
+    "STEP_01_SND"            :{"index":0x1,"sample_rate":hq_sample_rate,"priority":40},
+    "SOUND_2A_SND"            :{"index":0x2A,"sample_rate":hq_sample_rate,"priority":40},
+    "SFX_11_SND"            :{"index":0x11,"sample_rate":hq_sample_rate,"priority":40},
+    "SFX_12_SND"            :{"index":0x12,"sample_rate":hq_sample_rate,"priority":40},
+    "ZAP_0A_SND"            :{"index":0x0A,"sample_rate":hq_sample_rate,"priority":40},
+    "ZAP_09_SND"            :{"index":0x09,"sample_rate":hq_sample_rate,"priority":40},
+    "HORN_SND"            :{"index":0x27,"sample_rate":hq_sample_rate,"priority":40},
+    "SOMMERSAULT_SND"            :{"index":0x1B,"sample_rate":hq_sample_rate,"priority":40},
+    "PING_08_SND"            :{"index":0x08,"sample_rate":hq_sample_rate,"priority":40},
+    "SOUND_22_SND"            :{"index":0x22,"sample_rate":hq_sample_rate,"priority":40},
+    "SOUND_60_SND"            :{"index":0x60,"sample_rate":hq_sample_rate,"priority":40},
+    "SOUND_04_SND"            :{"index":0x04,"sample_rate":hq_sample_rate,"priority":40},
+    "SOUND_0E_SND"            :{"index":0x0E,"sample_rate":hq_sample_rate,"priority":40},
+    "SOUND_0F_SND"            :{"index":0x0F,"sample_rate":hq_sample_rate,"priority":40},
+    "SOUND_20_SND"            :{"index":0x20,"sample_rate":lq_sample_rate,"priority":40},
+    "SOUND_21_SND"            :{"index":0x21,"sample_rate":lq_sample_rate,"priority":40},
+    "PING_65_SND"            :{"index":0x65,"sample_rate":hq_sample_rate,"priority":40},
+    "PING_66_SND"            :{"index":0x66,"sample_rate":hq_sample_rate,"priority":40},
+    "CHEERING_SND"            :{"index":0x41,"sample_rate":lq_sample_rate,"priority":40},
+    "BLAST_BLOW_02_SND"            :{"index":0x02,"sample_rate":hq_sample_rate,"priority":40},
+    "BLAST_ZAP_03_SND"            :{"index":0x03,"sample_rate":hq_sample_rate,"priority":40},
     #"LEVEL_1_COMPLETED_TUNE_SND"                :{"index":0x1E,"pattern":0x14,"volume":32,"loops":False,"ticks":480},
 
 
     }
+    for v in sound_dict.values():
+        if "channel" not in v:
+            v["channel"] = -1 # auto
+
+    sound_dict["SOMMERSAULT_2_SND"] = {"index":0x1C,"same_as":"SOMMERSAULT_SND"}
+    sound_dict["PING_66_SND"] = {"index":0x66,"same_as":"PING_65_SND"}
 
     dummy_sounds = [0x40, # start music
     0x30,  # after start music (same as in tracknfield)
 0x3D, # swim event start
 0x3B, # game over music
-0x2D  # chariots
+0x3C, # qualify
+0x2D,  # chariots
+0x42, # podium shit
     ]
 
     with open(os.path.join(src_dir,"..","sounds.inc"),"w") as f:
@@ -124,9 +149,19 @@ def convert():
 
             channel = details.get("channel")
             if channel is None:
-                # if music loops, ticks are set to 1 so sound orders only can happen once (else music is started 50 times per second!!)
 
-                sound_table_set_1[sound_index] = "\t.word\t{},{},{}\n\t.byte\t{},{}".format(2,details["pattern"],details.get("ticks",0),details["volume"],int(details["loops"]))
+                same_as = details.get("same_as")
+                if same_as is None:
+                    # if music loops, ticks are set to 1 so sound orders only can happen once (else music is started 50 times per second!!)
+
+                    sound_table_set_1[sound_index] = "\t.word\t{},{},{}\n\t.byte\t{},{}".format(2,details["pattern"],0,details["volume"],int(details.get("loops",0)))
+                else:
+                    # aliased sound: reuse sample for a different sound index
+                    wav_entry = same_as
+                    details = sound_dict[same_as]
+                    wav_name = os.path.basename(wav_entry).lower()[:-4]
+                    wav = os.path.splitext(wav_name)[0]
+                    sound_table_set_1[sound_index] = f"\t.word\t1,{int(details.get('loops',0))}\n\t.long\t{wav}_sound"
             else:
                 wav_name = os.path.basename(wav_entry).lower()[:-4]
                 wav_file = os.path.join(sound_dir,wav_name+".wav")
