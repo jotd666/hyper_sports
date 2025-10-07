@@ -33,12 +33,21 @@ def convert():
     "CREDIT_SND"               :{"index":0x3A,"channel":3,"sample_rate":hq_sample_rate,"priority":40},
     "CURSOR_MOVE_SND"            :{"index":0x17,"channel":3,"sample_rate":hq_sample_rate,"priority":40},
     "LETTER_ENTERED_SND"            :{"index":0x18,"channel":3,"sample_rate":hq_sample_rate,"priority":40},
+    "GUNSHOT_SND"            :{"index":0x10,"channel":3,"sample_rate":hq_sample_rate,"priority":40},
+    "SPLASH_SND"            :{"index":0x15,"channel":3,"sample_rate":hq_sample_rate,"priority":40},
+    "SWIM_SND"            :{"index":0x14,"channel":3,"sample_rate":hq_sample_rate,"priority":40},
+    "SFX_11_SND"            :{"index":0x11,"channel":3,"sample_rate":hq_sample_rate,"priority":40},
+    "SFX_12_SND"            :{"index":0x12,"channel":3,"sample_rate":hq_sample_rate,"priority":40},
     #"LEVEL_1_COMPLETED_TUNE_SND"                :{"index":0x1E,"pattern":0x14,"volume":32,"loops":False,"ticks":480},
 
 
     }
 
-    dummy_sounds = [
+    dummy_sounds = [0x40, # start music
+    0x30,  # after start music (same as in tracknfield)
+0x3D, # swim event start
+0x3B, # game over music
+0x2D  # chariots
     ]
 
     with open(os.path.join(src_dir,"..","sounds.inc"),"w") as f:
