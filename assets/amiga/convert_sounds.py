@@ -21,7 +21,7 @@ def convert():
     sndfile = os.path.join(src_dir,"sound_entries.68k")
 
 
-    hq_sample_rate = 18004  #{"aga":18004,"ecs":12000,"ocs":11025}[mode]
+    hq_sample_rate = 14000  #{"aga":18004,"ecs":12000,"ocs":11025}[mode]
     lq_sample_rate = hq_sample_rate//2 # if aga_mode else 8000
 
 
