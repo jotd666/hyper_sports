@@ -21,7 +21,7 @@ def convert():
     sndfile = os.path.join(src_dir,"sound_entries.68k")
 
 
-    hq_sample_rate = 14000  #{"aga":18004,"ecs":12000,"ocs":11025}[mode]
+    hq_sample_rate = 12000  #{"aga":18004,"ecs":12000,"ocs":11025}[mode]
     lq_sample_rate = hq_sample_rate//2 # if aga_mode else 8000
 
 
@@ -54,11 +54,14 @@ def convert():
     "PING_08_SND"            :{"index":0x08,"sample_rate":hq_sample_rate,"priority":40},
     "SOUND_22_SND"            :{"index":0x22,"sample_rate":hq_sample_rate,"priority":40},
     "SOUND_60_SND"            :{"index":0x60,"sample_rate":hq_sample_rate,"priority":40},
+    "JUMP_19_SND"            :{"index":0x19,"sample_rate":hq_sample_rate,"priority":40},
+    "JUMP_1A_SND"            :{"index":0x1A,"sample_rate":hq_sample_rate,"priority":40},
     "SOUND_04_SND"            :{"index":0x04,"sample_rate":hq_sample_rate,"priority":40},
     "SOUND_0E_SND"            :{"index":0x0E,"sample_rate":hq_sample_rate,"priority":40},
     "SOUND_0F_SND"            :{"index":0x0F,"sample_rate":hq_sample_rate,"priority":40},
     "SOUND_20_SND"            :{"index":0x20,"sample_rate":lq_sample_rate,"priority":40},
     "SOUND_21_SND"            :{"index":0x21,"sample_rate":lq_sample_rate,"priority":40},
+    "SWOOSH_SND"            :{"index":0xB,"sample_rate":hq_sample_rate,"priority":40},
     "PING_65_SND"            :{"index":0x65,"sample_rate":hq_sample_rate,"priority":40},
     "PING_66_SND"            :{"index":0x66,"sample_rate":hq_sample_rate,"priority":40},
     "CHEERING_SND"            :{"index":0x41,"sample_rate":lq_sample_rate,"priority":40},
