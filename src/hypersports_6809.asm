@@ -1068,7 +1068,7 @@ start_game_4673:
 4761: 26 80          BNE    $4765
 4763: 0C 39          INC    $1B
 4765: 86 BF          LDA    #$3D
-4767: BD 66 9B       JSR    $4EB3
+4767: BD 66 9B       JSR    force_queue_sound_event_4eb3
 476A: 86 89          LDA    #$01
 476C: B7 1C 7B       STA    $34F3
 476F: 0C 0A          INC    event_sub_state_28
@@ -1425,9 +1425,9 @@ start_game_4673:
 4A76: B6 B1 DC       LDA    $33F4
 4A79: 26 D1          BNE    $4AD4
 4A7B: 4F             CLRA
-4A7C: BD 66 3B       JSR    $4EB3
+4A7C: BD 66 3B       JSR    force_queue_sound_event_4eb3
 4A7F: 86 63          LDA    #$41
-4A81: BD CC 31       JSR    $4EB3
+4A81: BD CC 31       JSR    force_queue_sound_event_4eb3
 4A84: 20 6C          BRA    $4AD4
 4A86: 8E B2 88       LDX    #$30A0
 4A89: BD C3 83       JSR    $4B0B
@@ -1468,7 +1468,7 @@ start_game_4673:
 4ADF: BD 5E 72       JSR    $7C50
 4AE2: BD 2D 8D       JSR    $AFAF
 4AE5: 86 BE          LDA    #$3C
-4AE7: BD 66 9B       JSR    $4EB3
+4AE7: BD 66 9B       JSR    force_queue_sound_event_4eb3
 4AEA: 86 77          LDA    #$FF
 4AEC: 20 22          BRA    $4AF8
 4AEE: B6 BC D5       LDA    $34F7
@@ -1574,9 +1574,9 @@ start_game_4673:
 4BB5: 26 89          BNE    $4BC2
 4BB7: 0C 61          INC    $49
 4BB9: 4F             CLRA
-4BBA: BD C6 9B       JSR    $4EB3
+4BBA: BD C6 9B       JSR    force_queue_sound_event_4eb3
 4BBD: 86 C9          LDA    #$41
-4BBF: BD 6C 91       JSR    $4EB3
+4BBF: BD 6C 91       JSR    force_queue_sound_event_4eb3
 4BC2: 96 5B          LDA    $D9
 4BC4: 4A             DECA
 4BC5: D6 98          LDB    $1A
@@ -1663,9 +1663,9 @@ start_game_4673:
 4C75: BD FE B3       JSR    $7C31
 4C78: BD 54 D8       JSR    $7C50
 4C7B: 4F             CLRA
-4C7C: BD 66 3B       JSR    $4EB3
+4C7C: BD 66 3B       JSR    force_queue_sound_event_4eb3
 4C7F: 86 1E          LDA    #$3C
-4C81: BD CC 31       JSR    $4EB3
+4C81: BD CC 31       JSR    force_queue_sound_event_4eb3
 4C84: 86 D2          LDA    #$F0
 4C86: 97 AB          STA    $29
 4C88: 0C 00          INC    event_sub_state_28
@@ -1791,7 +1791,7 @@ start_game_4673:
 4D6D: CC 8A 8D       LDD    #$0205
 4D70: BD 6C 18       JSR    queue_event_4e9a
 4D73: 86 19          LDA    #$3B
-4D75: BD CC 31       JSR    $4EB3
+4D75: BD CC 31       JSR    force_queue_sound_event_4eb3
 4D78: 86 B6          LDA    #$9E
 4D7A: 97 A3          STA    $2B
 4D7C: 0C 02          INC    event_sub_state_2a
@@ -1969,6 +1969,7 @@ queue_sound_event_4ead:
 4EAD: D6 85          LDB    dsw2_copy_0d
 4EAF: C4 26          ANDB   #$04
 4EB1: 26 86          BNE    $4EB7
+force_queue_sound_event_4eb3:
 4EB3: D6 22          LDB    game_playing_00
 4EB5: 27 90          BEQ    $4EC9
 4EB7: 10 9E 14       LDY    $3C
@@ -4308,7 +4309,7 @@ triple_jump_609c:
 610B: 81 20          CMPA   #$08
 610D: 26 8D          BNE    $6114
 610F: 86 1A          LDA    #$38
-6111: BD CC 31       JSR    $4EB3
+6111: BD CC 31       JSR    force_queue_sound_event_4eb3
 6114: 39             RTS
 
 6115: CC 5B 1D       LDD    #$D99F
@@ -4619,9 +4620,9 @@ triple_jump_609c:
 6397: ED 23          STD    $B,X
 6399: BD 0B 10       JSR    $8398
 639C: 4F             CLRA
-639D: BD C6 3B       JSR    $4EB3
+639D: BD C6 3B       JSR    force_queue_sound_event_4eb3
 63A0: 86 06          LDA    #$24
-63A2: BD CC 91       JSR    $4EB3
+63A2: BD CC 91       JSR    force_queue_sound_event_4eb3
 63A5: 0C A8          INC    event_sub_state_2a
 63A7: 39             RTS
 
@@ -4648,7 +4649,7 @@ triple_jump_609c:
 63D4: 25 32          BCS    $63E6
 63D6: 6C 06          INC    ,X
 63D8: 86 0C          LDA    #$24
-63DA: BD C6 9B       JSR    $4EB3
+63DA: BD C6 9B       JSR    force_queue_sound_event_4eb3
 63DD: 96 28          LDA    $A0
 63DF: 81 24          CMPA   #$06
 63E1: 26 80          BNE    $63E5
@@ -4862,9 +4863,9 @@ triple_jump_609c:
 6587: 39             RTS
 
 6588: 86 36          LDA    #$1E
-658A: BD C6 9B       JSR    $4EB3
+658A: BD C6 9B       JSR    force_queue_sound_event_4eb3
 658D: 86 97          LDA    #$1F
-658F: 7E 6C 91       JMP    $4EB3
+658F: 7E 6C 91       JMP    force_queue_sound_event_4eb3
 6592: 0A E7          DEC    $65
 6594: 26 3C          BNE    $65B4
 6596: 0A E4          DEC    $66
@@ -4878,7 +4879,7 @@ triple_jump_609c:
 65A7: 81 2A          CMPA   #$02
 65A9: 26 8D          BNE    $65B0
 65AB: 86 17          LDA    #$3F
-65AD: BD C6 3B       JSR    $4EB3
+65AD: BD C6 3B       JSR    force_queue_sound_event_4eb3
 65B0: 86 2E          LDA    #$0C
 65B2: 97 E7          STA    $65
 65B4: 39             RTS
@@ -5000,11 +5001,11 @@ free_style_65b8:
 6696: 8E B0 08       LDX    #$3220
 6699: BD 0D B3       JSR    $853B
 669C: 86 38          LDA    #$10
-669E: BD C6 91       JSR    $4EB3
+669E: BD C6 91       JSR    force_queue_sound_event_4eb3
 66A1: 86 93          LDA    #$11
-66A3: BD 6C 91       JSR    $4EB3
+66A3: BD 6C 91       JSR    force_queue_sound_event_4eb3
 66A6: 86 90          LDA    #$12
-66A8: BD 66 3B       JSR    $4EB3
+66A8: BD 66 3B       JSR    force_queue_sound_event_4eb3
 66AB: B6 19 15       LDA    $313D
 66AE: 97 ED          STA    $65
 66B0: FE 13 BC       LDU    $313E
@@ -5112,11 +5113,11 @@ free_style_65b8:
 678A: 97 A3          STA    $2B
 678C: 0C 02          INC    event_sub_state_2a
 678E: 86 98          LDA    #$10
-6790: BD 6C 31       JSR    $4EB3
+6790: BD 6C 31       JSR    force_queue_sound_event_4eb3
 6793: 86 33          LDA    #$11
-6795: BD CC 31       JSR    $4EB3
+6795: BD CC 31       JSR    force_queue_sound_event_4eb3
 6798: 86 3A          LDA    #$12
-679A: BD C6 9B       JSR    $4EB3
+679A: BD C6 9B       JSR    force_queue_sound_event_4eb3
 679D: 39             RTS
 
 679E: BD DD 24       JSR    $5506
@@ -5124,9 +5125,9 @@ free_style_65b8:
 67A3: 81 82          CMPA   #$A0
 67A5: 26 88          BNE    $67B1
 67A7: 86 9B          LDA    #$B3
-67A9: BD C6 3B       JSR    $4EB3
+67A9: BD C6 3B       JSR    force_queue_sound_event_4eb3
 67AC: 86 D7          LDA    #$FF
-67AE: BD C6 91       JSR    $4EB3
+67AE: BD C6 91       JSR    force_queue_sound_event_4eb3
 67B1: 0A A9          DEC    $2B
 67B3: 26 32          BNE    $67C5
 67B5: 9E 7C          LDX    $FE
@@ -5163,7 +5164,7 @@ free_style_65b8:
 67EF: 6F A6          CLR    ,X
 67F1: 6F 81          CLR    $3,X
 67F3: 86 19          LDA    #$3B
-67F5: BD CC 31       JSR    $4EB3
+67F5: BD CC 31       JSR    force_queue_sound_event_4eb3
 67F8: CC 2A 80       LDD    #$0208
 67FB: BD 66 B2       JSR    queue_event_4e9a
 67FE: CC 8A 2B       LDD    #$0209
@@ -5325,7 +5326,7 @@ free_style_65b8:
 6942: 26 8A          BNE    $694C
 6944: BD 55 E7       JSR    $7765
 6947: 86 3D          LDA    #$15
-6949: BD C6 3B       JSR    $4EB3
+6949: BD C6 3B       JSR    force_queue_sound_event_4eb3
 694C: 39             RTS
 
 694D: 6C 0C          INC    ,X
@@ -5390,7 +5391,7 @@ free_style_65b8:
 69D3: 81 F2          CMPA   #$D0
 69D5: 25 93          BCS    $69E8
 69D7: 86 02          LDA    #$2A
-69D9: BD C6 3B       JSR    $4EB3
+69D9: BD C6 3B       JSR    force_queue_sound_event_4eb3
 69DC: 6C AC          INC    ,X
 69DE: 86 58          LDA    #$D0
 69E0: A7 20          STA    $2,X
@@ -5526,7 +5527,7 @@ free_style_65b8:
 
 6AFA: 0C A0          INC    event_sub_state_28
 6AFC: 86 35          LDA    #$1D
-6AFE: BD C6 91       JSR    $4EB3
+6AFE: BD C6 91       JSR    force_queue_sound_event_4eb3
 6B01: 39             RTS
 
 6B02: 8E 57 47       LDX   #table_d565
@@ -5617,7 +5618,7 @@ free_style_65b8:
 6BBC: 0A 7C          DEC    $54
 6BBE: 26 6F          BNE    $6BA7
 6BC0: 86 1B          LDA    #$39
-6BC2: BD CC 91       JSR    $4EB3
+6BC2: BD CC 91       JSR    force_queue_sound_event_4eb3
 6BC5: 0F AA          CLR    event_sub_state_28
 6BC7: 0F 02          CLR    event_sub_state_2a
 6BC9: 0C AE          INC    $26
@@ -5652,7 +5653,7 @@ long_horse_6bcc:
 6BFF: 0A 09          DEC    $2B
 6C01: 26 8B          BNE    $6C0C
 6C03: 86 05          LDA    #$27
-6C05: BD CC 31       JSR    $4EB3
+6C05: BD CC 31       JSR    force_queue_sound_event_4eb3
 6C08: 0C 00          INC    event_sub_state_28
 6C0A: 0F A2          CLR    event_sub_state_2a
 6C0C: 39             RTS
@@ -5685,7 +5686,7 @@ long_horse_6bcc:
 6C42: 81 8A          CMPA   #$08
 6C44: 26 27          BNE    $6C4B
 6C46: 86 BA          LDA    #$38
-6C48: BD 66 3B       JSR    $4EB3
+6C48: BD 66 3B       JSR    force_queue_sound_event_4eb3
 6C4B: 39             RTS
 
 6C4C: FC 1C 79       LDD    $34F1
@@ -6019,9 +6020,9 @@ long_horse_6bcc:
 6F04: CB 26          ADDB   #$04
 6F06: FD B1 5D       STD    $3375
 6F09: 86 06          LDA    #$8E
-6F0B: BD 66 9B       JSR    $4EB3
+6F0B: BD 66 9B       JSR    force_queue_sound_event_4eb3
 6F0E: 86 77          LDA    #$FF
-6F10: BD 6C 31       JSR    $4EB3
+6F10: BD 6C 31       JSR    force_queue_sound_event_4eb3
 6F13: 86 25          LDA    #$07
 6F15: 97 AA          STA    event_sub_state_28
 6F17: 39             RTS
@@ -6167,7 +6168,7 @@ long_horse_6bcc:
 7032: A7 83          STA    $1,X
 7034: BD A7 4B       JSR    $85C9
 7037: 86 1F          LDA    #$37
-7039: BD C6 3B       JSR    $4EB3
+7039: BD C6 3B       JSR    force_queue_sound_event_4eb3
 703C: 0F 94          CLR    $BC
 703E: 0C A2          INC    event_sub_state_2a
 7040: 39             RTS
@@ -6270,7 +6271,7 @@ long_horse_6bcc:
 70F8: 81 29          CMPA   #$01
 70FA: 26 86          BNE    $710A
 70FC: 86 0B          LDA    #$23
-70FE: BD C6 91       JSR    $4EB3
+70FE: BD C6 91       JSR    force_queue_sound_event_4eb3
 7101: 96 68          LDA    $EA
 7103: 27 27          BEQ    $710A
 7105: BD 02 E1       JSR    $8063
@@ -6284,7 +6285,7 @@ long_horse_6bcc:
 7113: 86 74          LDA    #$56
 7115: A7 83          STA    $1,X
 7117: 86 4C          LDA    #$64
-7119: BD C6 3B       JSR    $4EB3
+7119: BD C6 3B       JSR    force_queue_sound_event_4eb3
 711C: 0C 02          INC    event_sub_state_2a
 711E: 39             RTS
 
@@ -6319,7 +6320,7 @@ long_horse_6bcc:
 7158: 81 2A          CMPA   #$02
 715A: 26 83          BNE    $7167
 715C: 86 4C          LDA    #$64
-715E: BD C6 91       JSR    $4EB3
+715E: BD C6 91       JSR    force_queue_sound_event_4eb3
 7161: 86 8A          LDA    #$08
 7163: 97 0A          STA    event_sub_state_28
 7165: 0F A8          CLR    event_sub_state_2a
@@ -7203,9 +7204,9 @@ long_horse_6bcc:
 78C2: 84 80          ANDA   #$02
 78C4: 27 37          BEQ    $78DB
 78C6: 86 E7          LDA    #$65
-78C8: BD 66 3B       JSR    $4EB3
+78C8: BD 66 3B       JSR    force_queue_sound_event_4eb3
 78CB: 86 4E          LDA    #$66
-78CD: BD C6 3B       JSR    $4EB3
+78CD: BD C6 3B       JSR    force_queue_sound_event_4eb3
 78D0: 6C AA DB       INC    $59,X
 78D3: 6C AA 77       INC    $55,X
 78D6: 86 92          LDA    #$10
@@ -8125,7 +8126,7 @@ long_horse_6bcc:
 8047: B7 1C CE       STA    $34E6
 804A: BD 08 DE       JSR    $80F6
 804D: 86 B1          LDA    #$39
-804F: BD 6C 91       JSR    $4EB3
+804F: BD 6C 91       JSR    force_queue_sound_event_4eb3
 8052: 39             RTS
 
 8053: CE FA 16       LDU    #$D834
@@ -8178,7 +8179,7 @@ long_horse_6bcc:
 80B3: 81 23          CMPA   #$01
 80B5: 26 8F          BNE    $80C4
 80B7: 86 0B          LDA    #$23
-80B9: BD C6 3B       JSR    $4EB3
+80B9: BD C6 3B       JSR    force_queue_sound_event_4eb3
 80BC: 0C 4D          INC    $65
 80BE: 96 ED          LDA    $65
 80C0: 81 26          CMPA   #$04
@@ -8436,7 +8437,7 @@ long_horse_6bcc:
 82D4: 81 2D          CMPA   #$0F
 82D6: 26 87          BNE    $82DD
 82D8: 86 29          LDA    #$01
-82DA: BD C6 9B       JSR    $4EB3
+82DA: BD C6 9B       JSR    force_queue_sound_event_4eb3
 82DD: 86 8E          LDA    #$06
 82DF: A7 27          STA    $5,X
 82E1: 10 AE 89       LDY    $B,X
@@ -8566,7 +8567,7 @@ long_horse_6bcc:
 83FE: 81 9A          CMPA   #$12
 8400: 26 27          BNE    $8407
 8402: 86 96          LDA    #$14
-8404: BD 6C 31       JSR    $4EB3
+8404: BD 6C 31       JSR    force_queue_sound_event_4eb3
 8407: 86 22          LDA    #$0A
 8409: A7 8D          STA    $5,X
 840B: 10 AE 23       LDY    $B,X
@@ -8584,9 +8585,9 @@ long_horse_6bcc:
 8429: 85 8F          BITA   #$07
 842B: 26 22          BNE    $8437
 842D: 86 3C          LDA    #$B4
-842F: BD 6C 91       JSR    $4EB3
+842F: BD 6C 91       JSR    force_queue_sound_event_4eb3
 8432: 86 7D          LDA    #$FF
-8434: BD 6C 31       JSR    $4EB3
+8434: BD 6C 31       JSR    force_queue_sound_event_4eb3
 8437: 84 20          ANDA   #$08
 8439: 26 8A          BNE    $843D
 843B: 33 6C          LEAU   $4,U
@@ -9436,7 +9437,7 @@ skeet_shooting_8aaf:
 8AD8: 4A             DECA
 8AD9: 26 73          BNE    $8AD6
 8ADB: 86 0F          LDA    #$27
-8ADD: BD C6 3B       JSR    $4EB3
+8ADD: BD C6 3B       JSR    force_queue_sound_event_4eb3
 8AE0: BD B2 F4       JSR    $9076
 8AE3: 0C 0A          INC    event_sub_state_28
 8AE5: 86 7D          LDA    #$FF
@@ -9530,7 +9531,7 @@ skeet_shooting_8aaf:
 8B94: 1F AB          TFR    A,B
 8B96: C4 86          ANDB   #$04
 8B98: D7 F6          STB    $DE
-8B9A: F6 B9 ED       LDB    $31C5
+8B9A: F6 B9 ED       LDB    shoot_ready_flag_31C5
 8B9D: 27 A6          BEQ    $8BCD
 8B9F: 81 27          CMPA   #$05
 8BA1: 26 85          BNE    $8BAA
@@ -9539,7 +9540,7 @@ skeet_shooting_8aaf:
 8BA6: 84 83          ANDA   #$01
 8BA8: 20 29          BRA    $8BAB
 8BAA: 5A             DECB
-8BAB: F7 19 ED       STB    $31C5
+8BAB: F7 19 ED       STB    shoot_ready_flag_31C5
 8BAE: 97 A5          STA    $2D
 8BB0: 86 21          LDA    #$03
 8BB2: 97 AE          STA    $2C
@@ -9555,9 +9556,9 @@ skeet_shooting_8aaf:
 8BC9: 97 6D          STA    $E5
 8BCB: 20 22          BRA    $8BD7
 8BCD: 86 E8          LDA    #$60
-8BCF: BD 6C 91       JSR    $4EB3
+8BCF: BD 6C 91       JSR    force_queue_sound_event_4eb3
 8BD2: 86 A0          LDA    #$22
-8BD4: BD 6C 31       JSR    $4EB3
+8BD4: BD 6C 31       JSR    force_queue_sound_event_4eb3
 8BD7: BD B8 E4       JSR    $90CC
 8BDA: 0D 5F          TST    $D7
 8BDC: 27 2B          BEQ    $8BE1
@@ -9577,7 +9578,7 @@ skeet_shooting_8aaf:
 8BFC: 22 26          BHI    $8C0C
 8BFE: 20 7A          BRA    $8BF2
 8C00: 86 2A          LDA    #$08
-8C02: BD CC 91       JSR    $4EB3
+8C02: BD CC 91       JSR    force_queue_sound_event_4eb3
 8C05: BD 0D 3A       JSR    $8FB8
 8C08: 86 36          LDA    #$1E
 8C0A: 97 A7          STA    $2F
@@ -9645,7 +9646,7 @@ skeet_shooting_8aaf:
 8C96: A7 87          STA    $5,X
 8C98: BD B9 0F       JSR    $9187
 8C9B: 86 27          LDA    #$0F
-8C9D: BD C6 3B       JSR    $4EB3
+8C9D: BD C6 3B       JSR    force_queue_sound_event_4eb3
 8CA0: 33 66          LEAU   $4,U
 8CA2: 10 8E FE B4    LDY    #$DC96
 8CA6: 30 86          LEAX   $4,X
@@ -9697,7 +9698,7 @@ skeet_shooting_8aaf:
 8D13: 0C DD          INC    $FF
 8D15: EC A3          LDD    $1,Y
 8D17: DD DF          STD    $F7
-8D19: 7C B9 4D       INC    $31C5
+8D19: 7C B9 4D       INC    shoot_ready_flag_31C5
 8D1C: 6D AC          TST    ,X
 8D1E: 2A 81          BPL    $8D29
 8D20: C6 20          LDB    #$02
@@ -9826,13 +9827,13 @@ skeet_shooting_8aaf:
 8E1B: 26 3D          BNE    $8E32
 8E1D: F6 B9 5C       LDB    $31D4
 8E20: F7 13 46       STB    $31C4
-8E23: B6 13 E7       LDA    $31C5
+8E23: B6 13 E7       LDA    shoot_ready_flag_31C5
 8E26: 4C             INCA
 8E27: 81 2B          CMPA   #$03
 8E29: 26 8C          BNE    $8E2F
 8E2B: 4A             DECA
 8E2C: 7F 19 4C       CLR    $31C4
-8E2F: B7 13 E7       STA    $31C5
+8E2F: B7 13 E7       STA    shoot_ready_flag_31C5
 8E32: 0D 74          TST    $F6
 8E34: 27 1A          BEQ    $8E6E
 8E36: 86 85          LDA    #$07
@@ -9851,9 +9852,9 @@ skeet_shooting_8aaf:
 8E51: 0D 55          TST    $D7
 8E53: 27 2E          BEQ    $8E61
 8E55: 86 32          LDA    #$B0
-8E57: BD 66 9B       JSR    $4EB3
+8E57: BD 66 9B       JSR    force_queue_sound_event_4eb3
 8E5A: 86 77          LDA    #$FF
-8E5C: BD 66 3B       JSR    $4EB3
+8E5C: BD 66 3B       JSR    force_queue_sound_event_4eb3
 8E5F: 20 2F          BRA    $8E6E
 8E61: BD CC 2F       JSR    queue_sound_event_4ead
 8E64: 86 32          LDA    #$10
@@ -9978,7 +9979,7 @@ skeet_shooting_8aaf:
 8F64: 25 24          BCS    $8F6C
 8F66: CE B4 64       LDU    #$364C
 8F69: BD 28 90       JSR    $A018
-8F6C: B6 19 4D       LDA    $31C5
+8F6C: B6 19 4D       LDA    shoot_ready_flag_31C5
 8F6F: 81 20          CMPA   #$02
 8F71: 27 89          BEQ    $8F7E
 8F73: 7D 13 E6       TST    $31C4
@@ -10167,7 +10168,7 @@ skeet_shooting_8aaf:
 90E3: DD 83          STD    $A1
 90E5: 8E B2 22       LDX    #$30A0
 90E8: 10 8E 54 14    LDY    #$DC9C
-90EC: 7D 19 4D       TST    $31C5
+90EC: 7D 19 4D       TST    shoot_ready_flag_31C5
 90EF: 26 26          BNE    $90F5
 90F1: 10 8E 5E B8    LDY    #$DC9A
 90F5: BD 0B C9       JSR    $894B
@@ -10575,7 +10576,7 @@ skeet_shooting_8aaf:
 9431: 0D 9B          TST    $19
 9433: 26 27          BNE    $943A
 9435: 86 AF          LDA    #$2D
-9437: BD 66 9B       JSR    $4EB3
+9437: BD 66 9B       JSR    force_queue_sound_event_4eb3
 943A: 96 84          LDA    $0C
 943C: 84 27          ANDA   #$0F
 943E: 81 87          CMPA   #$0F
@@ -10896,7 +10897,7 @@ skeet_shooting_8aaf:
 96DA: 0D 8B          TST    $03
 96DC: 27 2C          BEQ    $96E2
 96DE: 4F             CLRA
-96DF: BD 6C 91       JSR    $4EB3
+96DF: BD 6C 91       JSR    force_queue_sound_event_4eb3
 96E2: 0F 82          CLR    game_playing_00
 96E4: 0F 3B          CLR    $19
 96E6: 8E B2 08       LDX    #$3020
@@ -11029,12 +11030,12 @@ skeet_shooting_8aaf:
 9800: BD BB 3A       JSR    $99B8
 9803: B7 16 02       STA    $3420
 9806: 86 95          LDA    #$17
-9808: BD 66 3B       JSR    $4EB3
+9808: BD 66 3B       JSR    force_queue_sound_event_4eb3
 980B: BD 67 89       JSR    $4FA1
 980E: 84 8A          ANDA   #$02
 9810: 27 54          BEQ    $9888
 9812: 86 9A          LDA    #$18
-9814: BD 6C 31       JSR    $4EB3
+9814: BD 6C 31       JSR    force_queue_sound_event_4eb3
 9817: BE 1C 29       LDX    $3401
 981A: B6 BC 08       LDA    $3420
 981D: 81 A4          CMPA   #$2C
@@ -11238,7 +11239,7 @@ skeet_shooting_8aaf:
 99CF: 26 25          BNE    $99D8
 99D1: 0C A5          INC    $27
 99D3: 86 12          LDA    #$30
-99D5: BD CC 31       JSR    $4EB3
+99D5: BD CC 31       JSR    force_queue_sound_event_4eb3
 99D8: 39             RTS
 
 99D9: BD 10 00       JSR    $9888
@@ -11368,7 +11369,7 @@ archery_9a12:
 9ADB: 96 5A          LDA    chrono_second_72
 9ADD: A7 0C          STA    ,X
 9ADF: 86 06          LDA    #$24
-9AE1: BD CC 31       JSR    $4EB3
+9AE1: BD CC 31       JSR    force_queue_sound_event_4eb3
 9AE4: 0D 48          TST    $6A
 9AE6: 27 88          BEQ    $9AF2
 9AE8: 8E 1D A0       LDX    #$3528
@@ -11410,9 +11411,9 @@ archery_9a12:
 9B31: 0A AB          DEC    $29
 9B33: 26 2B          BNE    $9B3E
 9B35: 4F             CLRA
-9B36: BD CC 9B       JSR    $4EB3
+9B36: BD CC 9B       JSR    force_queue_sound_event_4eb3
 9B39: 86 AF          LDA    #$27
-9B3B: BD 66 9B       JSR    $4EB3
+9B3B: BD 66 9B       JSR    force_queue_sound_event_4eb3
 9B3E: 9E 30          LDX    $B8
 9B40: A6 23          LDA    $1,X
 9B42: 81 C0          CMPA   #$42
@@ -11459,11 +11460,11 @@ archery_9a12:
 9B98: 0D EF          TST    $C7
 9B9A: 26 9F          BNE    $9BB3
 9B9C: 86 23          LDA    #$0B
-9B9E: BD C6 91       JSR    $4EB3
+9B9E: BD C6 91       JSR    force_queue_sound_event_4eb3
 9BA1: 86 99          LDA    #$1B
-9BA3: BD 6C 91       JSR    $4EB3
+9BA3: BD 6C 91       JSR    force_queue_sound_event_4eb3
 9BA6: 86 9E          LDA    #$1C
-9BA8: BD 66 3B       JSR    $4EB3
+9BA8: BD 66 3B       JSR    force_queue_sound_event_4eb3
 9BAB: 0C EF          INC    $C7
 9BAD: 0C 28          INC    $A0
 9BAF: 0C 8B          INC    $A9
@@ -11523,9 +11524,9 @@ archery_9a12:
 9C28: C6 1F          LDB    #$37
 9C2A: D7 3E          STB    $B6
 9C2C: 86 99          LDA    #$B1
-9C2E: BD C6 91       JSR    $4EB3
+9C2E: BD C6 91       JSR    force_queue_sound_event_4eb3
 9C31: 86 7D          LDA    #$FF
-9C33: BD 6C 91       JSR    $4EB3
+9C33: BD 6C 91       JSR    force_queue_sound_event_4eb3
 9C36: 8E B3 28       LDX    #$3100
 9C39: CE BE 88       LDU    #$3600
 9C3C: 6D AC          TST    ,X
@@ -11762,7 +11763,7 @@ archery_9a12:
 9E35: 97 36          STA    $B4
 9E37: 27 2D          BEQ    $9E3E
 9E39: 86 E8          LDA    #$60
-9E3B: BD 66 9B       JSR    $4EB3
+9E3B: BD 66 9B       JSR    force_queue_sound_event_4eb3
 9E3E: 86 A8          LDA    #$20
 9E40: 6F A2          CLR    ,X+
 9E42: 4A             DECA
@@ -11931,11 +11932,11 @@ archery_9a12:
 9F72: 6D AA          TST    $8,Y
 9F74: 27 05          BEQ    $9F9D
 9F76: 4F             CLRA
-9F77: BD 66 9B       JSR    $4EB3
+9F77: BD 66 9B       JSR    force_queue_sound_event_4eb3
 9F7A: 86 81          LDA    #$09
-9F7C: BD 66 3B       JSR    $4EB3
+9F7C: BD 66 3B       JSR    force_queue_sound_event_4eb3
 9F7F: 86 28          LDA    #$0A
-9F81: BD CC 31       JSR    $4EB3
+9F81: BD CC 31       JSR    force_queue_sound_event_4eb3
 9F84: 0F 82          CLR    $A0
 9F86: 0F 38          CLR    $BA
 9F88: 0D 9C          TST    $B4
@@ -12030,9 +12031,9 @@ A040: BD B2 10       JSR    $9092
 A043: 0D FE          TST    $DC
 A045: 26 8E          BNE    $A053
 A047: 86 85          LDA    #$AD
-A049: BD C6 3B       JSR    $4EB3
+A049: BD C6 3B       JSR    force_queue_sound_event_4eb3
 A04C: 86 D7          LDA    #$FF
-A04E: BD C6 91       JSR    $4EB3
+A04E: BD C6 91       JSR    force_queue_sound_event_4eb3
 A051: 0C 5E          INC    $DC
 A053: 39             RTS
 
@@ -12041,7 +12042,7 @@ A057: 0F 9E          CLR    $B6
 A059: BD 15 24       JSR    $9DAC
 A05C: 7F 1E B5       CLR    $363D
 A05F: 4F             CLRA
-A060: BD 6C 31       JSR    $4EB3
+A060: BD 6C 31       JSR    force_queue_sound_event_4eb3
 A063: 8E 17 2A       LDX    #$3508
 A066: D6 9B          LDB    $19
 A068: 3A             ABX
@@ -13022,7 +13023,7 @@ A86A: 27 8C          BEQ    $A870
 A86C: E7 88          STB    ,Y+		; [video_address]
 A86E: 20 71          BRA    $A869
 A870: 86 05          LDA    #$27
-A872: BD CC 91       JSR    $4EB3
+A872: BD CC 91       JSR    force_queue_sound_event_4eb3
 A875: 8E B0 F2       LDX    #$3270
 A878: 6F AC          CLR    ,X
 A87A: 6F 89          CLR    $1,X
@@ -13043,7 +13044,7 @@ A898: 7C 1C C4       INC    $344C
 A89B: 7C 1C 64       INC    $344C
 A89E: 7C BC 6E       INC    $344C
 A8A1: 86 BA          LDA    #$38
-A8A3: BD 6C 91       JSR    $4EB3
+A8A3: BD 6C 91       JSR    force_queue_sound_event_4eb3
 A8A6: 39             RTS
 
 A8A7: 0F 02          CLR    event_sub_state_2a
@@ -13259,15 +13260,15 @@ AA7E: 25 8A          BCS    $AA82
 AA80: 86 3C          LDA    #$1E
 AA82: B7 B6 06       STA    $3424
 AA85: 86 85          LDA    #$07
-AA87: BD 66 9B       JSR    $4EB3
+AA87: BD 66 9B       JSR    force_queue_sound_event_4eb3
 AA8A: 0C A2          INC    event_sub_state_2a
 AA8C: 0F 27          CLR    $0F
 AA8E: 39             RTS
 
 AA8F: 86 39          LDA    #$1B
-AA91: BD CC 31       JSR    $4EB3
+AA91: BD CC 31       JSR    force_queue_sound_event_4eb3
 AA94: 86 3E          LDA    #$1C
-AA96: BD CC 9B       JSR    $4EB3
+AA96: BD CC 9B       JSR    force_queue_sound_event_4eb3
 AA99: 0F A2          CLR    event_sub_state_2a
 AA9B: 0C 00          INC    event_sub_state_28
 AA9D: 39             RTS
@@ -13312,9 +13313,9 @@ AAF4: 24 20          BCC    $AAF8
 AAF6: 8A 02          ORA    #$80
 AAF8: 97 E0          STA    $C8
 AAFA: 4F             CLRA
-AAFB: BD 66 9B       JSR    $4EB3
+AAFB: BD 66 9B       JSR    force_queue_sound_event_4eb3
 AAFE: 86 83          LDA    #$0B
-AB00: BD 6C 31       JSR    $4EB3
+AB00: BD 6C 31       JSR    force_queue_sound_event_4eb3
 AB03: B6 16 05       LDA    $3427
 AB06: 81 81          CMPA   #$03
 AB08: 27 20          BEQ    $AB12
@@ -13504,12 +13505,12 @@ ACB7: 97 E3          STA    $CB
 ACB9: 86 D1          LDA    #$59
 ACBB: 97 89          STA    $A1
 ACBD: 4F             CLRA
-ACBE: BD C6 91       JSR    $4EB3
+ACBE: BD C6 91       JSR    force_queue_sound_event_4eb3
 ACC1: 86 B4          LDA    #$36
 ACC3: 0D EB          TST    $C9
 ACC5: 27 80          BEQ    $ACC9
 ACC7: 86 1F          LDA    #$37
-ACC9: BD C6 3B       JSR    $4EB3
+ACC9: BD C6 3B       JSR    force_queue_sound_event_4eb3
 ACCC: DC 89          LDD    $A1
 ACCE: 80 8E          SUBA   #$06
 ACD0: FD 10 83       STD    $3201
@@ -13684,9 +13685,9 @@ AE3A: D6 E2          LDB    $6A
 AE3C: 5C             INCB
 AE3D: A7 0D          STA    B,X	; [video_address]
 AE3F: 86 A0          LDA    #$82
-AE41: BD CC 31       JSR    $4EB3
+AE41: BD CC 31       JSR    force_queue_sound_event_4eb3
 AE44: 86 DD          LDA    #$FF
-AE46: BD CC 9B       JSR    $4EB3
+AE46: BD CC 9B       JSR    force_queue_sound_event_4eb3
 AE49: 7F BC DE       CLR    $3456
 AE4C: 0C 00          INC    event_sub_state_28
 AE4E: 39             RTS
@@ -13740,7 +13741,7 @@ AEB6: B7 B6 CE       STA    $34E6
 AEB9: 7C BC 6F       INC    $34E7
 AEBC: 8E DB D0       LDX    #$F358
 AEBF: A6 A2          LDA    ,X+
-AEC1: BD CC 31       JSR    $4EB3
+AEC1: BD CC 31       JSR    force_queue_sound_event_4eb3
 AEC4: A6 A2          LDA    ,X+
 AEC6: 4D             TSTA
 AEC7: 26 D0          BNE    $AEC1
@@ -14243,9 +14244,9 @@ B2C7: 97 E3          STA    $CB
 B2C9: CC 8C 89       LDD    #$0401
 B2CC: FD 1A 20       STD    $32A8
 B2CF: 4F             CLRA
-B2D0: BD 6C 31       JSR    $4EB3
+B2D0: BD 6C 31       JSR    force_queue_sound_event_4eb3
 B2D3: 86 34          LDA    #$16
-B2D5: BD CC 31       JSR    $4EB3
+B2D5: BD CC 31       JSR    force_queue_sound_event_4eb3
 B2D8: 39             RTS
 
 B2D9: 96 40          LDA    $C8
@@ -14285,9 +14286,9 @@ B31A: 96 40          LDA    $C8
 B31C: 88 08          EORA   #$20
 B31E: 97 40          STA    $C8
 B320: 4F             CLRA
-B321: BD CC 31       JSR    $4EB3
+B321: BD CC 31       JSR    force_queue_sound_event_4eb3
 B324: 86 31          LDA    #$13
-B326: BD CC 9B       JSR    $4EB3
+B326: BD CC 9B       JSR    force_queue_sound_event_4eb3
 B329: 10 8E 56 1D    LDY    #$DE35
 B32D: 5F             CLRB
 B32E: A6 89          LDA    $1,X
@@ -14486,9 +14487,9 @@ B4CB: FD 1C 1C       STD    $3434
 B4CE: 86 86          LDA    #$0E
 B4D0: B7 16 82       STA    $3400
 B4D3: 4F             CLRA
-B4D4: BD 6C 31       JSR    $4EB3
+B4D4: BD 6C 31       JSR    force_queue_sound_event_4eb3
 B4D7: 86 0C          LDA    #$24
-B4D9: BD C6 3B       JSR    $4EB3
+B4D9: BD C6 3B       JSR    force_queue_sound_event_4eb3
 B4DC: BD 93 E8       JSR    $BB60
 B4DF: 0C 0E          INC    $2C
 B4E1: 39             RTS
@@ -14527,7 +14528,7 @@ B532: 27 95          BEQ    $B54B
 B534: B1 16 82       CMPA   $3400
 B537: 26 23          BNE    $B544
 B539: 86 A8          LDA    #$20
-B53B: BD 66 9B       JSR    $4EB3
+B53B: BD 66 9B       JSR    force_queue_sound_event_4eb3
 B53E: 7C BC 22       INC    $3400
 B541: 7C B6 82       INC    $3400
 B544: 39             RTS
@@ -14546,20 +14547,20 @@ B55D: FD BC A5       STD    $342D
 B560: A6 86          LDA    ,Y
 B562: B7 B6 0D       STA    $342F
 B565: 86 A6          LDA    #$24
-B567: BD 66 9B       JSR    $4EB3
+B567: BD 66 9B       JSR    force_queue_sound_event_4eb3
 B56A: 86 2C          LDA    #$A4
 B56C: BB 1C BE       ADDA   $3436
-B56F: BD 6C 91       JSR    $4EB3
+B56F: BD 6C 91       JSR    force_queue_sound_event_4eb3
 B572: 81 2B          CMPA   #$A9
 B574: 27 26          BEQ    $B57A
 B576: 81 29          CMPA   #$AB
 B578: 26 2D          BNE    $B57F
 B57A: 86 22          LDA    #$AA
-B57C: BD 66 3B       JSR    $4EB3
+B57C: BD 66 3B       JSR    force_queue_sound_event_4eb3
 B57F: 86 8E          LDA    #$AC
-B581: BD CC 31       JSR    $4EB3
+B581: BD CC 31       JSR    force_queue_sound_event_4eb3
 B584: 86 DD          LDA    #$FF
-B586: BD CC 9B       JSR    $4EB3
+B586: BD CC 9B       JSR    force_queue_sound_event_4eb3
 B589: 86 96          LDA    #$1E
 B58B: 97 05          STA    $2D
 B58D: 0C A4          INC    $2C
@@ -14579,7 +14580,7 @@ B5A8: 27 16          BEQ    $B5E8
 B5AA: B1 BC 28       CMPA   $3400
 B5AD: 26 83          BNE    $B5BA
 B5AF: 86 02          LDA    #$20
-B5B1: BD CC 31       JSR    $4EB3
+B5B1: BD CC 31       JSR    force_queue_sound_event_4eb3
 B5B4: 7C 16 82       INC    $3400
 B5B7: 7C 1C 28       INC    $3400
 B5BA: 39             RTS
@@ -14605,7 +14606,7 @@ B5E4: 7C 16 A6       INC    $3424
 B5E7: 39             RTS
 
 B5E8: 86 0C          LDA    #$24
-B5EA: BD C6 9B       JSR    $4EB3
+B5EA: BD C6 9B       JSR    force_queue_sound_event_4eb3
 B5ED: 7F BC AD       CLR    $3425
 B5F0: 0C 0E          INC    $2C
 B5F2: 0C AE          INC    $2C
@@ -14722,9 +14723,9 @@ B6EA: FD BC 0F       STD    $3427
 B6ED: 8E BC A4       LDX    #$342C
 B6F0: BD E1 FD       JSR    $C37F
 B6F3: 4F             CLRA
-B6F4: BD 6C 31       JSR    $4EB3
+B6F4: BD 6C 31       JSR    force_queue_sound_event_4eb3
 B6F7: 86 0F          LDA    #$27
-B6F9: BD C6 3B       JSR    $4EB3
+B6F9: BD C6 3B       JSR    force_queue_sound_event_4eb3
 B6FC: CC 28 88       LDD    #$0000
 B6FF: FD 16 D0       STD    $34F2
 B702: 8E A6 FB       LDX    #$24D9
@@ -14799,7 +14800,7 @@ B7AC: 26 22          BNE    $B7B8
 B7AE: 8B 8A          ADDA   #$02
 B7B0: B7 16 C0       STA    $3442
 B7B3: 86 1A          LDA    #$38
-B7B5: BD CC 31       JSR    $4EB3
+B7B5: BD CC 31       JSR    force_queue_sound_event_4eb3
 B7B8: 7A 1C B9       DEC    $3431
 B7BB: 26 20          BNE    $B7C5
 B7BD: 7A BC B8       DEC    $3430
@@ -14911,9 +14912,9 @@ B8AC: CB 29          ADDB   #$01
 B8AE: F1 BC 18       CMPB   $343A
 B8B1: 25 90          BCS    $B8C5
 B8B3: 86 02          LDA    #$20
-B8B5: BD CC 31       JSR    $4EB3
+B8B5: BD CC 31       JSR    force_queue_sound_event_4eb3
 B8B8: 86 09          LDA    #$21
-B8BA: BD C6 9B       JSR    $4EB3
+B8BA: BD C6 9B       JSR    force_queue_sound_event_4eb3
 B8BD: B6 BC B2       LDA    $343A
 B8C0: 8B 36          ADDA   #$14
 B8C2: B7 B6 18       STA    $343A
@@ -15031,11 +15032,11 @@ B9C8: 27 2C          BEQ    $B9CE
 B9CA: 81 B4          CMPA   #$3C
 B9CC: 26 27          BNE    $B9DD
 B9CE: 86 E9          LDA    #$61
-B9D0: BD 6C 31       JSR    $4EB3
+B9D0: BD 6C 31       JSR    force_queue_sound_event_4eb3
 B9D3: 86 40          LDA    #$62
-B9D5: BD CC 31       JSR    $4EB3
+B9D5: BD CC 31       JSR    force_queue_sound_event_4eb3
 B9D8: 86 4B          LDA    #$63
-B9DA: BD C6 9B       JSR    $4EB3
+B9DA: BD C6 9B       JSR    force_queue_sound_event_4eb3
 B9DD: B6 BC B1       LDA    $3439
 B9E0: 8E 06 54       LDX    #$24D6
 B9E3: C6 36          LDB    #$14
@@ -15073,13 +15074,13 @@ BA22: DD 15          STD    $97
 BA24: 97 BB          STA    $99
 BA26: BD FD 22       JSR    $7F0A
 BA29: 86 39          LDA    #$B1
-BA2B: BD 66 9B       JSR    $4EB3
+BA2B: BD 66 9B       JSR    force_queue_sound_event_4eb3
 BA2E: 86 01          LDA    #$89
-BA30: BD 6C 31       JSR    $4EB3
+BA30: BD 6C 31       JSR    force_queue_sound_event_4eb3
 BA33: 86 93          LDA    #$B1
-BA35: BD CC 31       JSR    $4EB3
+BA35: BD CC 31       JSR    force_queue_sound_event_4eb3
 BA38: 86 D7          LDA    #$FF
-BA3A: BD C6 9B       JSR    $4EB3
+BA3A: BD C6 9B       JSR    force_queue_sound_event_4eb3
 BA3D: 20 89          BRA    $BA40
 BA3F: 39             RTS
 
@@ -15973,7 +15974,7 @@ C1B1: 25 83          BCS    $C1B4
 C1B3: 5C             INCB
 C1B4: F7 36 02       STB    flip_screen_set_1480
 C1B7: 86 16          LDA    #$3E
-C1B9: BD C6 3B       JSR    $4EB3
+C1B9: BD C6 3B       JSR    force_queue_sound_event_4eb3
 C1BC: 86 2A          LDA    #$02
 C1BE: 97 A3          STA    $2B
 C1C0: 0C 08          INC    event_sub_state_2a
@@ -16171,32 +16172,32 @@ C357: 96 41          LDA    current_event_69
 C359: 48             ASLA
 C35A: 6E 5E          JMP    [A,U]        ; [jump_table]
 C35C: 86 8A          LDA    #$A2
-C35E: BD C6 91       JSR    $4EB3
+C35E: BD C6 91       JSR    force_queue_sound_event_4eb3
 C361: 86 06          LDA    #$84
-C363: BD 6C 91       JSR    $4EB3
+C363: BD 6C 91       JSR    force_queue_sound_event_4eb3
 C366: 7E 46 4D       JMP    $C465
 C369: 96 E1          LDA    current_event_69
 C36B: 81 2A          CMPA   #$02
 C36D: 27 87          BEQ    $C37E
 C36F: 86 A0          LDA    #$82
-C371: BD CC 31       JSR    $4EB3
+C371: BD CC 31       JSR    force_queue_sound_event_4eb3
 C374: 86 DD          LDA    #$FF
-C376: BD CC 9B       JSR    $4EB3
+C376: BD CC 9B       JSR    force_queue_sound_event_4eb3
 C379: 86 89          LDA    #$01
 C37B: B7 1C D8       STA    $34F0
 C37E: 39             RTS
 
 C37F: A6 23          LDA    $1,X
 C381: 8B 12          ADDA   #$90
-C383: BD 6C 91       JSR    $4EB3
+C383: BD 6C 91       JSR    force_queue_sound_event_4eb3
 C386: 86 2C          LDA    #$AE
-C388: BD 66 3B       JSR    $4EB3
+C388: BD 66 3B       JSR    force_queue_sound_event_4eb3
 C38B: 30 29          LEAX   $1,X
 C38D: BD 4C 17       JSR    $C49F
 C390: 86 A1          LDA    #$83
-C392: BD CC 91       JSR    $4EB3
+C392: BD CC 91       JSR    force_queue_sound_event_4eb3
 C395: 86 7D          LDA    #$FF
-C397: 7E 66 9B       JMP    $4EB3
+C397: 7E 66 9B       JMP    force_queue_sound_event_4eb3
 C39A: 8E BB F9       LDX    #$33D1
 C39D: A6 97          LDA    -$1,X
 C39F: 27 34          BEQ    $C3B7
@@ -16214,16 +16215,16 @@ C3B5: 24 86          BCC    $C3BB
 C3B7: 30 2E          LEAX   $6,X
 C3B9: 20 6A          BRA    $C39D
 C3BB: 86 8A          LDA    #$A2
-C3BD: BD C6 3B       JSR    $4EB3
+C3BD: BD C6 3B       JSR    force_queue_sound_event_4eb3
 C3C0: 86 A5          LDA    #$87
-C3C2: BD CC 91       JSR    $4EB3
+C3C2: BD CC 91       JSR    force_queue_sound_event_4eb3
 C3C5: A6 06          LDA    ,X
 C3C7: 27 2D          BEQ    $C3CE
 C3C9: 8B 18          ADDA   #$90
-C3CB: BD 66 9B       JSR    $4EB3
+C3CB: BD 66 9B       JSR    force_queue_sound_event_4eb3
 C3CE: BD 4C BD       JSR    $C49F
 C3D1: 86 07          LDA    #$85
-C3D3: BD 6C 91       JSR    $4EB3
+C3D3: BD 6C 91       JSR    force_queue_sound_event_4eb3
 C3D6: 30 80          LEAX   $2,X
 C3D8: A6 29          LDA    $1,X
 C3DA: C6 82          LDB    #$0A
@@ -16239,7 +16240,7 @@ C3EB: CE D7 CE       LDU    #$FFE6
 C3EE: A6 89          LDA    $1,X
 C3F0: 80 20          SUBA   #$02
 C3F2: A6 44          LDA    A,U
-C3F4: BD 6C 31       JSR    $4EB3
+C3F4: BD 6C 31       JSR    force_queue_sound_event_4eb3
 C3F7: A6 2A          LDA    $2,X
 C3F9: 8B 3D          ADDA   #$B5
 C3FB: 20 3B          BRA    $C410
@@ -16252,9 +16253,9 @@ C407: 20 2F          BRA    $C410
 C409: CE 70 71       LDU    #$F8F9
 C40C: C0 22          SUBB   #$0A
 C40E: A6 4D          LDA    B,U
-C410: BD 6C 31       JSR    $4EB3
+C410: BD 6C 31       JSR    force_queue_sound_event_4eb3
 C413: 86 DD          LDA    #$FF
-C415: 7E CC 31       JMP    $4EB3
+C415: 7E CC 31       JMP    force_queue_sound_event_4eb3
 C418: 30 37          LEAX   -$1,X
 C41A: A6 89          LDA    $1,X
 C41C: 27 19          BEQ    $C44F
@@ -16264,7 +16265,7 @@ C421: EB 80          ADDB   $2,X
 C423: 27 2A          BEQ    $C42D
 C425: BD 46 24       JSR    $C4A6
 C428: 86 A2          LDA    #$8A
-C42A: BD C6 9B       JSR    $4EB3
+C42A: BD C6 9B       JSR    force_queue_sound_event_4eb3
 C42D: 30 8B          LEAX   $3,X
 C42F: A6 A6          LDA    ,X
 C431: 27 92          BEQ    $C443
@@ -16272,14 +16273,14 @@ C433: 8B B2          ADDA   #$90
 C435: 81 14          CMPA   #$96
 C437: 26 2A          BNE    $C43B
 C439: 86 28          LDA    #$A0
-C43B: BD 66 9B       JSR    $4EB3
+C43B: BD 66 9B       JSR    force_queue_sound_event_4eb3
 C43E: 86 26          LDA    #$AE
-C440: BD 6C 31       JSR    $4EB3
+C440: BD 6C 31       JSR    force_queue_sound_event_4eb3
 C443: 8D 78          BSR    $C49F
 C445: 86 30          LDA    #$B2
-C447: BD 66 9B       JSR    $4EB3
+C447: BD 66 9B       JSR    force_queue_sound_event_4eb3
 C44A: 86 77          LDA    #$FF
-C44C: 7E 66 3B       JMP    $4EB3
+C44C: 7E 66 3B       JMP    force_queue_sound_event_4eb3
 C44F: 30 23          LEAX   $1,X
 C451: A6 83          LDA    $1,X
 C453: C6 28          LDB    #$0A
@@ -16288,18 +16289,18 @@ C456: EB 80          ADDB   $2,X
 C458: 27 2F          BEQ    $C461
 C45A: 8D C2          BSR    $C4A6
 C45C: 86 86          LDA    #$AE
-C45E: BD C6 91       JSR    $4EB3
+C45E: BD C6 91       JSR    force_queue_sound_event_4eb3
 C461: 30 80          LEAX   $2,X
 C463: 20 FC          BRA    $C443
 C465: 8D BA          BSR    $C49F
 C467: 86 AD          LDA    #$85
-C469: BD C6 3B       JSR    $4EB3
+C469: BD C6 3B       JSR    force_queue_sound_event_4eb3
 C46C: A6 2B          LDA    $3,X
 C46E: 8B 18          ADDA   #$90
 C470: 81 B4          CMPA   #$96
 C472: 26 80          BNE    $C476
 C474: 86 82          LDA    #$A0
-C476: BD CC 9B       JSR    $4EB3
+C476: BD CC 9B       JSR    force_queue_sound_event_4eb3
 C479: 96 E1          LDA    current_event_69
 C47B: 81 2E          CMPA   #$06
 C47D: 27 9F          BEQ    $C496
@@ -16308,14 +16309,14 @@ C481: 8B 12          ADDA   #$90
 C483: 81 B4          CMPA   #$96
 C485: 26 80          BNE    $C489
 C487: 86 88          LDA    #$A0
-C489: BD C6 3B       JSR    $4EB3
+C489: BD C6 3B       JSR    force_queue_sound_event_4eb3
 C48C: 86 AE          LDA    #$86
-C48E: BD C6 91       JSR    $4EB3
+C48E: BD C6 91       JSR    force_queue_sound_event_4eb3
 C491: 86 7D          LDA    #$FF
-C493: 7E 6C 91       JMP    $4EB3
+C493: 7E 6C 91       JMP    force_queue_sound_event_4eb3
 C496: A6 86          LDA    $4,X
 C498: 8B 9D          ADDA   #$B5
-C49A: BD C6 9B       JSR    $4EB3
+C49A: BD C6 9B       JSR    force_queue_sound_event_4eb3
 C49D: 20 7A          BRA    $C491
 C49F: A6 23          LDA    $1,X
 C4A1: C6 88          LDB    #$0A
@@ -16329,11 +16330,11 @@ C4AE: CE 77 C4       LDU    #$FFE6
 C4B1: A6 83          LDA    $1,X
 C4B3: 80 20          SUBA   #$02
 C4B5: A6 44          LDA    A,U
-C4B7: BD 66 9B       JSR    $4EB3
+C4B7: BD 66 9B       JSR    force_queue_sound_event_4eb3
 C4BA: A6 8A          LDA    $2,X
 C4BC: 27 2D          BEQ    $C4C3
 C4BE: 8B 18          ADDA   #$90
-C4C0: BD 6C 31       JSR    $4EB3
+C4C0: BD 6C 31       JSR    force_queue_sound_event_4eb3
 C4C3: 39             RTS
 
 C4C4: CB B2          ADDB   #$90
@@ -16423,7 +16424,7 @@ C56F: EE E4          LDU    A,U
 C571: C6 80          LDB    #$02
 C573: A6 E2          LDA    ,U+
 C575: 34 C6          PSHS   U,B
-C577: BD 66 9B       JSR    $4EB3
+C577: BD 66 9B       JSR    force_queue_sound_event_4eb3
 C57A: 35 CC          PULS   B,U
 C57C: 5A             DECB
 C57D: 26 7C          BNE    $C573

@@ -219,7 +219,7 @@ for i,tsd in tile_sheet_dict.items():
 
 # pad
 tile_palette = sorted(tile_palette)
-print(f"Used tile cololrs: {len(tile_palette)}")
+print(f"Used tile colors: {len(tile_palette)}")
 
 tile_palette += (16-len(tile_palette)) * [(0x10,0x20,0x30)]
 

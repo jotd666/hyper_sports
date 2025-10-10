@@ -30,26 +30,26 @@ def convert():
     EMPTY_SND = "EMPTY_SND"
     sound_dict = {
 
-    "CREDIT_SND"               :{"index":0x3A,"channel":3,"sample_rate":hq_sample_rate,"priority":40},
-    "CURSOR_MOVE_SND"            :{"index":0x17,"channel":3,"sample_rate":hq_sample_rate,"priority":40},
-    "LETTER_ENTERED_SND"            :{"index":0x18,"channel":3,"sample_rate":hq_sample_rate,"priority":40},
+    "CREDIT_3A_SND"               :{"index":0x3A,"channel":3,"sample_rate":hq_sample_rate,"priority":40},
+    "CURSOR_MOVE_17_SND"            :{"index":0x17,"channel":3,"sample_rate":hq_sample_rate,"priority":40},
+    "LETTER_ENTERED_18_SND"            :{"index":0x18,"channel":3,"sample_rate":hq_sample_rate,"priority":40},
 
-    "BOUNCE_SND"            :{"index":0x23,"channel":2,"sample_rate":hq_sample_rate,"priority":40},
+    "BOUNCE_23_SND"            :{"index":0x23,"channel":2,"sample_rate":hq_sample_rate,"priority":40},
     "SOUND_24_SND"            :{"index":0x24,"channel":2,"sample_rate":hq_sample_rate,"priority":40},
-    "HURRY_SND"            :{"index":0x38,"channel":3,"sample_rate":hq_sample_rate,"priority":40},
+    "HURRY_38_SND"            :{"index":0x38,"channel":3,"sample_rate":hq_sample_rate,"priority":40},
 
     "SOUND_3f_SND"            :{"index":0x3f,"sample_rate":hq_sample_rate,"priority":40},
      "SOUND_64_SND"            :{"index":0x64,"sample_rate":hq_sample_rate,"priority":40},
-    "GUNSHOT_SND"            :{"index":0x10,"sample_rate":hq_sample_rate,"priority":40},
+    "GUNSHOT_10_SND"            :{"index":0x10,"sample_rate":hq_sample_rate,"priority":40},
     "SPLASH_SND"            :{"index":0x15,"sample_rate":hq_sample_rate,"priority":40},
-    "SWIM_SND"            :{"index":0x14,"sample_rate":hq_sample_rate,"priority":40},
+    "SWIM_14_SND"            :{"index":0x14,"sample_rate":hq_sample_rate,"priority":40},
     "STEP_01_SND"            :{"index":0x1,"sample_rate":hq_sample_rate,"priority":40},
     "SOUND_2A_SND"            :{"index":0x2A,"sample_rate":hq_sample_rate,"priority":40},
     "SFX_11_SND"            :{"index":0x11,"sample_rate":hq_sample_rate,"priority":40},
     "SFX_12_SND"            :{"index":0x12,"sample_rate":hq_sample_rate,"priority":40},
     "ZAP_0A_SND"            :{"index":0x0A,"sample_rate":hq_sample_rate,"priority":40},
     "ZAP_09_SND"            :{"index":0x09,"sample_rate":hq_sample_rate,"priority":40},
-    "HORN_SND"            :{"index":0x27,"sample_rate":hq_sample_rate,"priority":40},
+    "HORN_27_SND"            :{"index":0x27,"sample_rate":hq_sample_rate,"priority":40},
     "SOMMERSAULT_SND"            :{"index":0x1B,"sample_rate":hq_sample_rate,"priority":40},
     "PING_08_SND"            :{"index":0x08,"sample_rate":hq_sample_rate,"priority":40},
     "SOUND_22_SND"            :{"index":0x22,"sample_rate":hq_sample_rate,"priority":40},
@@ -59,18 +59,36 @@ def convert():
     "SOUND_04_SND"            :{"index":0x04,"sample_rate":hq_sample_rate,"priority":40},
     "SOUND_0E_SND"            :{"index":0x0E,"sample_rate":hq_sample_rate,"priority":40},
     "SOUND_0F_SND"            :{"index":0x0F,"sample_rate":hq_sample_rate,"priority":40},
+    "TICK_1E_SND"            :{"index":0x1e,"sample_rate":hq_sample_rate,"priority":40},
+    "TICK_1F_SND"            :{"index":0x1f,"sample_rate":hq_sample_rate,"priority":40},
     "SOUND_20_SND"            :{"index":0x20,"sample_rate":lq_sample_rate,"priority":40},
     "SOUND_21_SND"            :{"index":0x21,"sample_rate":lq_sample_rate,"priority":40},
     "SWOOSH_SND"            :{"index":0xB,"sample_rate":hq_sample_rate,"priority":40},
     "PING_65_SND"            :{"index":0x65,"sample_rate":hq_sample_rate,"priority":40},
     "PING_66_SND"            :{"index":0x66,"sample_rate":hq_sample_rate,"priority":40},
     "CHEERING_SND"            :{"index":0x41,"sample_rate":lq_sample_rate,"priority":40},
+
     "BLAST_BLOW_02_SND"            :{"index":0x02,"sample_rate":hq_sample_rate,"priority":40},
     "BLAST_ZAP_03_SND"            :{"index":0x03,"sample_rate":hq_sample_rate,"priority":40},
     #"LEVEL_1_COMPLETED_TUNE_SND"                :{"index":0x1E,"pattern":0x14,"volume":32,"loops":False,"ticks":480},
 
 
     }
+
+    # scan directory for speech
+    for f in sound_dir.glob("*.wav"):
+        sound_name = f.stem
+        parts = sound_name.rsplit("_",maxsplit=1)
+        if len(parts)>1:
+            try:
+                index = int(parts[1],16)
+                if index > 0x7F:
+                    # speech: auto-declare
+                    entry = f"{sound_name}_SND"
+                    sound_dict[entry] = {"index":index,"sample_rate":lq_sample_rate,"priority":40}
+            except ValueError:
+                pass
+
     for v in sound_dict.values():
         if "channel" not in v:
             v["channel"] = -1 # auto
@@ -85,6 +103,7 @@ def convert():
 0x3C, # qualify
 0x2D,  # chariots
 0x42, # podium shit
+0xFF, # ignore
     ]
 
     with open(os.path.join(src_dir,"..","sounds.inc"),"w") as f:

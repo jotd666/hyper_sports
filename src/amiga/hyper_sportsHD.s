@@ -39,8 +39,9 @@ _expmem
     dc.w    _config-_base
 ;---
 _config
-;	dc.b	"C1:X:invincible:0;"
-;	dc.b	"C1:X:infinite lives:1;"
+	dc.b	"C1:X:fast shoot:0;"
+	dc.b	"C1:X:archery bull's eye:1;"
+
 	dc.b	"C1:X:cheat keys:4;"
 	dc.b	"C2:X:25 Hz update:0;"
 	IFD		CHIP_ONLY

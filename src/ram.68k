@@ -1,5 +1,5 @@
-	.global infinite_lives_flag
-	.global invincible_flag
+	.global fast_shoot_flag
+	.global always_bulls_eye_flag
 	.global start_level
 	.global vb_ticks_count
 	.global break_at_startup_flag
@@ -50,24 +50,16 @@ stack_top:
 	.long	0
 	
 
-skip_intro_flag:
-	.byte	0
-must_skip_konami_logo_flag:
-	.byte	0
-invincible_flag:
-	.byte	0
-infinite_lives_flag:
-	.byte	0
-infinite_time_flag:
-	.byte	0
-music_off_flag:
-	.byte 	0
 
 	.ifndef	RELEASE
 log_ptr:
 	.long	0x100
 	.endif
 	
+fast_shoot_flag:
+	.byte	0
+always_bulls_eye_flag:
+	.byte	0
 highscore_needs_saving_flag:
 	.byte	0
 vb_ticks_count:
