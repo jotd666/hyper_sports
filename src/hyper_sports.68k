@@ -12564,7 +12564,6 @@ select_diving_sprite_84e5:
 	move.w	#0xdbc5,d4                      	| [$84e5: ldu    #$dbc5] fully extended
 	jra	select_sprite_84ce                             	| [$84e8: bra    $84ce]
 select_arriving_swimming_sprite_84ea:
-	ENABLE_LOG_REGS
 	move.w	#0xdc4b,d4                      	| [$84ea: ldu    #$dc4b]
 	jra	select_sprite_84ce                             	| [$84ed: bra    $84ce]
 l_84ef:
@@ -14022,7 +14021,7 @@ l_8c4b:
 	cmp.b	#0x05,d0                         	| [$8c55: cmpa   #$05]
 	jcc	l_8c5e                             	| [$8c57: bcc    $8c5e]
 l_8c59:
-	jbsr	l_9187                            	| [$8c59: jsr    $9187]
+	jbsr	skeet_missed_9187                            	| [$8c59: jsr    $9187]
 	jra	l_8c72                             	| [$8c5c: bra    $8c72]
 l_8c5e:
 	GET_ADDRESS	0x3375                     	| [$8c5e: ldd    $3375]
@@ -14074,7 +14073,7 @@ l_8c90:
 	jhi	l_8ca0                             	| [$8c94: bhi    $8ca0]
 	GET_REG_ADDRESS	0x5,d2                 	| [$8c96: sta    $5,x]
 	move.b	d0,(a0)                         	| [...]
-	jbsr	l_9187                            	| [$8c98: jsr    $9187]
+	jbsr	skeet_missed_9187                            	| [$8c98: jsr    $9187]
 	move.b	#0x0f,d0                        	| [$8c9b: lda    #$0f]
 	jbsr	force_queue_sound_eventl_4eb3                            	| [$8c9d: jsr    $4eb3]
 l_8ca0:
@@ -14146,6 +14145,7 @@ l_8cf4:
 	GET_ADDRESS	0x31c6                     	| [$8d0c: inc    $31c6]
 	addq.b	#1,(a0)                         	| [...]
 l_8d0f:
+	* skeet shot: increase some counters
 	OP_W_ON_DP_ADDRESS	addq,0xf3,#1         | [$8d0f: inc    $f3]
 	OP_W_ON_DP_ADDRESS	addq,0xf6,#1         | [$8d11: inc    $f6]
 	OP_W_ON_DP_ADDRESS	addq,0xff,#1         | [$8d13: inc    $ff]
@@ -14239,6 +14239,7 @@ l_8d91:
 l_8d94:
 	OP_1_ON_DP_ADDRESS	tst,archery_score_index_2d             | [$8d94: tst    $2d]
 	jeq	l_8e07                             	| [$8d96: beq    $8e07]
+	* increase score!
 	OP_R_ON_DP_ADDRESS	move,0xf3,d0         | [$8d98: lda    $f3]
 	jeq	l_8e07                             	| [$8d9a: beq    $8e07]
 	move.b	#0x01,d1                        	| [$8d9c: ldb    #$01]
@@ -14348,6 +14349,7 @@ l_8e2f:
 l_8e32:
 	OP_1_ON_DP_ADDRESS	tst,0xf6             | [$8e32: tst    $f6]
 	jeq	l_8e6e                             	| [$8e34: beq    $8e6e]
+	* reached when skeet is shot
 	move.b	#0x07,d0                        	| [$8e36: lda    #$07]
 	GET_DP_ADDRESS	0xf7                    	| [$8e38: ldx    $f7]
 	MOVE_W_TO_REG	a0,d2                         	| [...]
@@ -14371,13 +14373,14 @@ l_8e40:
 	GET_ADDRESS	0x31f8                     	| [$8e4e: std    $31f8]
 	MOVE_W_FROM_REG	d1,a0                         	| [...]
 	OP_1_ON_DP_ADDRESS	tst,0xd7             | [$8e51: tst    $d7]
-	jeq	l_8e61                             	| [$8e53: beq    $8e61]
+	jeq	skeet_shot_8e61                             	| [$8e53: beq    $8e61]
 	move.b	#0xb0,d0                        	| [$8e55: lda    #$b0]
 	jbsr	force_queue_sound_eventl_4eb3                            	| [$8e57: jsr    $4eb3]
 	move.b	#0xff,d0                        	| [$8e5a: lda    #$ff]
 	jbsr	force_queue_sound_eventl_4eb3                            	| [$8e5c: jsr    $4eb3]
 	jra	l_8e6e                             	| [$8e5f: bra    $8e6e]
-l_8e61:
+skeet_shot_8e61:
+	* play sounds of skeet exploding
 	jbsr	queue_sound_event_4ead            	| [$8e61: jsr    queue_sound_event_4ead]
 	move.b	#0x10,d0                        	| [$8e64: lda    #$10]
 	jbsr	queue_sound_event_4ead            	| [$8e66: jsr    queue_sound_event_4ead]
@@ -14932,7 +14935,7 @@ l_917b:
 l_9186:
 	rts                                    	| [$9186: rts]
 
-l_9187:
+skeet_missed_9187:
 	OP_W_ON_DP_ADDRESS	addq,0xfe,#1         | [$9187: inc    $fe]
 	OP_1_ON_DP_ADDRESS	clr,0xff             | [$9189: clr    $ff]
 	OP_R_ON_DP_ADDRESS	move,0xeb,d1         | [$918b: ldb    $eb]
@@ -14955,6 +14958,10 @@ l_91a3:
 	move.b	(a0),d1                         	| [...]
 	GET_ADDRESS	0x31c6                     	| [$91a6: stb    $31c6]
 	move.b	d1,(a0)                         	| [...]
+	tst.b	large_sights_flag
+	jeq		0f	
+	move.b	#0x10,(a0)                         	| [...]
+0:
 	GET_ADDRESS	0x31d0                     	| [$91a9: stb    $31d0]
 	move.b	d1,(a0)                         	| [...]
 l_91ac:
@@ -17543,6 +17550,7 @@ l_a018:
 	jbsr	l_9092                            	| [$a040: jsr    $9092]
 	OP_1_ON_DP_ADDRESS	tst,0xdc             | [$a043: tst    $dc]
 	jne	l_a053                             	| [$a045: bne    $a053]
+	* perfect sound not played yet: play it
 	move.b	#0xad,d0                        	| [$a047: lda    #$ad]
 	jbsr	force_queue_sound_eventl_4eb3                            	| [$a049: jsr    $4eb3]
 	move.b	#0xff,d0                        	| [$a04c: lda    #$ff]
@@ -20595,8 +20603,8 @@ l_b15f:
 	move.w	d2,d1                           	| [$b15f: tfr    x,d]
 	ror.w	#8,d2                            	| [...]
 	move.b	d2,d0                           	| [...] set MSB
-	ror.w	#8,d2                            	| [...]
-	movem.l	(sp)+,d2                       	| [$b161: puls   x]
+												| [...]
+	move.l	(sp)+,d2                       	| [$b161: puls   x]
 	OP_1_ON_DP_ADDRESS	tst,0x49             | [$b163: tst    $49]
 	jeq	l_b168                             	| [$b165: beq    $b168]
 	neg.b	d1                               	| [$b167: negb]
@@ -25689,12 +25697,12 @@ l_cc7a:
 	GET_REG_ADDRESS_FROM_REG	d6,d4         	| [$cc9d: lda    a,u]
 	move.b	(a0),d0                         	| [...]
 	GET_REG_UNCHECKED_ADDRESS	0,d3                   	| [$cc9f: sta    ,y]
-	move.b	d0,(a0)+                         	| [...]
+	move.b	d0,(a0)                         	| [...]
 	VIDEO_BYTE_DIRTY
-	                 	| [$cca1: sta    $1,y]
-	move.b	d0,(a0)+                         	| [...]
+	addq	#1,a0                 	| [$cca1: sta    $1,y]
+	move.b	d0,(a0)                         	| [...]
 	VIDEO_BYTE_DIRTY
-	                 	| [$cca3: sta    $2,y]
+	addq	#1,a0                	| [$cca3: sta    $2,y]
 	move.b	d0,(a0)                         	| [...]
 	VIDEO_BYTE_DIRTY
 l_cca5:

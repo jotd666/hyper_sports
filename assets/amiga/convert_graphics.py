@@ -83,6 +83,12 @@ dump=False,name_dict=None,cluts=None,tile_number=0,is_bob=False):
             tile_number += 1
 
     if is_bob:
+        # special case for cursor & scores: black should be transparent
+        for idx in [0x31,0x16a,0x163]:
+            tile = tileset_1[idx]
+            if tile:
+                bitplanelib.replace_color(tile,{(0,0,0)},magenta)
+
         # rework & dump grouped / non grouped sprites
         # rework tiles which are grouped
         for tile_number,wtile in enumerate(tileset_1):
@@ -148,6 +154,7 @@ try:
 except OSError:
     print("Cannot find used_sprites")
 
+add_tile(sprite_cluts,0x163,cluts=[0xA,0xB])  # 1000 and 2000 points
 
 player_cluts = [1,2]  # only 2 players supported: less memory
 # for all player frames with all player "races" (sorry)
