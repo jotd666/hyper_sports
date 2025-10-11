@@ -65,6 +65,11 @@ def convert():
     "SOUND_20_SND"            :{"index":0x20,"sample_rate":lq_sample_rate,"priority":40},
     "SOUND_21_SND"            :{"index":0x21,"sample_rate":lq_sample_rate,"priority":40},
     "SWOOSH_SND"            :{"index":0xB,"sample_rate":hq_sample_rate,"priority":40},
+    "PING_05_SND"            :{"index":0x5,"sample_rate":hq_sample_rate,"priority":40},
+   "DROP_06_SND"            :{"index":0x6,"sample_rate":hq_sample_rate,"priority":40},
+    "PING_61_SND"            :{"index":0x61,"sample_rate":hq_sample_rate,"priority":40},
+    "PING_62_SND"            :{"index":0x62,"sample_rate":hq_sample_rate,"priority":40},
+    "PING_63_SND"            :{"index":0x63,"sample_rate":hq_sample_rate,"priority":40},
     "PING_65_SND"            :{"index":0x65,"sample_rate":hq_sample_rate,"priority":40},
     "PING_66_SND"            :{"index":0x66,"sample_rate":hq_sample_rate,"priority":40},
     "CHEERING_SND"            :{"index":0x41,"sample_rate":lq_sample_rate,"priority":40},
@@ -76,6 +81,7 @@ def convert():
 
     }
 
+    speech_list = set()
     # scan directory for speech
     for f in sound_dir.glob("*.wav"):
         sound_name = f.stem
@@ -84,11 +90,18 @@ def convert():
             try:
                 index = int(parts[1],16)
                 if index > 0x7F:
+                    speech_list.add(index)
                     # speech: auto-declare
                     entry = f"{sound_name}_SND"
                     sound_dict[entry] = {"index":index,"sample_rate":lq_sample_rate,"priority":40}
             except ValueError:
                 pass
+
+
+    full_speech_list = set(range(0x80,0xDA))
+    missing = full_speech_list - speech_list
+    print("Missing speech samples: {}".format(",".join(hex(x) for x in sorted(missing))))
+
 
     for v in sound_dict.values():
         if "channel" not in v:
