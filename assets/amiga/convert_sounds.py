@@ -45,6 +45,7 @@ def convert():
     "SWIM_14_SND"            :{"index":0x14,"sample_rate":hq_sample_rate,"priority":40},
     "STEP_01_SND"            :{"index":0x1,"sample_rate":hq_sample_rate,"priority":40},
     "SOUND_2A_SND"            :{"index":0x2A,"sample_rate":hq_sample_rate,"priority":40},
+    "FALL_37_SND"            :{"index":0x37,"sample_rate":hq_sample_rate,"priority":40},
     "SFX_11_SND"            :{"index":0x11,"sample_rate":hq_sample_rate,"priority":40},
     "SFX_12_SND"            :{"index":0x12,"sample_rate":hq_sample_rate,"priority":40},
     "ZAP_0A_SND"            :{"index":0x0A,"sample_rate":hq_sample_rate,"priority":40},
