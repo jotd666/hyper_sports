@@ -5,7 +5,7 @@ import os,re
 
 this_dir = os.path.dirname(os.path.abspath(__file__))
 
-jere = re.compile(r"\s+OP_R_ON_DP_ADDRESS.*: ([la]s[lr]|ro[lr]|eor)",flags=re.I)
+jere = re.compile(r"\s+OP_R_ON_DP_ADDRESS.*: ([la]s[lr]|ro[lr])",flags=re.I)
 
 with open(os.path.join(this_dir,"..","src","hyper_sports.68k")) as f:
     lines = list(f)
