@@ -61,10 +61,13 @@ ROM_START = 0x4000
 OPT_ENABLE_PROFILING = 0         | DO NOT CHANGE THIS
 OPT_ENABLE_LOGGING = 0           | DO NOT CHANGE THIS
 OPT_VERY_EASY = 0
+OPT_DUPLICATE_CONTROLS = 0
 	.else
 OPT_ENABLE_LOGGING = 1
 OPT_ENABLE_PROFILING = 0
 OPT_VERY_EASY = 1
+OPT_DUPLICATE_CONTROLS = 1
+
 * set to higher values than 1 to speed game up
 
 
@@ -2414,7 +2417,6 @@ update_bg_tile:
 	lea		mirror_jump_table(pc),a4
 	ror.b	#4,d1			        | modifiers on first bits
 	and.w	#3,d1
-	moveq	#0,d1			| TEMP no mirror
 	.ifdef	NO68020
 	add.w	d1,d1
 	add.w	d1,d1	
@@ -2771,14 +2773,23 @@ osd_read_inputs_1:
 	tst.b	(0x4F,a0)		| "<-" key
 	beq.b	0f
 	bclr	#BIT_LEFT_1P,d0
+	.ifne	OPT_DUPLICATE_CONTROLS
+	bclr	#BIT_LEFT_2P,d0
+	.endif
 0:
 	tst.b	(0x4E,a0)		| "->" key
 	beq.b	0f
 	bclr	#BIT_RIGHT_1P,d0
+	.ifne	OPT_DUPLICATE_CONTROLS
+	bclr	#BIT_RIGHT_2P,d0
+	.endif
 0:
 	tst.b	(0x63,a0)		| "ctrl" key
 	beq.b	0f
 	bclr	#BIT_FIRE_1P,d0
+	.ifne	OPT_DUPLICATE_CONTROLS
+	bclr	#BIT_FIRE_2P,d0
+	.endif
 0:
 	tst.b	(45,a0)		| "4" num key
 	beq.b	0f
@@ -2798,10 +2809,14 @@ osd_read_inputs_1:
 	move.l	_joypad_1_state(pc),d1
 	jbsr	read_player_joypad_1P
 
+	.ifne	OPT_DUPLICATE_CONTROLS
+	move.l	_joypad_1_state(pc),d1
+	.else
 	* 2P active with joypad only if joypad connected
 	tst.b	controller_joypad_0
 	jeq		0f
 	move.l	_joypad_2_state(pc),d1
+	.endif
 	jbsr	read_player_joypad_2P
 0:
 

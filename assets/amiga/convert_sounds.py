@@ -38,6 +38,7 @@ def convert():
     "SOUND_24_SND"            :{"index":0x24,"channel":2,"sample_rate":hq_sample_rate},
     "HURRY_38_SND"            :{"index":0x38,"channel":3,"sample_rate":hq_sample_rate},
 
+    "WIN_39_SND"            :{"index":0x39,"sample_rate":hq_sample_rate},
     "SOUND_3f_SND"            :{"index":0x3f,"sample_rate":hq_sample_rate},
      "SOUND_64_SND"            :{"index":0x64,"sample_rate":hq_sample_rate},
     "GUNSHOT_10_SND"            :{"index":0x10,"sample_rate":hq_sample_rate},
@@ -69,6 +70,7 @@ def convert():
     "SOUND_20_SND"            :{"index":0x20,"sample_rate":lq_sample_rate},
     "SOUND_21_SND"            :{"index":0x21,"sample_rate":lq_sample_rate},
     "SWOOSH_SND"            :{"index":0xB,"sample_rate":hq_sample_rate},
+    "SWOOSH_1D_SND"            :{"index":0x1D,"sample_rate":lq_sample_rate},
     "PING_05_SND"            :{"index":0x5,"sample_rate":hq_sample_rate},
    "DROP_06_SND"            :{"index":0x6,"sample_rate":hq_sample_rate},
     "PING_61_SND"            :{"index":0x61,"sample_rate":hq_sample_rate},
@@ -122,6 +124,9 @@ def convert():
 0x2D,  # chariots
 0x42, # podium shit
 0x44, # win tune
+0x3E, # 2P end round tune
+0x43, # win tune (followed by cheering)
+0x47, # another win tune
 0xFF, # ignore
     ]
 
