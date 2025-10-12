@@ -44,6 +44,8 @@ nb_long_horse_turns_ef = 0xef
 watchdog_1400 = 0x1400
 sound_queue_3340 = 0x3340
 current_level_3068 = 0x3068
+current_attempt_validating_value_342d = 0x342d
+qualifying_value_3060 = 0x3060
 
 dsw2_1600 = 0x1600
 system_1680 = 0x1680
@@ -1348,7 +1350,7 @@ start_game_4673:
 	OP_1_ON_DP_ADDRESS	clr,0x1b             | [$4677: clr    $1b]
 	moveq	#0,d0                            	| [$4679: clra]
 	moveq	#0,d1                            	| [$467a: clrb]
-	move.w	#0x3060,d2                      	| [$467b: ldx    #$3060]
+	move.w	#qualifying_value_3060,d2                      	| [$467b: ldx    #$3060]
 l_467e:
 	MAKE_D                                 	| [...]
 	GET_REG_ADDRESS	0,d2                   	| [$467e: std    ,x++]
@@ -1598,7 +1600,7 @@ l_47bb:
 	rts                                    	| [$47bf: rts]
 
 l_47c0:
-	move.w	#0x3060,d2                      	| [$47c0: ldx    #$3060]
+	move.w	#qualifying_value_3060,d2                      	| [$47c0: ldx    #$3060]
 	move.w	#0x2658,d4                      	| [$47c3: ldu    #$2658]
 	jbsr	l_5742                            	| [$47c6: jsr    $5742]
 	move.b	#0x01,d0                        	| [$47c9: lda    #$01]
@@ -3605,7 +3607,7 @@ l_52a3:
 	move.b	(a0),d0                         	| [...]
 	cmp.b	#0x16,d0                         	| [$52a7: cmpa   #$16]
 	jeq	l_52b7                             	| [$52a9: beq    $52b7]
-	move.w	#0x3060,d3                      	| [$52ab: ldy    #$3060]
+	move.w	#qualifying_value_3060,d3                      	| [$52ab: ldy    #$3060]
 	jbsr	l_520b                            	| [$52af: jsr    $520b]
 	tst.b	d1                               	| [$52b2: tstb]
 	jeq	l_52b7                             	| [$52b3: beq    $52b7]
@@ -11615,7 +11617,7 @@ l_7f69:
 	jbsr	multiply_ab                       	| [$7f6b: mul]
 	add.w	d1,d2                            	| [$7f6c: leax   d,x]
 l_7f6e:
-	move.w	#0xd79b,d4                      	| [$7f6e: ldu    #$d79b]
+	move.w	#qualifying_values_table_d79b,d4                      	| [$7f6e: ldu    #$d79b]
 	OP_R_ON_DP_ADDRESS	move,current_event_69,d0| [$7f71: lda    current_event_69]
 	move.b	d0,d1                           	| [$7f73: tfr    a,b]
 	asl.b	#1,d0                            	| [$7f75: asla]
@@ -11636,7 +11638,7 @@ l_7f80:
 	move.b	(a0),d1                         	| [...]
 	jbsr	multiply_ab                       	| [$7f82: mul]
 	add.w	d1,d4                            	| [$7f83: leau   d,u]
-	move.w	#0x3060,d2                      	| [$7f85: ldx    #$3060]
+	move.w	#qualifying_value_3060,d2                      	| [$7f85: ldx    #$3060]
 	moveq	#0,d0                            	| [$7f88: clra]
 	OP_R_ON_DP_ADDRESS	move,current_event_69,d1| [$7f89: ldb    current_event_69]
 	cmp.b	#0x03,d1                         	| [$7f8b: cmpb   #$03]
@@ -11650,6 +11652,7 @@ l_7f91:
 	move.b	d0,(a0)                         	| [...]
 	move.b	#0x02,d1                        	| [$7f93: ldb    #$02]
 l_7f95:
+	* copy ROM qualifying/attempts/whatever to RAM
 	GET_REG_ADDRESS	0,d4                   	| [$7f95: lda    ,u]
 	move.b	(a0),d0                         	| [...]
                                          | [$7f97: lsra]
@@ -11687,7 +11690,7 @@ l_7fa7:
 	move.b	d1,d6                           	| [...] as byte
 	DO_EXTB	d6                             	| [...] with sign extension
 	add.w	d6,d2                            	| [$7fb8: leax   b,x]
-	move.w	#0x3060,d4                      	| [$7fba: ldu    #$3060]
+	move.w	#qualifying_value_3060,d4                      	| [$7fba: ldu    #$3060]
 	move.b	#0x05,d1                        	| [$7fbd: ldb    #$05]
 	cmp.b	#0x03,d0                         	| [$7fbf: cmpa   #$03]
 	jeq	l_7fc7                             	| [$7fc1: beq    $7fc7]
@@ -18753,7 +18756,7 @@ l_a6e4:
 	GET_REG_ADDRESS	0,d2                   	| [$a70e: ldd    ,x++]
 	addq.w	#2,d2                           	| [...]
 	LOAD_D                                 	| [$a70e: ldd    ,x++]
-	GET_ADDRESS	0x342d                     	| [$a710: std    $342d]
+	GET_ADDRESS	current_attempt_validating_value_342d                     	| [$a710: std    $342d]
 	MOVE_W_FROM_REG	d1,a0                         	| [...]
 	GET_REG_ADDRESS	0,d2                   	| [$a713: lda    ,x+]
 	addq.w	#1,d2                           	| [...]
@@ -18815,7 +18818,7 @@ l_a751:
 	OP_W_ON_DP_ADDRESS	move,0x48,d0         | [$a75e: sta    $48]
 	GET_DP_ADDRESS	0x48                    	| [$a760: orb    $48]
 	or.b	(a0),d1                           	| [...]
-	GET_ADDRESS	0x342d                     	| [$a762: lda    $342d]
+	GET_ADDRESS	current_attempt_validating_value_342d                     	| [$a762: lda    $342d]
 	move.b	(a0),d0                         	| [...]
 	MAKE_D                                 	| [...]
 	GET_DP_ADDRESS	0x48                    	| [$a765: std    $48]
@@ -18844,7 +18847,7 @@ l_a783:
 l_a785:
 	GET_DP_ADDRESS	0x48                    	| [$a785: ldd    $48]
 	LOAD_D                                 	| [$a785: ldd    $48]
-	GET_ADDRESS	0x342d                     	| [$a787: sta    $342d]
+	GET_ADDRESS	current_attempt_validating_value_342d                     	| [$a787: sta    $342d]
 	move.b	d0,(a0)                         	| [...]
                                          | [$a78a: lsrb]
                                          | [$a78b: lsrb]
@@ -18861,7 +18864,7 @@ l_a798:
 	GET_REG_UNCHECKED_ADDRESS	0x0800,d3              	| [$a79c: clr    $0800,y]  [video_address]
 	clr.b	(a0)                         	| [...]
 	VIDEO_BYTE_DIRTY | [...]
-	GET_ADDRESS	0x342d                     	| [$a7a0: lda    $342d]
+	GET_ADDRESS	current_attempt_validating_value_342d                     	| [$a7a0: lda    $342d]
 	move.b	(a0),d0                         	| [...]
 	GET_REG_UNCHECKED_ADDRESS	0,d3                   	| [$a7a3: sta    ,y++]  [video_address]
 	addq.w	#2,d3                           	| [...]
@@ -18883,8 +18886,9 @@ l_a798:
 	MAKE_D                                 	| [...]
 	GET_ADDRESS	0x3273                     	| [$a7b4: std    $3273]
 	MOVE_W_FROM_REG	d1,a0                         	| [...]
+	* current height to match screen address
 	move.w	#0x26da,d3                      	| [$a7b7: ldy    #$26da]
-	GET_ADDRESS	0x342d                     	| [$a7bb: lda    $342d]
+	GET_ADDRESS	current_attempt_validating_value_342d                     	| [$a7bb: lda    $342d]
 	move.b	(a0),d0                         	| [...]
 	move.b	#0x8a,d1                        	| [$a7be: ldb    #$8a]
 	MAKE_D                                 	| [...]
@@ -18907,7 +18911,7 @@ l_a798:
 	GET_REG_UNCHECKED_ADDRESS	0x0800,d3              	| [$a7ce: std    $0800,y]  [video_address_word]
 	MOVE_W_FROM_REG	d1,a0                         	| [...]
 	VIDEO_WORD_DIRTY | [...]
-	move.w	#0x342d,d3                      	| [$a7d2: ldy    #$342d]
+	move.w	#current_attempt_validating_value_342d,d3                      	| [$a7d2: ldy    #$342d]
 	GET_REG_ADDRESS	0,d3                   	| [$a7d6: ldb    ,y+]
 	addq.w	#1,d3                           	| [...]
 	move.b	(a0),d1                         	| [...]
@@ -19871,7 +19875,7 @@ l_ad67:
 	GET_REG_ADDRESS	0,d3                   	| [$ad7e: std    ,y++]
 	addq.w	#2,d3                           	| [...]
 	MOVE_W_FROM_REG	d1,a0                         	| [...]
-	GET_ADDRESS	0x342d                     	| [$ad80: ldd    $342d]
+	GET_ADDRESS	current_attempt_validating_value_342d                     	| [$ad80: ldd    $342d]
 	LOAD_D                                 	| [$ad80: ldd    $342d]
 	GET_REG_ADDRESS	0,d3                   	| [$ad83: std    ,y++]
 	addq.w	#2,d3                           	| [...]
@@ -20025,7 +20029,7 @@ l_ae4f:
 	move.b	#0x20,d1                        	| [$ae64: ldb    #$20]
 	jbsr	multiply_ab                       	| [$ae66: mul]
 	add.w	d1,d2                            	| [$ae67: leax   d,x]
-	GET_ADDRESS	0x342d                     	| [$ae69: ldd    $342d]
+	GET_ADDRESS	current_attempt_validating_value_342d                     	| [$ae69: ldd    $342d]
 	LOAD_D                                 	| [$ae69: ldd    $342d]
 	GET_REG_ADDRESS	0,d2                   	| [$ae6c: std    ,x++]
 	addq.w	#2,d2                           	| [...]
@@ -20059,7 +20063,7 @@ l_ae93:
 	move.b	(a0),d0                         	| [...]
 	jeq	l_aed4                             	| [$ae96: beq    $aed4]
 	move.w	#0x3852,d3                      	| [$ae98: ldy    #$3852]
-	move.w	#0x342d,d2                      	| [$ae9c: ldx    #$342d]
+	move.w	#current_attempt_validating_value_342d,d2                      	| [$ae9c: ldx    #$342d]
 	move.b	#0x03,d0                        	| [$ae9f: lda    #$03]
 	jbsr	l_a6c1                            	| [$aea1: jsr    $a6c1]
 	tst.b	d0                               	| [$aea4: tsta]
@@ -21280,7 +21284,7 @@ l_b4f2:
 	move.b	#0x02,d0                        	| [$b50f: ldd    #$0206]
 	move.w	#0x0206,d1                      	| [$b50f: ldd    #$0206]
 	MAKE_D                                 	| [...]
-	GET_ADDRESS	0x342d                     	| [$b512: std    $342d]
+	GET_ADDRESS	current_attempt_validating_value_342d                     	| [$b512: std    $342d]
 	MOVE_W_FROM_REG	d1,a0                         	| [...]
 	GET_ADDRESS	0x3425                     	| [$b515: clr    $3425]
 	clr.b	(a0)                         	| [...]
@@ -21330,7 +21334,7 @@ l_b54b:
 	GET_REG_ADDRESS	0,d3                   	| [$b55b: ldd    ,y++]
 	addq.w	#2,d3                           	| [...]
 	LOAD_D                                 	| [$b55b: ldd    ,y++]
-	GET_ADDRESS	0x342d                     	| [$b55d: std    $342d]
+	GET_ADDRESS	current_attempt_validating_value_342d                     	| [$b55d: std    $342d]
 	MOVE_W_FROM_REG	d1,a0                         	| [...]
 	GET_REG_ADDRESS	0,d3                   	| [$b560: lda    ,y]
 	move.b	(a0),d0                         	| [...]
@@ -21386,7 +21390,7 @@ l_b5ba:
 	rts                                    	| [$b5ba: rts]
 
 l_b5bb:
-	GET_ADDRESS	0x342d                     	| [$b5bb: lda    $342d]
+	GET_ADDRESS	current_attempt_validating_value_342d                     	| [$b5bb: lda    $342d]
 	move.b	(a0),d0                         	| [...]
 	cmp.b	#0x04,d0                         	| [$b5be: cmpa   #$04]
 	jeq	l_b5ba                             	| [$b5c0: beq    $b5ba]
@@ -21402,7 +21406,7 @@ l_b5bb:
 	move.w	#0x2373,d3                      	| [$b5d4: ldy    #$2373]
 	MAKE_D                                 	| [...]
 	add.w	d1,d3                            	| [$b5d8: leay   d,y]
-	GET_ADDRESS	0x342d                     	| [$b5da: ldd    $342d]
+	GET_ADDRESS	current_attempt_validating_value_342d                     	| [$b5da: ldd    $342d]
 	LOAD_D                                 	| [$b5da: ldd    $342d]
 	GET_REG_ADDRESS	0,d3                   	| [$b5dd: std    ,y++]
 	addq.w	#2,d3                           	| [...]
@@ -21519,7 +21523,7 @@ l_b665:
 	move.w	#0x0001,d1                      	| [$b671: ldd    #$0001]
 	GET_ADDRESS	0x3436                     	| [$b674: sta    $3436]
 	move.b	d0,(a0)                         	| [...]
-	GET_ADDRESS	0x342d                     	| [$b677: stb    $342d]
+	GET_ADDRESS	current_attempt_validating_value_342d                     	| [$b677: stb    $342d]
 	move.b	d1,(a0)                         	| [...]
 	move.b	#0x05,d0                        	| [$b67a: ldd    #$0500]
 	move.w	#0x0500,d1                      	| [$b67a: ldd    #$0500]
@@ -21625,7 +21629,7 @@ l_b6e0:
 	GET_ADDRESS	0x34f2                     	| [$b6ff: std    $34f2]
 	MOVE_W_FROM_REG	d1,a0                         	| [...]
 	move.w	#0x24d9,d2                      	| [$b702: ldx    #$24d9]
-	GET_ADDRESS	0x342d                     	| [$b705: ldd    $342d]
+	GET_ADDRESS	current_attempt_validating_value_342d                     	| [$b705: ldd    $342d]
 	LOAD_D                                 	| [$b705: ldd    $342d]
 	GET_REG_UNCHECKED_ADDRESS	0,d2                   	| [$b708: std    ,x++] [video_address_word]
 	addq.w	#2,d2                           	| [...]
@@ -22323,7 +22327,7 @@ l_baf9:
 	move.b	#0x20,d1                        	| [$bafe: ldb    #$20]
 	jbsr	multiply_ab                       	| [$bb00: mul]
 	add.w	d1,d2                            	| [$bb01: leax   d,x]
-	GET_ADDRESS	0x342d                     	| [$bb03: ldd    $342d]
+	GET_ADDRESS	current_attempt_validating_value_342d                     	| [$bb03: ldd    $342d]
 	LOAD_D                                 	| [$bb03: ldd    $342d]
 	GET_REG_ADDRESS	0,d2                   	| [$bb06: std    ,x++]
 	addq.w	#2,d2                           	| [...]
@@ -24299,7 +24303,7 @@ l_c573:
 	GET_REG_ADDRESS	0,d4                   	| [$c584: ldd    ,u++]
 	addq.w	#2,d4                           	| [...]
 	LOAD_D                                 	| [$c584: ldd    ,u++]
-	GET_ADDRESS	0x342d                     	| [$c586: std    $342d]
+	GET_ADDRESS	current_attempt_validating_value_342d                     	| [$c586: std    $342d]
 	MOVE_W_FROM_REG	d1,a0                         	| [...]
 	rts                                    	| [$c589: rts]
 
@@ -24739,7 +24743,7 @@ l_c7c7:
 	jbsr	l_cc4b                            	| [$c7ca: jsr    $cc4b]
 	GET_ADDRESS	0x3421                     	| [$c7cd: ldx    $3421]
 	MOVE_W_TO_REG	a0,d2                         	| [...]
-	GET_ADDRESS	0x342d                     	| [$c7d0: lda    $342d]
+	GET_ADDRESS	current_attempt_validating_value_342d                     	| [$c7d0: lda    $342d]
 	move.b	(a0),d0                         	| [...]
 	GET_ADDRESS	0x3424                     	| [$c7d3: sta    $3424]
 	move.b	d0,(a0)                         	| [...]
