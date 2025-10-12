@@ -15600,12 +15600,14 @@ l_94ee:
 	move.w	d1,d4                           	| [$94ee: tfr    d,u]
 	move.b	#0x01,d0                        	| [$94f0: lda    #$01]
 l_94f2:
-	GET_REG_ADDRESS	0,d2                   	| [$94f2: stu    ,x++]
+	GET_REG_UNCHECKED_ADDRESS	0,d2                   	| [$94f2: stu    ,x++]
 	addq.w	#2,d2                           	| [...]
 	MOVE_W_FROM_REG	d4,a0                         	| [...]
-	GET_REG_ADDRESS	0,d2                   	| [$94f4: sta    ,x+]
+	VIDEO_WORD_DIRTY
+	GET_REG_UNCHECKED_ADDRESS	0,d2                   	| [$94f4: sta    ,x+]
 	addq.w	#1,d2                           	| [...]
 	move.b	d0,(a0)                         	| [...]
+	VIDEO_BYTE_DIRTY
 	add.w	#0x7e,d2                         	| [$94f6: leax   $7e,x]
 	addq.b	#1,d0                           	| [$94f9: inca]
 	cmp.b	#0x0a,d0                         	| [$94fa: cmpa   #$0a]

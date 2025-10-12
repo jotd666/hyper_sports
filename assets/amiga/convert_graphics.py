@@ -154,7 +154,11 @@ try:
 except OSError:
     print("Cannot find used_sprites")
 
+# some tiles are hard to display... We know they are there, we force them
+# instead of trying to trigger them by playing to death :)
 add_tile(sprite_cluts,0x163,cluts=[0xA,0xB])  # 1000 and 2000 points
+for i in range(0x21,0x24):
+    add_tile(sprite_cluts,i,cluts=[0])  # add mole with 2000,4000,8000 points
 
 player_cluts = [1,2]  # only 2 players supported: less memory
 # for all player frames with all player "races" (sorry)
@@ -163,7 +167,7 @@ for index,name in sprite_names.items():
         add_tile(sprite_cluts,index,cluts=player_cluts)
         if index in player_sprite_pairs:
             add_tile(sprite_cluts,index+1,cluts=player_cluts)
-
+# we should remove the other cluts 3 & 4 just in case it has been logged at some point
 if all_tile_cluts:
     tile_cluts = None
 else:
