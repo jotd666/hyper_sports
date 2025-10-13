@@ -2800,10 +2800,10 @@ osd_read_inputs_2:
 	movem.l	a0/d1,-(a7)
 	lea		keyboard_table(pc),a0
 
-	tst.b	(4,a0)		| "4" key like in MAME
-	beq.b	0f
-	bclr	#BIT_START_4P,d0
-0:	
+*	tst.b	(4,a0)		| "4" key like in MAME
+*	beq.b	0f
+*	bclr	#BIT_START_4P,d0
+*0:	
 	
 	movem.l	(a7)+,a0/d1
 	rts
@@ -2858,10 +2858,10 @@ osd_read_inputs_1:
 
 	lea		keyboard_table(pc),a0
 
-	tst.b	(3,a0)		| "3" key like in MAME
-	beq.b	0f
-	bclr	#BIT_START_3P,d0
-0:	
+*	tst.b	(3,a0)		| "3" key like in MAME
+*	beq.b	0f
+*	bclr	#BIT_START_3P,d0
+*0:	
 	tst.b	(0x4F,a0)		| "<-" key
 	beq.b	0f
 	bclr	#BIT_LEFT_1P,d0

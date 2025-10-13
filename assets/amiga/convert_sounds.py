@@ -99,7 +99,8 @@ def convert():
                     speech_list.add(index)
                     # speech: auto-declare
                     entry = f"{sound_name}_SND"
-                    sound_dict[entry] = {"index":index,"sample_rate":lq_sample_rate}
+                    # fix channel to avoid overlap
+                    sound_dict[entry] = {"channel":3,"index":index,"sample_rate":lq_sample_rate}
             except ValueError:
                 pass
 
