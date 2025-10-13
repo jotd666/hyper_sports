@@ -45,6 +45,8 @@ SPRITE_X_CORRECTION = 32
 SPRITE_Y_CORRECTION = 0
 SPRITE_HEIGHT = 16
 SPRITE_WIDTH = 16
+HW_SPRITE_Y_CORRECTION = -4
+HW_SPRITE_X_CORRECTION = 14
 
 Y_MAX = 256
 
@@ -54,7 +56,8 @@ _custom = 0xDFF000
 RAM_START = 0x1000
 ROM_START = 0x4000
 
-
+LAST_SPRITE = RAM_START+0xBC
+FIRST_SPRITE = RAM_START
 
 
 	.ifdef	RELEASE
@@ -82,7 +85,6 @@ OPT_IGNORE_ZERO_BITPLANE = 0
 OPT_ENABLE_DOUBLE_BUFFERING = 1
 
 
-OPT_ENABLE_MULTIPLEXED_SPRITES = 0
 
 NB_TILE_PLANES = 4
 NB_BOB_PLANES = 4
@@ -933,23 +935,27 @@ _vblank:
 	jbsr		do_irq
 	* now D5 can be destroyed
 	jbsr	really_update_scroll
+	jbsr	really_update_hw_sprites
 	
 	tst.b	frameskip
 	jeq		0f
 	eor.b	#1,flip_flop
 	jeq		23f
 0:
-	jbsr		really_update_tiles
 	jbsr		really_update_sprites
 	
 	
 	.ifne	OPT_ENABLE_DOUBLE_BUFFERING
-	bsr		switch_screen_buffers
+	jbsr		switch_screen_buffers
 	.endif
 	* process speech queue at each copper interrupt including PAL mid-screen
 	* so in NTSC the timings are the same
 	jbsr	process_speech_queue
 	
+	* update tiles in the end, dual playfield means that
+	* we can do that when we want and at the frequency
+	* we want
+	jbsr		really_update_tiles
 23:
 
 
@@ -1207,7 +1213,6 @@ really_update_tiles:
 
 
 really_update_sprites:
-update_bobs_and_hw_sprites:
 	
 	***********************
 	* erase previous BOBs *
@@ -1250,12 +1255,16 @@ update_bobs_and_hw_sprites:
 	lea		sprite_groups(pc),a2
 	GET_MEMORY_START_AND_DP
     lea _custom,A5
-	lea		(0x10BC,a6),a0		| sprite start
+	lea		(LAST_SPRITE,a6),a0		| sprite start
 	lea		bob_table,a4
 	move.w	#NB_TARGET_SPRITES-1,d7
 	move.l	bob_previous_drawn_sprites(pc),a6
 1:
+	lea		sprite_drawn(pc),a3
+	tst.b	(a3,d7.w)
+	jne		3f
 	jbsr	update_one_bob
+3:
 	subq.w	#TARGET_SPRITE_SIZEOF,a0
 	dbf		d7,1b
 2:
@@ -1488,59 +1497,121 @@ update_one_bob:
 sprite_groups:
 	.include	"sprite_groups.68k"
 	
-	.ifdef	HW_SPRITES
-update_one_hw_sprite:
-	* code = 0 and clut = 0 => disabled ?? to check
-	moveq	#0,d2
-	move.b	(TARGET_SPRITE_CODE,a0),d2
-	jeq	2f
 
-	move.b	(TARGET_SPRITE_X,a0),d0
-	add.w	d2,d2
-	add.w	d2,d2
-	btst    #2,(TARGET_SPRITE_ATTR,a0)
-	jeq		0f
-	addq	#2,d2
+really_update_hw_sprites:
+	************************************************
+	* draw current sprites from 6809 sprite memory *
+	************************************************
+	GET_MEMORY_START_AND_DP
+	* clear "sprite drawn" table
+	lea		sprite_drawn(pc),a0
+	move.w	#NB_TARGET_SPRITES/4-1,d7
 0:
-	cmp.b	#1,(a6,d2.w)
-	jne		2f		| not a hw sprite: zap
-	* get the actual sprite index for our engine
-	move.b	(1,a6,d2.w),d2
-	and.w	#0xFF,d2
-	* it is a HW sprite all right
-	lsl.w	#4,d2	| 4 pointers for each sprite
-	move.b  (TARGET_SPRITE_CODE,a0),d3
-	btst	#0,d3
-	jeq		10f
-	addq	#8,d2			| mirror sprite couple
-10:
-	lea		(a4,d2.w),a5	| pointer on first sprite
+	clr.l	(a0)+
+	dbf		d7,0b
+	
+	* now update in the reverted order // the bobs
+	lea		(FIRST_SPRITE,a6),a0		| sprite start
+	lea		hws_table,a4
+	lea		game_sprites+2,a2				| copperlist part
+	lea		game_sprites_end+2,a6
+	move.w	#NB_TARGET_SPRITES,d6
+	moveq	#0,d7
+	lea		HW_SpriteYTable_16,a1		| all sprites have same size 16 high
+1:
+	jbsr	update_one_hw_sprite
+	addq.w	#2,a0
+	cmp.l	a2,a6
+	jeq		2f			| all sprites are used already: bail out
+	addq	#1,d7
+	cmp.w	d6,d7		| we have to increase d7 (priority inverted vs bobs)
+	jne		1b
+	* blank the rest of the unused sprites
+	move.l	#blank_sprite,d0
+1:
+	move.w	d0,(4,a2)
+	swap	d0
+	move.w	d0,(a2)
+	swap	d0
+	addq	#8,a2
+	cmp.l	a2,a6
+	jne		1b
+2:	
+	rts
 
+* < A0: target sprite memory
+* < A1: hw sprite y table
+* < A2: part copperlist where the sprites are
+* < D7: loop counter (used for flag index)
+update_one_hw_sprite:
 	moveq	#0,d0
 	moveq	#0,d1
 	move.b	(TARGET_SPRITE_Y,a0),d1  | sprite Y
-	beq.b	2f			| Y set to 0: not shown
-	not.b	d1
+	move.b	(TARGET_SPRITE_X,a0),d0
 
-	move.b	(TARGET_SPRITE_X,a0),d0  | sprite X
+	* filter out if X=0 AND Y=0
+	tst.b	d1
+	jne		0f
+	tst.b	d0
+	jeq	2f
+0:
+
+	* get code immediately. we want to know if it's a
+	* hardware sprite right away
+	moveq	#0,d3
+	move.b	(TARGET_SPRITE_CODE,a0),d3
+	.ifdef	NO68020
+	add.w	d3,d3
+	add.w	d3,d3
+	move.l	(a4,d3.w),d3
+	.else
+	move.l	(a4,d3.w*4),d3
+	.endif
+	jeq		2f		| not defined or no HW sprite, pass to BOBs
+	move.l	d3,a5	| clut table
 	
-	.ifne	SPRITE_Y_CORRECTION
-	add.b	#SPRITE_Y_CORRECTION,d1
+	* we're taking from here, mark the sprite as empty
+	* so BOB pass isn't going to consider it
+	lea		sprite_drawn(pc),a3
+	st.b	(a3,d7.w)
+	
+	* now change coordinates
+
+	neg.w	d1
+	add.w	#241+HW_SPRITE_Y_CORRECTION,d1
+	jmi		2f		| negative after correction => skip
+
+
+	.ifne	HW_SPRITE_X_CORRECTION
+	add.w	#HW_SPRITE_X_CORRECTION,d0
 	.endif
-	.ifne	SPRITE_X_CORRECTION
-	add.b	#SPRITE_X_CORRECTION,d0
-	.endif
+
+	moveq	#0,d2
+	move.b	(TARGET_SPRITE_ATTR,a0),d2
+	and.b	#0xF,d2		| CLUT
+	
+	* it is a HW sprite all right
+	lsl.w	#3,d2	| 2 pointers for each sprite
+
+	lea		(a5,d2.w),a5	| pointer on first sprite
 
 	* D0 and D1 are already set
-
-	sub.w	#16,d0	| move each sprite 16 bits to the left
-	bmi.b	2f			| X < 0 after correction: can't show
+	* so is A1 with sprite Y pos table
+	
 	bsr		store_sprite_pos
 
 	
 	* first sprite of couple
 	move.l	(a5)+,a3
+	.ifdef	OCS_VERSION
 	move.l	d0,(a3)
+	.else
+	* fmode = 2: sprite control word is 8 bytes
+	move.w	d0,(4,a3)
+	swap	d0
+	move.w	d0,(a3)
+	swap	d0
+	.endif
 	move.l	a3,d1
 	* store sprite pointer in copperlist
 	move.w	d1,(4,a2)
@@ -1549,7 +1620,14 @@ update_one_hw_sprite:
 	* second sprite of couple
 	BSET	#7,d0		| attach bit set
 	move.l	(a5),a3
+	.ifdef	OCS_VERSION
 	move.l	d0,(a3)
+	.else
+	move.w	d0,(4,a3)
+	swap	d0
+	move.w	d0,(a3)
+	swap	d0
+	.endif
 	move.l	a3,d1
 	* store sprite pointer in copperlist
 	move.w	d1,(4+8,a2)
@@ -1559,7 +1637,8 @@ update_one_hw_sprite:
 2:
 	
 	rts
-	.endif
+	
+
 	
 
 	.ifne	OPT_ENABLE_LOGGING
@@ -1890,7 +1969,9 @@ clear_planes_any_blitter_internal:
 	move.w  d4,bltsize(a5)	|rectangle size, starts blit
     rts
 
-	
+sprite_drawn:
+	.skip	NB_TARGET_SPRITES
+
 sprite_buffer:
 	.skip	NB_TARGET_SPRITES*SPRITE_SIZEOF
 	
@@ -1959,6 +2040,8 @@ store_system:
 	jsr		_LVOSupervisor(a6)
 	move.l	d0,system_vbr
 1:
+
+
 	move.w	AttnFlags(a6),d0
 	btst	#AFB_68020,d0
 	beq.b	0f				| no 68020: disable stars & switch to 25FPS
@@ -3366,8 +3449,11 @@ tiles_bitplanes:
 reset_bplcon1_1:
 	.word 	0
 
-*game_sprite_colors:
-*	DECL_COLORS	16,16
+	.ifdef	OCS_VERSION
+sprite_colors:
+	DECL_COLORS	16,16
+	.endif
+
 game_sprites:
 	DECL_SPRITES
 game_sprites_end:

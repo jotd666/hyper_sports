@@ -13,6 +13,10 @@ used_sprite_cluts_file = this_dir / "used_sprite_cluts.json"
 used_tile_cluts_file = this_dir / "used_tile_cluts.json"
 used_graphics_dir = this_dir / "used_graphics"
 
+NB_SPRITES = 0x200
+NB_TILES = 0x400
+
+
 def palette_pad(palette,pad_nb):
     palette += (pad_nb-len(palette)) * [(0x10,0x20,0x30)]
 
@@ -125,12 +129,15 @@ swimming_player = {0x101,
 
 #0x146,0x14E use a mirror (target): don't regroup!!
 group_sprite_pairs = player_sprite_pairs | {0x1DE,0xF0,0x8E,0x85,0x17C,0xFC,0x62,0x64,0x66,0x168,0x17A,0x160,0x1A8} |sr2(0x2A,0x30)
+shooting_player = {0X1E0,0x1E2,0x1E4,0x1E8,0x1EA,0x1EC,0x1EF,0x1F4,0x1E7,0x1F2,0x1F5}
+bow_player = {0xE7,0xEE}
 
 def get_sprite_names():
 
     rval = dict()
     rval = {k:"player" for k in player_sprite_pairs | player_single_sprites}
     rval |= {k:"swimming_player" for k in swimming_player}
+    rval |= {k:"shooting_player" for k in shooting_player}
     rval[0x1E6] = "gun"
     rval[0x1EE] = "go"
     rval[0x16A] = "points"

@@ -8,10 +8,18 @@ sprite_names = get_sprite_names()
 
 mirror_sprites = get_mirror_sprites()
 
+
+def get_possible_hw_sprites():
+    # declare all player frames: TODO do not declare pole vault jump
+    possible_hw_sprites = {i for i in range(NB_SPRITES) if i not in mirror_sprites and
+    any(x in sprite_names.get(i,"") for x in ("shooting_player",))}
+    return possible_hw_sprites
+
+possible_hw_sprites = set() #get_possible_hw_sprites()
+
+
 magenta = (254,0,254)
 
-NB_SPRITES = 0x200
-NB_TILES = 0x400
 
 dump_it = True
 
@@ -262,7 +270,7 @@ sprite_palette = sorted(sprite_palette)
 magi = sprite_palette.index(magenta)
 sprite_palette.pop(magi)
 # temporary: put magenta as first color to be able to decode the frames properly
-sprite_palette.insert(0,magi)
+sprite_palette.insert(0,magenta)
 
 print(f"Used sprite colors: {len(sprite_palette)}")
 sprite_palette += (16-len(sprite_palette)) * [(0x10,0x20,0x30)]
@@ -286,7 +294,7 @@ full_palette = tile_palette+sprite_palette
 #print([(hex(x<<4),hex(y<<4),hex(z<<4)) for x,y,z in unused_colors])
 
 # pad just in case we don't have 16+16 colors (but we have)
-full_palette += (nb_colors-len(full_palette)) * [(0x10,0x20,0x30)]
+full_palette += [(0x10,0x20,0x30)] * (nb_colors-len(full_palette))
 
 
 
@@ -305,6 +313,7 @@ def read_tileset(img_set_list,palette,plane_orientation_flags,cache,is_bob):
             if tile:
 
                 for b,(plane_name,plane_func) in zip(plane_orientation_flags,plane_orientations):
+                    bitplane_sprite_data = None
                     if b:
 
                         actual_nb_planes = nb_planes
@@ -324,6 +333,14 @@ def read_tileset(img_set_list,palette,plane_orientation_flags,cache,is_bob):
                             height = wtile.size[1]
                             width = wtile.size[0]//8 + 2
                             bitplane_data = bitplanelib.palette_image2raw(wtile,None,palette,generate_mask=True,mask_color=magenta)
+                            # add sprite data if eligible: player frame, not mirrored
+
+                            if i in possible_hw_sprites:
+                                # using original, uncropped bitplane data
+                                bitplane_sprite_data = bitplanelib.palette_image2attached_sprites(wtile,None,palette,
+                                sprite_fmode=2,with_control_words=True)
+                                # void the blitter data
+                                bitplane_data = b''
                         else:
                             # 4 planes, no mask
                             height = 8
@@ -348,6 +365,8 @@ def read_tileset(img_set_list,palette,plane_orientation_flags,cache,is_bob):
                                 else:
                                     bitplane_plane_ids.append(0)  # blank
                         entry[plane_name] = {"width":width,"height":height,"y_start":y_start,"bitplanes":bitplane_plane_ids}
+                        if bitplane_sprite_data:
+                            entry[plane_name]["sprdat"] = bitplane_sprite_data
 
             tile_entry.append(entry)
 
@@ -366,6 +385,7 @@ tile_plane_cache = {}
 tile_table = read_tileset(tile_set_list,full_palette[:16],[True,False,False,False],cache=tile_plane_cache, is_bob=False)
 
 bob_plane_cache = {}
+
 
 sprite_table = read_tileset(sprite_set_list,full_palette[16:],[True,False,True,False],cache=bob_plane_cache, is_bob=True)
 
@@ -388,6 +408,7 @@ with open(os.path.join(src_dir,"sprite_groups.68k"),"w") as f:
 with open(os.path.join(src_dir,"graphics.68k"),"w") as f:
     f.write("\t.global\tcharacter_table\n")
     f.write("\t.global\tbob_table\n")
+    f.write("\t.global\thws_table\n")
 
     f.write("character_table:\n")
 
@@ -452,6 +473,30 @@ with open(os.path.join(src_dir,"graphics.68k"),"w") as f:
             f.write("0")
         f.write("\n")
 
+    f.write("hws_table:\n")
+    for i,tile_entry in enumerate(sprite_table):
+        f.write("\t.long\t")
+        if any(t and "sprdat" in t['standard'] for t in tile_entry):
+            prefix = sprite_names.get(i,"bob")
+            prefix = f"hws_{prefix}_{i:02x}"
+            f.write(prefix)
+        else:
+            f.write("0")
+        f.write("\n")
+
+    # HW sprites clut declaration
+    for i,tile_entry in enumerate(sprite_table):
+        if any(t and "sprdat" in t['standard'] for t in tile_entry):
+            prefix = sprite_names.get(i,"bob")
+            f.write(f"hws_{prefix}_{i:02x}:\n")
+            for j,t in enumerate(tile_entry):
+                f.write("\t.long\t")
+                if t:
+                    z = f"hws_{prefix}_{i:02x}_{j:02x}"
+                    f.write(f"{z}_0,{z}_1")
+                else:
+                    f.write("0,0")
+                f.write("\n")
     for i,tile_entry in enumerate(sprite_table):
         if any(tile_entry):
             prefix = sprite_names.get(i,"bob")
@@ -511,3 +556,14 @@ with open(os.path.join(src_dir,"graphics.68k"),"w") as f:
         f.write(f"bob_plane_{v:02d}:")
         dump_asm_bytes(k,f)
 
+    for i,tile_entry in enumerate(sprite_table):
+        if any(t and "sprdat" in t['standard'] for t in tile_entry):
+            prefix = sprite_names.get(i,"bob")
+            for j,t in enumerate(tile_entry):
+
+                if t:
+                    data = t["standard"]["sprdat"]
+                    for k,d in enumerate(data):
+                        f.write(f"hws_{prefix}_{i:02x}_{j:02x}_{k}:")
+                        bitplanelib.dump_asm_bytes(d,f,mit_format=True)
+                    f.write("\n")
