@@ -265,6 +265,14 @@ for clut_index,tsd in sprite_sheet_dict.items():
     sprite_set_list[clut_index] = sprite_set
     sprite_palette.update(sp)
 
+# mark 27/05 should have black, but it's completely blank. No need to transfer black from another
+# clut just for that. Copy mark from another clut
+mark = sprite_set_list[8][0x27]
+mark_2 = Image.new("RGB",mark.size)
+mark_2.paste(mark)
+bitplanelib.replace_color(mark_2,{(0xFF,0,0)},(0,0,0))
+sprite_set_list[5][0x27] = mark_2
+# end of dirty color hack
 
 sprite_palette = sorted(sprite_palette)
 magi = sprite_palette.index(magenta)
@@ -278,10 +286,6 @@ sprite_palette += (16-len(sprite_palette)) * [(0x10,0x20,0x30)]
 
 # sprite_set_list is now a 16x512 matrix of sprite tiles
 
-    # Hardware sprites
-##    cluts = hw_sprite_cluts
-##    _,hw_sprite_set = load_tileset(tsd,i,16,"hw_sprites",dump_dir,dump=dump_it,name_dict=sprite_names,cluts=cluts)
-##    hw_sprite_set_list.append(hw_sprite_set)
 
 
 full_palette = tile_palette+sprite_palette
