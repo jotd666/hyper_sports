@@ -82,7 +82,6 @@ def convert():
 
     "BLAST_BLOW_02_SND"            :{"index":0x02,"sample_rate":hq_sample_rate},
     "BLAST_ZAP_03_SND"            :{"index":0x03,"sample_rate":hq_sample_rate},
-    #"LEVEL_1_COMPLETED_TUNE_SND"                :{"index":0x1E,"pattern":0x14,"volume":32,"loops":False,"ticks":480},
 
 
     }
@@ -114,19 +113,26 @@ def convert():
         if "channel" not in v:
             v["channel"] = -1 # auto
 
+    sound_dict.update({    "RECORD_BROKEN_TUNE_SND"      :{"index":0x43,"pattern":0x8,"volume":32},
+    "CHARIOTS_TUNE_SND"      :{"index":0x2D,"pattern":0x3,"volume":32,"loops":True},
+    "BEST_PLAYER_TUNE_SND"      :{"index":0x3E,"pattern":0xA,"volume":32},
+    "GAME_OVER_TUNE_SND"      :{"index":0x3B,"pattern":0xC,"volume":32},
+    "START_EVENT_TUNE_SND"      :{"index":0x3D,"pattern":0xE,"volume":32},
+    "NAME_ENTRY_SND"      :{"index":0x40,"pattern":0x0,"volume":32,"loops":True},
+})
     sound_dict["SOMMERSAULT_2_SND"] = {"index":0x1C,"same_as":"SOMMERSAULT_SND"}
     sound_dict["PING_66_SND"] = {"index":0x66,"same_as":"PING_65_SND"}
 
-    dummy_sounds = [0x40, # start music
-    0x30,  # after start music (same as in tracknfield)
-0x3D, # swim event start
-0x3B, # game over music
+    dummy_sounds = [#0x40, # start music
+    0x30,  # after start music
+#0x3D, # swim event start
+#0x3B, # game over music
 0x3C, # qualify
-0x2D,  # chariots
+#0x2D,  # chariots
 0x42, # podium shit
 0x44, # win tune
-0x3E, # 2P end round tune
-0x43, # win tune (followed by cheering)
+#0x3E, # 2P end round tune
+#0x43, # win tune (followed by cheering)
 0x47, # another win tune
 0xFF, # ignore
     ]
@@ -214,8 +220,7 @@ def convert():
                 wav_file = os.path.join(sound_dir,wav_name+".wav")
 
                 def get_sox_cmd(sr,output):
-                    return [sox,"--volume","0.8",wav_file,"--channels","1","-D","--bits","8","-r",str(sr),"--encoding","signed-integer",output]
-
+                    return [sox,"--volume","2.0",wav_file,"--channels","1","-D","--bits","8","-r",str(sr),"--encoding","signed-integer",output]
 
                 used_sampling_rate = details["sample_rate"]
                 used_priority = details.get("priority",1)
@@ -275,8 +280,8 @@ def convert():
 
 
         # make sure next section will be aligned
-##        with open(os.path.join(sound_dir,f"{gamename}_conv.mod"),"rb") as f:
-##            contents = f.read()
+        with open(os.path.join(sound_dir,f"{gamename}_conv.mod"),"rb") as f:
+            contents = f.read()
 
         fw.write("{}:".format(music_module_label))
         write_asm(contents,fw)

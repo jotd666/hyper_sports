@@ -167,6 +167,15 @@ BIT_LEFT_2P = 6
 	.endm
 	
 .macro	WAIT_BLIT
+	.ifndef	RELEASE
+	* always check that custom is set (in dev mode)
+	* saves a lot of time!
+	cmp.l	#_custom,a5
+	jeq		customok\@
+	BREAKPOINT	"custom not set in A5"
+customok\@:
+	.endif
+
 	move.w	#0x8400,(dmacon,a5)		| blitter high priority
 wait\@:
 	BTST	#6,(dmaconr,a5)
@@ -253,10 +262,6 @@ start:
 		.text
 
 
-	.ifne	OPT_ENABLE_PROFILING
-	* init profiling if enabled
-	.include	"profiler.68k"
-	.endif
 
 	    
 _user:
@@ -905,7 +910,6 @@ _vblank:
 
 
 	* declare that we're in interrupt mode so osd_disable_interrupts/osd_enable_interrupts
-	st.b	interrupt_mode
 	* is level 1 interrupt set? that would mean that mid-screen interrupt
 	* is the source of the interrupt
 	btst	#2,d0
@@ -918,7 +922,6 @@ _vblank:
 	bne.b	1f
 	* D5 should be left untouched!
 	jbsr		do_irq
-	clr.b	interrupt_mode	
 	jbsr	process_speech_queue	| process here too (PAL)
 	clr.b	d0
 1:
@@ -928,7 +931,6 @@ _vblank:
 
 
 	
-	subq.w	#1,delay_timer
 		
 	* make sure that we didn't change D5 from there. The IRQ
 	* may use it (D5 = S) to create local variables
@@ -1048,42 +1050,6 @@ osd_break:
 
 	
 
-* < D0: number of 1/60Hz ticks
-* can work with interrupts enabled or disabled
-osd_wait:
-	movem.l	d0-a6,-(a7)
-	move.w	d0,delay_timer
-	jbsr	osd_is_vblank_interrupt_enabled
-	tst.w	d0
-	jne		2f
-	* interrupts are disabled: timer isn't going to change
-	* wait using vertical blank interrupt request (we don't need it!)
-	clr.w	one_out_of_five
-0:
-	move.w	#0x20,_custom+intreq
-	move.w	#0x20,_custom+intreq
-1:
-	move.w	_custom+intreqr,d0
-	btst	#5,d0
-	beq.b	1b
-	addq.w	#1,one_out_of_five
-	cmp.w	#5,one_out_of_five
-	bne.b	5f
-	subq.w	#1,delay_timer	
-	clr.w	one_out_of_five
-5:
-	subq.w	#1,delay_timer
-	beq.b	4f
-	bpl.b	0b
-4:
-	movem.l	(a7)+,d0-a6
-	rts
-	
-2:
-	tst.w	delay_timer
-	bne.b	2b
-	movem.l	(a7)+,d0-a6
-	rts
 
 
 * < D0: nonzero interrupts enabled
@@ -2827,10 +2793,14 @@ osd_read_system_inputs:
 	tst.b	(1,a0)		| "1" key like in MAME
 	beq.b	0f
 	bclr	#BIT_START_1P,d0
+	* rescan controller types in case the user swapped mouse after bootup
+	jsr	 _detect_controller_types_no_wait 
 0:
 	tst.b	(2,a0)		| "2" key like in MAME
 	beq.b	0f
 	bclr	#BIT_START_2P,d0
+	* rescan controller types
+	jsr	 _detect_controller_types_no_wait 
 0:	
 
 	jbsr		is_game_playing
@@ -3139,8 +3109,7 @@ program_args_end:
 	.align	4
 read_args_string:
 	.byte	read_args_string_end-read_args_string
-	.ascii	"INVINCIBLE/S,INFLIVES/S,"
-	.ascii	"CHEATKEYS/S,STARTLIVES/K/N,SKILL/K/N,STARTLEVEL/K/N"
+	.ascii	"CHEATKEYS/S,STARTLEVEL/K/N"
 read_args_string_end:
 	.align	2
 
@@ -3170,7 +3139,8 @@ old_actiview:
 	.long	0
 old_stack:
 	.long	0
-
+current_screen:
+	.word	0
 	
 _tag:
 		.long	WHDLTAG_MONITOR_GET
@@ -3215,6 +3185,10 @@ system_vbr:
 flip_flop:
 	.byte	0
 
+second_joystick:
+	.byte	0
+fire1fire2up_controls:
+	.byte	0
 
 	.align	2
 
@@ -3223,9 +3197,6 @@ host_sprites:
 keyboard_table:
 	ds.b	0x100
 
-interrupt_mode:
-	.word	0
-	
 	
 last_known_m6809_pc:
 	.word	-1
@@ -3252,8 +3223,7 @@ _gfxbase:
 	.long	0
 _dosbase:
 	.long	0
-delay_timer:
-	.word	0
+
 one_out_of_five:
 	.word	0
 
@@ -3480,7 +3450,11 @@ scroll_rows_second_half:
 
 
 	* pal limit
-    .word  0xFFCF,0xFFFE       | PAL wait
+	.ifdef OCS_VERSION
+    .word  0xFFDF,0xFFFE       | PAL wait
+	.else
+    .word  0xFFCF,0xFFFE       | PAL wait (fmode changes stuff)
+	.endif
 	| no bobs from now on (as a bonus it runs on NTSC!)
 	.word	 intreq,0x8010
 	.set	y_start,0
