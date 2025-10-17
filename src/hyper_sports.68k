@@ -29,7 +29,7 @@
 
 * page $38xx
 
-game_playing_00 = 0x00
+global_state_00 = 0x00
 dsw2_copy_0d = 0x0d
 event_pointer_1c = 0x1c
 event_pointer_1e = 0x1e
@@ -782,7 +782,7 @@ l_42cb:
 	rts                                    	| [$431f: rts]
 
 l_4320:
-	OP_R_ON_DP_ADDRESS	move,game_playing_00,d0| [$4320: lda    game_playing_00]
+	OP_R_ON_DP_ADDRESS	move,global_state_00,d0| [$4320: lda    global_state_00]
 	jne	l_4325                             	| [$4322: bne    $4325]
 	rts                                    	| [$4324: rts]
 
@@ -988,7 +988,7 @@ l_446b:
 	move.b	(a0),d0                         	| [...]
 	jra	l_422d                             	| [$446d: jra    $422d]
 l_4470:
-	OP_R_ON_DP_ADDRESS	move,game_playing_00,d0| [$4470: lda    game_playing_00]
+	OP_R_ON_DP_ADDRESS	move,global_state_00,d0| [$4470: lda    global_state_00]
 	jne	l_4475                             	| [$4472: bne    $4475]
 	rts                                    	| [$4474: rts]
 
@@ -1162,7 +1162,7 @@ l_4564:
 	and.b	#0x07,d0                         	| [$456e: anda   #$07]
 	jeq	l_458d                             	| [$4570: beq    $458d]
 	OP_W_ON_DP_ADDRESS	move,0x48,d0         | [$4572: sta    $48]
-	OP_R_ON_DP_ADDRESS	move,game_playing_00,d0| [$4574: lda    game_playing_00]
+	OP_R_ON_DP_ADDRESS	move,global_state_00,d0| [$4574: lda    global_state_00]
 	jne	l_4581                             	| [$4576: bne    $4581]
 	moveq	#0,d0                            	| [$4578: clra]
 	jbsr	l_4eb7                            	| [$4579: jsr    $4eb7]
@@ -1345,7 +1345,7 @@ l_466c:
 	jra	queue_event_4e9a                   	| [$4670: jra    queue_event_4e9a]
 
 start_game_4673:
-	OP_W_ON_DP_ADDRESS	addq,game_playing_00,#1| [$4673: inc    game_playing_00]
+	OP_W_ON_DP_ADDRESS	addq,global_state_00,#1| [$4673: inc    global_state_00]
 	OP_1_ON_DP_ADDRESS	clr,swimmer_19             | [$4675: clr    $19]
 	OP_1_ON_DP_ADDRESS	clr,0x1b             | [$4677: clr    $1b]
 	moveq	#0,d0                            	| [$4679: clra]
@@ -1445,7 +1445,7 @@ l_46d9:
 	JMP_A_INDEXED	A2                   	| [$46df: jra    [a,x]] [jump_table]
 
 l_46e1:
-	OP_1_ON_DP_ADDRESS	tst,game_playing_00  | [$46e1: tst    game_playing_00]
+	OP_1_ON_DP_ADDRESS	tst,global_state_00  | [$46e1: tst    global_state_00]
 	jeq	l_46f3                             	| [$46e3: beq    $46f3]
 	move.w	#0xd370,d4                      	| [$46e5: ldu    #$d370]
 	OP_R_ON_DP_ADDRESS	move,current_level_68,d0| [$46e8: lda    current_level_68]
@@ -1561,7 +1561,7 @@ l_4772:
 	jbsr	l_5703                            	| [$477a: jsr    $5703]
 	jbsr	l_56a6                            	| [$477d: jsr    $56a6]
 	jbsr	l_47c0                            	| [$4780: bsr    $47c0]
-	OP_R_ON_DP_ADDRESS	move,game_playing_00,d0| [$4782: lda    game_playing_00]
+	OP_R_ON_DP_ADDRESS	move,global_state_00,d0| [$4782: lda    global_state_00]
 	jne	l_47bb                             	| [$4784: bne    $47bb]
 	GET_ADDRESS	0x34e5                     	| [$4786: tst    $34e5]
 	tst.b	(a0)                             	| [...]
@@ -1749,7 +1749,7 @@ l_487f:
 l_488c:
 	jbsr	l_5431                            	| [$488c: jsr    $5431]
 	move.b	#0x03,d0                        	| [$488f: lda    #$03]
-	OP_1_ON_DP_ADDRESS	tst,game_playing_00  | [$4891: tst    game_playing_00]
+	OP_1_ON_DP_ADDRESS	tst,global_state_00  | [$4891: tst    global_state_00]
 	jne	l_4897                             	| [$4893: bne    $4897]
 	move.b	#0x07,d0                        	| [$4895: lda    #$07]
 l_4897:
@@ -2394,7 +2394,7 @@ l_4caf:
 
 l_4cb0:
 	jbsr	l_5027                            	| [$4cb0: jsr    $5027]
-	OP_R_ON_DP_ADDRESS	move,game_playing_00,d0| [$4cb3: lda    game_playing_00]
+	OP_R_ON_DP_ADDRESS	move,global_state_00,d0| [$4cb3: lda    global_state_00]
 	jne	l_4cc0                             	| [$4cb5: bne    $4cc0]
 	OP_W_ON_DP_ADDRESS	addq,0x24,#1         | [$4cb7: inc    $24]
 	OP_1_ON_DP_ADDRESS	clr,0x26             | [$4cb9: clr    $26]
@@ -2758,7 +2758,7 @@ queue_sound_event_4ead:
 	and.b	#0x04,d1                         	| [$4eaf: andb   #$04]
 	jne	l_4eb7                             	| [$4eb1: bne    $4eb7]
 force_queue_sound_eventl_4eb3:
-	OP_R_ON_DP_ADDRESS	move,game_playing_00,d1| [$4eb3: ldb    game_playing_00]
+	OP_R_ON_DP_ADDRESS	move,global_state_00,d1| [$4eb3: ldb    global_state_00]
 	jeq	l_4ec9                             	| [$4eb5: beq    $4ec9]
 l_4eb7:
 	GET_DP_ADDRESS	0x3c                    	| [$4eb7: ldy    $3c]
@@ -2873,7 +2873,7 @@ l_4f42:
 	rts                                    	| [$4f4e: rts]
 
 l_4f4f:
-	OP_R_ON_DP_ADDRESS	move,game_playing_00,d0| [$4f4f: lda    game_playing_00]
+	OP_R_ON_DP_ADDRESS	move,global_state_00,d0| [$4f4f: lda    global_state_00]
 	jne	l_4f6d                             	| [$4f51: bne    $4f6d]
 	OP_R_ON_DP_ADDRESS	move,current_event_69,d0| [$4f53: lda    current_event_69]
 	cmp.b	#0x01,d0                         	| [$4f55: cmpa   #$01]
@@ -3629,7 +3629,7 @@ l_52b8:
 	rts                                    	| [$52cb: rts]
 
 l_52cc:
-	OP_R_ON_DP_ADDRESS	move,game_playing_00,d0| [$52cc: lda    game_playing_00]
+	OP_R_ON_DP_ADDRESS	move,global_state_00,d0| [$52cc: lda    global_state_00]
 	jeq	l_52d1                             	| [$52ce: beq    $52d1]
 	rts                                    	| [$52d0: rts]
 
@@ -3674,7 +3674,7 @@ l_5301:
 	clr.b	(a0)                         	| [...]
 	GET_ADDRESS	0x31cd                     	| [$5309: clr    $31cd]
 	clr.b	(a0)                         	| [...]
-	OP_1_ON_DP_ADDRESS	tst,game_playing_00  | [$530c: tst    game_playing_00]
+	OP_1_ON_DP_ADDRESS	tst,global_state_00  | [$530c: tst    global_state_00]
 	jne	l_531c                             	| [$530e: bne    $531c]
 	OP_W_ON_DP_ADDRESS	addq,0xad,#1         | [$5310: inc    $ad]
 	GET_ADDRESS	0x310d                     	| [$5312: inc    $310d]
@@ -3777,7 +3777,7 @@ l_5380:
 	move.b	(a0),d0                         	| [...]
 	jra	l_422d                             	| [$5399: jra    $422d]
 l_539c:
-	OP_R_ON_DP_ADDRESS	move,game_playing_00,d0| [$539c: lda    game_playing_00]
+	OP_R_ON_DP_ADDRESS	move,global_state_00,d0| [$539c: lda    global_state_00]
 	jeq	l_53b3                             	| [$539e: beq    $53b3]
 	move.w	#0x3380,d2                      	| [$53a0: ldx    #$3380]
 	OP_1_ON_DP_ADDRESS	clr,0x48             | [$53a3: clr    $48]
@@ -4327,7 +4327,7 @@ l_56a6:
 	jeq	l_56db                             	| [$56aa: beq    $56db]
 	cmp.b	#0x03,d0                         	| [$56ac: cmpa   #$03]
 	jeq	l_56db                             	| [$56ae: beq    $56db]
-	OP_R_ON_DP_ADDRESS	move,game_playing_00,d0| [$56b0: lda    game_playing_00]
+	OP_R_ON_DP_ADDRESS	move,global_state_00,d0| [$56b0: lda    global_state_00]
 	jeq	l_56db                             	| [$56b2: beq    $56db]
 	move.w	#0x2695,d4                      	| [$56b4: ldu    #$2695]
 	move.w	#0xd413,d2                      	| [$56b7: ldx    #$d413]
@@ -4553,7 +4553,7 @@ l_57f3:
 	rts                                    	| [$57fb: rts]
 
 l_57fc:
-	OP_R_ON_DP_ADDRESS	move,game_playing_00,d0| [$57fc: lda    game_playing_00]
+	OP_R_ON_DP_ADDRESS	move,global_state_00,d0| [$57fc: lda    global_state_00]
 	jeq	l_5816                             	| [$57fe: beq    $5816]
 	OP_1_ON_DP_ADDRESS	clr,0x90             | [$5800: clr    $90]
 	move.w	#0x33d0,d2                      	| [$5802: ldx    #$33d0]
@@ -4583,7 +4583,7 @@ l_5817:
 	move.b	#0x20,d0                        	| [$5827: lda    #$20]
 	jra	l_422d                             	| [$5829: jra    $422d]
 l_582c:
-	OP_R_ON_DP_ADDRESS	move,game_playing_00,d0| [$582c: lda    game_playing_00]
+	OP_R_ON_DP_ADDRESS	move,global_state_00,d0| [$582c: lda    global_state_00]
 	jeq	l_5854                             	| [$582e: beq    $5854]
 	OP_R_ON_DP_ADDRESS	move,current_event_69,d0| [$5830: lda    current_event_69]
 	cmp.b	#0x03,d0                         	| [$5832: cmpa   #$03]
@@ -8165,7 +8165,7 @@ l_6c0d:
 	asl.b	#1,d0                            	| [$6c12: asla]
 	JMP_A_INDEXED	A4                   	| [$6c13: jra    [a,u]] [jump_table]
 l_6c15:
-	OP_1_ON_DP_ADDRESS	tst,game_playing_00  | [$6c15: tst    game_playing_00]
+	OP_1_ON_DP_ADDRESS	tst,global_state_00  | [$6c15: tst    global_state_00]
 	jeq	l_6c20                             	| [$6c17: beq    $6c20]
 	jbsr	l_4fa1                            	| [$6c19: jsr    $4fa1]
 	and.b	#0x05,d0                         	| [$6c1c: anda   #$05]
@@ -8177,7 +8177,7 @@ l_6c20:
 	move.b	(a0),d0                         	| [...]
 	cmp.b	#0x0f,d0                         	| [$6c28: cmpa   #$0f]
 	jeq	l_6c6d                             	| [$6c2a: beq    $6c6d]
-	OP_1_ON_DP_ADDRESS	tst,game_playing_00  | [$6c2c: tst    game_playing_00]
+	OP_1_ON_DP_ADDRESS	tst,global_state_00  | [$6c2c: tst    global_state_00]
 	jne	l_6c34                             	| [$6c2e: bne    $6c34]
 	cmp.b	#0x01,d0                         	| [$6c30: cmpa   #$01]
 	jeq	l_6c4c                             	| [$6c32: beq    $6c4c]
@@ -8305,7 +8305,7 @@ l_6cdd:
 	jbsr	l_4fa1                            	| [$6cf1: jsr    $4fa1]
 	and.b	#0x02,d0                         	| [$6cf4: anda   #$02]
 	jne	l_6d06                             	| [$6cf6: bne    $6d06]
-	OP_1_ON_DP_ADDRESS	tst,game_playing_00  | [$6cf8: tst    game_playing_00]
+	OP_1_ON_DP_ADDRESS	tst,global_state_00  | [$6cf8: tst    global_state_00]
 	jne	l_6d1d                             	| [$6cfa: bne    $6d1d]
 	jbsr	l_579f                            	| [$6cfc: jsr    $579f]
 	GET_ADDRESS	0x34f1                     	| [$6cff: lda    $34f1]
@@ -8555,7 +8555,7 @@ l_6e57:
 	jbsr	l_8560                            	| [$6e57: jsr    $8560]
 l_6e5a:
 	OP_W_ON_DP_ADDRESS	addq,0xbc,#1         | [$6e5a: inc    $bc]
-	OP_1_ON_DP_ADDRESS	tst,game_playing_00  | [$6e5c: tst    game_playing_00]
+	OP_1_ON_DP_ADDRESS	tst,global_state_00  | [$6e5c: tst    global_state_00]
 	jne	l_6e66                             	| [$6e5e: bne    $6e66]
 	OP_R_ON_DP_ADDRESS	move,0xbc,d0         | [$6e60: lda    $bc]
 	cmp.b	#0x1e,d0                         	| [$6e62: cmpa   #$1e]
@@ -8706,7 +8706,7 @@ l_6f47:
 l_6f49:
 	jbsr	l_590e                            	| [$6f49: jsr    $590e]
 l_6f4c:
-	OP_1_ON_DP_ADDRESS	tst,game_playing_00  | [$6f4c: tst    game_playing_00]
+	OP_1_ON_DP_ADDRESS	tst,global_state_00  | [$6f4c: tst    global_state_00]
 	jne	l_6f5c                             	| [$6f4e: bne    $6f5c]
 	OP_R_ON_DP_ADDRESS	move,nb_long_horse_turns_ef,d0| [$6f50: lda    nb_long_horse_turns_ef]
 	cmp.b	#0x06,d0                         	| [$6f52: cmpa   #$06]
@@ -13877,7 +13877,7 @@ l_8b6c:
 	OP_W_ON_DP_ADDRESS	addq,event_sub_state_28,#1| [$8b6c: inc    event_sub_state_28]
 	move.b	#0x01,d0                        	| [$8b6e: ldd    #$0105]
 	move.w	#0x0105,d1                      	| [$8b6e: ldd    #$0105]
-	OP_1_ON_DP_ADDRESS	tst,game_playing_00  | [$8b71: tst    game_playing_00]
+	OP_1_ON_DP_ADDRESS	tst,global_state_00  | [$8b71: tst    global_state_00]
 	jne	l_8b76                             	| [$8b73: bne    $8b76]
 	moveq	#0,d1                            	| [$8b75: clrb]
 l_8b76:
@@ -14763,7 +14763,7 @@ l_9080:
 	addq.w	#0x1,d2                         	| [$9088: leax   $1,x]
 	OP_W_ON_DP_ADDRESS	subq,0x49,#1         | [$908a: dec    $49]
 	jne	l_9080                             	| [$908c: bne    $9080]
-	OP_1_ON_DP_ADDRESS	tst,game_playing_00  | [$908e: tst    game_playing_00]
+	OP_1_ON_DP_ADDRESS	tst,global_state_00  | [$908e: tst    global_state_00]
 	jeq	l_90cb                             	| [$9090: beq    $90cb]
 l_9092:
 	move.b	#0x02,d1                        	| [$9092: ldb    #$02]
@@ -15122,7 +15122,7 @@ l_9270:
 	jbsr	l_894b                            	| [$9270: jsr    $894b]
 	jra	l_8ccb                             	| [$9273: jra    $8ccb]
 l_9276:
-	OP_1_ON_DP_ADDRESS	tst,game_playing_00  | [$9276: tst    game_playing_00]
+	OP_1_ON_DP_ADDRESS	tst,global_state_00  | [$9276: tst    global_state_00]
 	jne	l_927d                             	| [$9278: bne    $927d]
 	jra	l_a37f                             	| [$927a: jra    $a37f]
 l_927d:
@@ -15951,7 +15951,7 @@ l_96d2:
 	moveq	#0,d0                            	| [$96de: clra]
 	jbsr	force_queue_sound_eventl_4eb3                            	| [$96df: jsr    $4eb3]
 l_96e2:
-	OP_1_ON_DP_ADDRESS	clr,game_playing_00  | [$96e2: clr    game_playing_00]
+	OP_1_ON_DP_ADDRESS	clr,global_state_00  | [$96e2: clr    global_state_00]
 	OP_1_ON_DP_ADDRESS	clr,swimmer_19             | [$96e4: clr    $19]
 	move.w	#0x3020,d2                      	| [$96e6: ldx    #$3020]
 l_96e9:
@@ -21132,7 +21132,7 @@ l_b436:
 	add.w	#0x20,d3                         	| [$b448: leay   $20,y]
 	jra	l_b42a                             	| [$b44b: bra    $b42a]
 l_b44d:
-	OP_1_ON_DP_ADDRESS	tst,game_playing_00  | [$b44d: tst    game_playing_00]
+	OP_1_ON_DP_ADDRESS	tst,global_state_00  | [$b44d: tst    global_state_00]
 	jne	l_b459                             	| [$b44f: bne    $b459]
 	OP_R_ON_DP_ADDRESS	move,0x0f,d0         | [$b451: lda    $0f]
 	BIT	#0x3f,d0                           	| [$b453: bita   #$3f]
@@ -21505,7 +21505,7 @@ l_b665:
 	GET_ADDRESS	0x34f2                     	| [$b668: std    $34f2]
 	MOVE_W_FROM_REG	d1,a0                         	| [...]
 	OP_W_ON_DP_ADDRESS	addq,0x2c,#1         | [$b66b: inc    $2c]
-	OP_1_ON_DP_ADDRESS	tst,game_playing_00  | [$b66d: tst    game_playing_00]
+	OP_1_ON_DP_ADDRESS	tst,global_state_00  | [$b66d: tst    global_state_00]
 	jne	l_b680                             	| [$b66f: bne    $b680]
 	move.b	#0x00,d0                        	| [$b671: ldd    #$0001]
 	move.w	#0x0001,d1                      	| [$b671: ldd    #$0001]
@@ -21988,7 +21988,7 @@ l_b8e6:
 l_b90f:
 	GET_ADDRESS	0x342b                     	| [$b90f: sta    $342b]
 	move.b	d0,(a0)                         	| [...]
-	OP_1_ON_DP_ADDRESS	tst,game_playing_00  | [$b912: tst    game_playing_00]
+	OP_1_ON_DP_ADDRESS	tst,global_state_00  | [$b912: tst    global_state_00]
 	jne	l_b920                             	| [$b914: bne    $b920]
 	OP_R_ON_DP_ADDRESS	move,0x0f,d0         | [$b916: lda    $0f]
 	and.b	#0x3f,d0                         	| [$b918: anda   #$3f]
@@ -22252,7 +22252,7 @@ l_ba94:
 
 l_ba9e:
 	jbsr	l_bfa2                            	| [$ba9e: jsr    $bfa2]
-	OP_1_ON_DP_ADDRESS	tst,game_playing_00  | [$baa1: tst    game_playing_00]
+	OP_1_ON_DP_ADDRESS	tst,global_state_00  | [$baa1: tst    global_state_00]
 	jeq	l_bad7                             	| [$baa3: beq    $bad7]
 	move.w	#0x3380,d2                      	| [$baa5: ldx    #$3380]
 	jbsr	l_53b4                            	| [$baa8: jsr    $53b4]
@@ -22295,7 +22295,7 @@ l_bad7:
 l_bae6:
 	jbsr	l_aef5                            	| [$bae6: jsr    $aef5]
 	jbsr	l_5466                            	| [$bae9: jsr    $5466]
-	OP_1_ON_DP_ADDRESS	tst,game_playing_00  | [$baec: tst    game_playing_00]
+	OP_1_ON_DP_ADDRESS	tst,global_state_00  | [$baec: tst    global_state_00]
 	jeq	l_baf6                             	| [$baee: beq    $baf6]
 	move.w	#0x3380,d2                      	| [$baf0: ldx    #$3380]
 	jbsr	l_53b4                            	| [$baf3: jsr    $53b4]

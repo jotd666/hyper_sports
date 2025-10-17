@@ -15,7 +15,7 @@ def get_possible_hw_sprites():
     any(x in sprite_names.get(i,"") for x in ("shooting_player",))}
     return possible_hw_sprites
 
-possible_hw_sprites = set() #get_possible_hw_sprites()
+possible_hw_sprites = get_possible_hw_sprites()
 
 
 magenta = (254,0,254)

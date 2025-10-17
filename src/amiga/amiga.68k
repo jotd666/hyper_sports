@@ -879,17 +879,7 @@ _vblank:
 	bne.b	0f
 	bsr		toggle_pause
 0:
-	* here music doesn't loop. We have to stop it when it ends
-	move.w	music_tick,d1
-	beq.b	13f
-	bmi.b	13f		| negative: infinite, not interruptible
-	
-	subq	#1,d1
 
-	move.w	d1,music_tick
-	bne.b	13f
-	jbsr		osd_music_stop
-13:
 	
 	* ack vbl twice (040/pistorm bug)
 	move.w	#0x20,(intreq,a5)
@@ -1066,15 +1056,23 @@ is_game_playing:
 
 	move.l	a5,-(a7)
 	move.l	m6809_direct_page_pointer,a5
-*	*GET_MEMORY_START_AND_DP
-*	cmp.b	#1,global_state_00(a5)
-*	jeq		0f
-*	cmp.b	#4,global_state_00(a5)
-*0:
-	cmp.l	#0,a5
+	GET_MEMORY_START_AND_DP
+	cmp.b	#1,global_state_00(a5)
+	jeq		0f
+	cmp.b	#4,global_state_00(a5)
+	jeq		0f
+	cmp.b	#2,global_state_00(a4)
+	jne		0f
+	* push start screen but also name entry sound
+	* so pressing fire inserts a coin there too, it should not.
+	* since it's tedious, we can check if music is playing...
+	*tst.b	music_playing
+	nop
+	
+0:	cmp.l	#0,a5
 	move.l	(a7)+,a5
 	rts
-	
+
 lose_all_lives:
 	movem.l	a6/a5,-(a7)
 	GET_MEMORY_START_AND_DP
