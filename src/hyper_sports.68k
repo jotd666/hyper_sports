@@ -5010,6 +5010,8 @@ l_5a89:
 	GET_REG_ADDRESS	0x21,d2                	| [$5a8b: sta    $21,x]
 	move.b	d0,(a0)                         	| [...]
 	GET_REG_ADDRESS	0x1,d4                 	| [$5a8e: lda    $1,u]
+
+	nop
 	move.b	(a0),d0                         	| [...]
                                          | [$5a90: asla]
                                          | [$5a91: asla]

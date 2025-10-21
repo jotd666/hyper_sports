@@ -113,7 +113,8 @@ def convert():
         if "channel" not in v:
             v["channel"] = -1 # auto
 
-    sound_dict.update({    "RECORD_BROKEN_TUNE_SND"      :{"index":0x43,"pattern":0x8,"volume":32},
+    sound_dict.update({
+    "RECORD_BROKEN_TUNE_SND"      :{"index":0x3C,"pattern":0x8,"volume":32},
     "CHARIOTS_TUNE_SND"      :{"index":0x2D,"pattern":0x3,"volume":32,"loops":True},
     "BEST_PLAYER_TUNE_SND"      :{"index":0x3E,"pattern":0xA,"volume":32},
     "GAME_OVER_TUNE_SND"      :{"index":0x3B,"pattern":0xC,"volume":32},
@@ -127,9 +128,9 @@ def convert():
     0x30,  # after start music
 #0x3D, # swim event start
 #0x3B, # game over music
-0x3C, # qualify
 #0x2D,  # chariots
 0x42, # podium shit
+0x43,  # win tune
 0x44, # win tune
 #0x3E, # 2P end round tune
 #0x43, # win tune (followed by cheering)

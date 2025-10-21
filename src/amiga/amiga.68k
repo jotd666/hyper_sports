@@ -33,7 +33,7 @@ NB_SCROLL_ROWS_PART_3 = 1
 
 * 3 & 3: most performant
 BITPLANE_FMODE = 3			| works with 1, albeit slower
-SPRITE_FMODE = 3			| required!!
+SPRITE_FMODE = 1			| required!!
 
 BORDERBLANK = 1
 
@@ -46,7 +46,7 @@ SPRITE_Y_CORRECTION = 0
 SPRITE_HEIGHT = 16
 SPRITE_WIDTH = 16
 HW_SPRITE_Y_CORRECTION = -4
-HW_SPRITE_X_CORRECTION = 14
+HW_SPRITE_X_CORRECTION = 14+32+16
 
 Y_MAX = 256
 
@@ -1525,6 +1525,12 @@ update_one_hw_sprite:
 	* hardware sprite right away
 	moveq	#0,d3
 	move.b	(TARGET_SPRITE_CODE,a0),d3
+	moveq	#0,d2
+	move.b	(TARGET_SPRITE_ATTR,a0),d2
+	btst.b	#5,d2
+	jeq		111f
+	bset	#8,d3		| add 256
+111:
 	.ifdef	NO68020
 	add.w	d3,d3
 	add.w	d3,d3
@@ -1551,8 +1557,6 @@ update_one_hw_sprite:
 	add.w	#HW_SPRITE_X_CORRECTION,d0
 	.endif
 
-	moveq	#0,d2
-	move.b	(TARGET_SPRITE_ATTR,a0),d2
 	and.b	#0xF,d2		| CLUT
 	
 	* it is a HW sprite all right
@@ -1563,7 +1567,7 @@ update_one_hw_sprite:
 	* D0 and D1 are already set
 	* so is A1 with sprite Y pos table
 	
-	bsr		store_sprite_pos
+	jbsr		store_sprite_pos
 
 	
 	* first sprite of couple
