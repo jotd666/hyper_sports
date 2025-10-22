@@ -19,7 +19,8 @@ def get_possible_hw_sprites():
     return possible_hw_sprites
 
 possible_hw_sprites = get_possible_hw_sprites()
-
+# uncomment to disable hw sprites completely
+#possible_hw_sprites = set()
 
 magenta = (254,0,254)
 

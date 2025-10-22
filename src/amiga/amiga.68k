@@ -948,7 +948,7 @@ _vblank:
 	eor.b	#1,flip_flop
 	jeq		23f
 0:
-	jbsr		really_update_sprites
+	jbsr		really_update_bobs
 	
 	.ifne	OPT_ENABLE_DOUBLE_BUFFERING
 	jbsr		switch_screen_buffers
@@ -1191,7 +1191,7 @@ really_update_tiles:
 
 
 
-really_update_sprites:
+really_update_bobs:
 	
 	***********************
 	* erase previous BOBs *
@@ -1236,7 +1236,7 @@ really_update_sprites:
     lea _custom,A5
 	lea		(LAST_SPRITE,a6),a0		| sprite start
 	lea		bob_table,a4
-	move.w	#NB_TARGET_SPRITES-1,d7
+	moveq	#0,d7
 	move.l	bob_previous_drawn_sprites(pc),a6
 1:
 	lea		sprite_drawn(pc),a3
@@ -1245,7 +1245,9 @@ really_update_sprites:
 	jbsr	update_one_bob
 3:
 	subq.w	#TARGET_SPRITE_SIZEOF,a0
-	dbf		d7,1b
+	addq	#1,d7
+	cmp.w	#NB_TARGET_SPRITES,d7
+	jne		1b
 2:
 	rts
 	

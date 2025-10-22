@@ -255,11 +255,11 @@ osd_sound_start:
 	jbsr	osd_music_stop
 	jra		10f
 0:
-*	cmp.b	#RECORD_BROKEN_TUNE_SND,d0
-*	jne		0f
-*	* try to save memory when game triggers a "record broken"
-*	jbsr	osd_write_high_scores
-*0:
+	cmp.b	#RECORD_BROKEN_TUNE_SND,d0
+	jne		0f
+	* try to save memory when game triggers a "record broken"
+	jbsr	osd_write_high_scores
+0:
 	cmp.b	#CHARIOTS_TUNE_SND,d0
 	jne		0f
 	* try to save memory when game triggers a "chariots of fire" tune
