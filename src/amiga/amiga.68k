@@ -31,15 +31,21 @@ NB_SCROLL_ROWS_PART_1 = NB_SCROLL_ROWS/2
 NB_SCROLL_ROWS_PART_2 = NB_SCROLL_ROWS/2+1
 NB_SCROLL_ROWS_PART_3 = 1
 
+NB_TILE_PLANES = 4
+NB_BOB_PLANES = 4
 * 3 & 3: most performant
 BITPLANE_FMODE = 3			| works with 1, albeit slower
+* we only need 32-pixel wide sprites, no need for 64
 SPRITE_FMODE = 1			| required!!
+FMODE_OFFSET = -8
+SCROLL_WIDTH = 0x40
 
 BORDERBLANK = 1
 
 COPPER_Y_START = 0x18
 BASE_BPLCON3_VALUE = (1<<12)+(BORDERBLANK<<5)  | dpf second playfield palette starts at color 16!
 BASE_BPLCON2_VALUE = 0x0024		| sprites above all playfields
+BASE_BPLCON0_VALUE = 0x0610+BORDERBLANK  | 6 bitplanes, dual playfield, borderblank
 
 SPRITE_X_CORRECTION = 32
 SPRITE_Y_CORRECTION = 0
@@ -424,7 +430,15 @@ _user:
 	lea		tiles_colors,a1
 	bsr		load_palette
 	
-
+	.ifne	OPT_ENABLE_LOGGING
+	* protection for end of cpu log buffer
+	lea		log_buffer_end,a0
+	move.l	#0xCAFECAFE,d0
+	.rept	4
+	move.l	d0,(a0)+
+	.endr
+	.endif
+	
 	move.l	cheat_flags,d0
 	bclr	#4,d0		| cheat keys only disable cheats if used
 	tst.l	d0
@@ -2130,25 +2144,30 @@ platform_init:
 	* disable extra mid-screen interrupt, as it would be too fast (NTSC)
 	move.w	#0x1FE,intreq_block_game
 0:
-     move.w #0x0610+BORDERBLANK,bplcon0(a5) | 8 bitplanes, dual playfield, borderblank
+     move.w #BASE_BPLCON0_VALUE,bplcon0(a5)
 	move.w	#BASE_BPLCON2_VALUE,bplcon2(a5)
-	move.w	#BASE_BPLCON3_VALUE,bplcon3(a5)
  	*         VVHH
-    move.w #0x99-0X18+0x40+(COPPER_Y_START<<8),diwstrt(a5)
-    move.w #0x79+0x48+(COPPER_Y_START<<8)-0x1000,diwstop(a5)
+    move.w #0x99-0X18+SCROLL_WIDTH+(COPPER_Y_START<<8),diwstrt(a5)
+    move.w #0x79+SCROLL_WIDTH+8+(COPPER_Y_START<<8)-0x1000,diwstop(a5)
     move.w #0x0038,ddfstrt(a5)
     move.w #0x00D0,ddfstop(a5)
 
 	* restrict borders: we don't see bobs on the borders!
 	* try to hide color 0 on the border (except on OCS)
 
+	.ifdef	OCS_VERSION
+	move.w	#BASE_BPLCON3_VALUE,bplcon3(a5)
+	.else
     move.w #(SPRITE_FMODE<<2)+BITPLANE_FMODE,fmode(a5)	| 32 bit bitplane fetch, 64 bit wide sprites
+	move.w	#BASE_BPLCON3_VALUE,bplcon3(a5)
+	move.w	#0,bplcon4(a5)			| use the same colors as bobs playfield
+	.endif
 
 	move.w	#0,bplcon1(a5)
 
-	move.w	#-8+BG_NB_BYTES_PER_ROW-40,d0
+	move.w	#FMODE_OFFSET+BG_NB_BYTES_PER_ROW-40,d0
     move.w d0,bpl2mod(a5)
-	move.w	#-8+FG_NB_BYTES_PER_ROW-40,d0
+	move.w	#FMODE_OFFSET+FG_NB_BYTES_PER_ROW-40,d0
     move.w d0,bpl1mod(a5)
 
 	lea		game_copperlist,a0
@@ -3298,11 +3317,6 @@ palette:
 log_ptr:
 	.long	log_buffer
 
-log_buffer:
-	.skip	LOG_BUFFER_SIZE
-	.rept	20
-	.long	0xCAFECAFE
-	.endr
 
 cpu_log_enable:
 	.word	0
@@ -3324,7 +3338,7 @@ scroll_table:
 	* easier to debug game to have memory aligned on 0x10000
 
 	.ifne	OPT_ENABLE_LOGGING
-	.section	.bss
+	.section	.bsspublic
 
 sprite_log_table:
 	* 16 cluts, 512 tiles
@@ -3335,9 +3349,12 @@ character_log_table:
 	* a lot of combinations aren't used (fortunately!)
 	.skip	16*NB_POSSIBLE_TILES
 	.endif
+
+log_buffer:
+	.skip	LOG_BUFFER_SIZE
+log_buffer_end:
+	.skip	16
 	.endif
-
-
 
 	.section	.datachip
 

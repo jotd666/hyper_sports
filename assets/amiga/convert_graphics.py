@@ -396,6 +396,7 @@ bob_plane_cache = {}
 
 sprite_table = read_tileset(sprite_set_list,full_palette[16:],[True,False,True,False],cache=bob_plane_cache, is_bob=True)
 
+
 # now that the sprites were decoded, put black as first color too (else for some priority reason
 # the background is magenta or whatever the color is)
 full_palette[16] = (0,0,9)
@@ -473,7 +474,7 @@ with open(os.path.join(src_dir,"graphics.68k"),"w") as f:
     f.write("bob_table:\n")
     for i,tile_entry in enumerate(sprite_table):
         f.write("\t.long\t")
-        if any(tile_entry):
+        if i not in possible_hw_sprites and any(tile_entry):
             prefix = sprite_names.get(i,"bob")
             f.write(f"{prefix}_{i:02x}")
         else:
@@ -505,7 +506,7 @@ with open(os.path.join(src_dir,"graphics.68k"),"w") as f:
                     f.write("0,0")
                 f.write("\n")
     for i,tile_entry in enumerate(sprite_table):
-        if any(tile_entry):
+        if i not in possible_hw_sprites and any(tile_entry):
             prefix = sprite_names.get(i,"bob")
             f.write(f"{prefix}_{i:02x}:\n")
             for j,t in enumerate(tile_entry):
@@ -518,7 +519,7 @@ with open(os.path.join(src_dir,"graphics.68k"),"w") as f:
 
 
     for i,tile_entry in enumerate(sprite_table):
-        if tile_entry:
+        if i not in possible_hw_sprites and any(tile_entry):
             prefix = sprite_names.get(i,"bob")
             for j,t in enumerate(tile_entry):
                 if t:
