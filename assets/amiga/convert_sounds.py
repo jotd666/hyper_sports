@@ -160,15 +160,18 @@ def convert():
     # longword: sample data pointer if sample, 0 if no entry and
     # 2 words: 0/1 noloop/loop followed by duration in ticks
     #
+    # SOUND_ENTRY macro defines a ptplayer-compatible structure, with added the number
+    # of ticks (PAL) giving the duration of the sample (offset 0xA)
     FXFREQBASE = 3579564
 
-        .macro    SOUND_ENTRY    sound_name,size,channel,soundfreq,volume,priority
+        .macro    SOUND_ENTRY    sound_name,size,channel,soundfreq,volume,priority,ticks
     \sound_name\()_sound:
         .long    \sound_name\()_raw
         .word   \size
         .word   FXFREQBASE/\soundfreq,\volume
         .byte    \channel
         .byte    \priority
+        .word    \ticks
         .endm
 
     """
@@ -221,7 +224,7 @@ def convert():
                 wav_file = os.path.join(sound_dir,wav_name+".wav")
 
                 def get_sox_cmd(sr,output):
-                    return [sox,"--volume","2.0",wav_file,"--channels","1","-D","--bits","8","-r",str(sr),"--encoding","signed-integer",output]
+                    return [sox,"--volume","3.0",wav_file,"--channels","1","-D","--bits","8","-r",str(sr),"--encoding","signed-integer",output]
 
                 used_sampling_rate = details["sample_rate"]
                 used_priority = details.get("priority",1)
@@ -239,24 +242,28 @@ def convert():
                 maxsigned = max(signed_data)
                 minsigned = min(signed_data)
 
-                amp_ratio = max(maxsigned,abs(minsigned))/128
+                amp_ratio = max(maxsigned,abs(minsigned))/32
 
                 # JOTD: for that one, I'm using maxxed out sfx by no9, no amp
-                amp_ratio = 0.9
+                print(f"amp_ratio: {amp_ratio}")
 
                 wav = os.path.splitext(wav_name)[0]
                 if amp_ratio > 1:
                     print(f"{wav}: volume peaked {amp_ratio}")
                     amp_ratio = 1
-                sound_table[sound_index] = "    SOUND_ENTRY {},{},{},{},{},{}\n".format(wav,len(signed_data)//2,channel,used_sampling_rate,int(64*amp_ratio),used_priority)
+                ticks = details.get("ticks")
+                if not ticks:
+                    ticks = int(len(signed_data)/used_sampling_rate*170)+1  # inflate time (else speech is too fast)
+                sound_table[sound_index] = "    SOUND_ENTRY {},{},{},{},{},{},{}\n".format(wav,len(signed_data)//2,channel,
+                            used_sampling_rate,int(64*amp_ratio),used_priority,ticks)
                 sound_table_set_1[sound_index] = f"\t.word\t1,{int(details.get('loops',0))}\n\t.long\t{wav}_sound"
 
-##                if amp_ratio > 0:
-##                    maxed_contents = [int(x/amp_ratio) for x in signed_data]
-##                else:
-##                    maxed_contents = signed_data
+                if amp_ratio > 0:
+                    maxed_contents = [int(x/amp_ratio) for x in signed_data]
+                else:
+                    maxed_contents = signed_data
 
-                maxed_contents = signed_data
+
 
                 signed_contents = bytes([x if x >= 0 else 256+x for x in maxed_contents])
                 # pre-pad with 0W, used by ptplayer for idling

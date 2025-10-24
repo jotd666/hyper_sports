@@ -113,7 +113,7 @@ VIDEO_ADDRESS = 0x2000
 
 NB_HOST_SPRITES = 8
 
-NB_TARGET_SPRITES = 0x40  
+NB_TARGET_SPRITES = 48 
 	
 TARGET_SPRITE_X = 3
 TARGET_SPRITE_Y = 1 
@@ -955,16 +955,19 @@ _vblank:
 	.endif
 	
 
-	* process speech queue at each copper interrupt including PAL mid-screen
-	* so in NTSC the timings are the same
-	jbsr	process_speech_queue
 	
 	* update tiles in the end, dual playfield means that
 	* we can do that when we want and at the frequency
 	* we want
 	jbsr		really_update_tiles
 23:
+	* process speech queue at each copper interrupt including PAL mid-screen
+	* so in NTSC the timings are the same
+	jbsr	process_speech_queue
 
+	.ifdef	OCS_VERSION
+	jbsr	detect_current_screen
+	.endif
 
 3:
     movem.l (a7)+,d0-d7/a0-a6
@@ -1234,9 +1237,11 @@ really_update_bobs:
 	lea		sprite_groups(pc),a2
 	GET_MEMORY_START_AND_DP
     lea _custom,A5
+	* last drawn BOB overwrites the previous ones: 
+	* we have to start by the end of the sprite list
 	lea		(LAST_SPRITE,a6),a0		| sprite start
 	lea		bob_table,a4
-	moveq	#0,d7
+	move.w	#NB_TARGET_SPRITES-1,d7
 	move.l	bob_previous_drawn_sprites(pc),a6
 1:
 	lea		sprite_drawn(pc),a3
@@ -1245,9 +1250,7 @@ really_update_bobs:
 	jbsr	update_one_bob
 3:
 	subq.w	#TARGET_SPRITE_SIZEOF,a0
-	addq	#1,d7
-	cmp.w	#NB_TARGET_SPRITES,d7
-	jne		1b
+	dbf		d7,1b
 2:
 	rts
 	
@@ -1501,7 +1504,7 @@ really_update_hw_sprites:
 	lea		HW_SpriteYTable_16,a1		| all sprites have same size 16 high
 1:
 	jbsr	update_one_hw_sprite
-	addq.w	#4,a0
+	addq.w	#TARGET_SPRITE_SIZEOF,a0
 	cmp.l	a2,a6
 	jeq		2f			| all sprites are used already: bail out
 	addq	#1,d7
