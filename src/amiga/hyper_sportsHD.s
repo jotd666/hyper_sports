@@ -6,13 +6,13 @@
 ;CHIP_ONLY
 
 EXPMEM = $100000
-CHIPSIZE = $100000
+CHIPSIZE = $110000
 
 _base	SLAVE_HEADER					; ws_security + ws_id
 	dc.w	17					; ws_version (was 10)
 	dc.w	WHDLF_NoError
     IFD CHIP_ONLY
-	dc.l	CHIPSIZE+EXPMEM					; ws_basememsize
+	dc.l	$200000					; ws_basememsize
 	ELSE
 	dc.l	CHIPSIZE
 	ENDC
