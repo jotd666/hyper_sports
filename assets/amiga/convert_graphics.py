@@ -13,7 +13,7 @@ def get_possible_hw_sprites():
     # declare all player frames: do not declare pole vault jump
     # do not declare sprites that can be displayed several times at once
     possible_hw_sprites = {i for i in range(NB_SPRITES) if i not in mirror_sprites and
-    any(x in sprite_names.get(i,"") for x in ("shooting_player","running_player","bow_player","caret","apple"))}
+    any(x in sprite_names.get(i,"") for x in ("arrow","shooting_player","running_player","bow_player","caret","apple"))}
 
     possible_hw_sprites.add(0x17C)  # nice
     return possible_hw_sprites

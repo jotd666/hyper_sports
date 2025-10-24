@@ -1501,7 +1501,7 @@ really_update_hw_sprites:
 	lea		HW_SpriteYTable_16,a1		| all sprites have same size 16 high
 1:
 	jbsr	update_one_hw_sprite
-	addq.w	#2,a0
+	addq.w	#4,a0
 	cmp.l	a2,a6
 	jeq		2f			| all sprites are used already: bail out
 	addq	#1,d7

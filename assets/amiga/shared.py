@@ -168,6 +168,7 @@ def get_sprite_names():
     rval[0x1a8] = "weight"
     rval[0x1aa] = "weight"
     rval[0x146] = "target"
+    rval[0x147] = "target"
     rval[0x14e] = "target"
     rval[0x91] = "target"
     rval[0x31] = "caret"
@@ -175,6 +176,7 @@ def get_sprite_names():
     rval[0x6b] = "referee"
     rval[0x68] = "referee"
     rval[0x69] = "referee"
+    rval[0xE8] = "arrow"
 
 
     return rval

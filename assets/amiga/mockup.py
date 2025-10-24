@@ -68,7 +68,7 @@ def process(the_dump,name_filter=None,hide_named_sprite=None):
     for offs in range(0XBC,-4,-4):
         sx = m_spriteram[offs + 3];
         sy = 240 - m_spriteram[offs + 1];
-        if sx or (240-sy):
+        if (sx or (240-sy)) and sy>=0:
             code = m_spriteram[offs + 2] + 8 * (m_spriteram[offs] & 0x20)
             color = m_spriteram[offs] & 0x0f
             flipx = bool(~m_spriteram[offs] & 0x40)
@@ -81,8 +81,6 @@ def process(the_dump,name_filter=None,hide_named_sprite=None):
             if flipx:
                 im = ImageOps.mirror(im)
 
-            if not flipx:
-                continue
 
             name = sprite_names.get(code,"unknown")
             print(f"offs:{offs:02x}, name: {name}, code:{code:02x}, flipx: {flipx}, flipy: {flipy}, color:{color:02x}, X:{sx}, Y:{sy}")
