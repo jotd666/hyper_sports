@@ -6846,11 +6846,13 @@ l_6460:
 	GET_DP_ADDRESS	0xda                    	| [$6474: ldu    $da]
 	MOVE_W_TO_REG	a0,d4                         	| [...]
 	MAKE_D                                 	| [...]
-	GET_REG_ADDRESS	0,d4                   	| [$6476: std    ,u++]
+	GET_REG_UNCHECKED_ADDRESS	0,d4                   	| [$6476: std    ,u++]
 	addq.w	#2,d4                           	| [...]
 	MOVE_W_FROM_REG	d1,a0                         	| [...]
-	GET_REG_ADDRESS	0,d4                   	| [$6478: sta    ,u]
+	VIDEO_WORD_DIRTY
+	GET_REG_UNCHECKED_ADDRESS	0,d4                   	| [$6478: sta    ,u]
 	move.b	d0,(a0)                         	| [...]
+	VIDEO_BYTE_DIRTY
 	move.b	#0x10,d0                        	| [$647a: lda    #$10]
 l_647c:
 	GET_REG_ADDRESS	0,d2                   	| [$647c: sta    ,x]

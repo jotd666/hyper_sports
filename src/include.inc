@@ -419,6 +419,7 @@ do_jmp_0e_x:
 	JUMP_IF_KNOWN	b1a0
 	JUMP_IF_KNOWN	83a9
 	JUMP_IF_KNOWN	833d
+	JUMP_IF_KNOWN	82af
 	BREAKPOINT	"unknown dynamic jump address in D6"
 	illegal
 	rts
