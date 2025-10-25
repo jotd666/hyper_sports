@@ -439,6 +439,7 @@ _user:
 	.endr
 	.endif
 	
+	jsr	 _detect_controller_types 
 	move.l	cheat_flags,d0
 	bclr	#4,d0		| cheat keys only disable cheats if used
 	tst.l	d0
@@ -466,6 +467,17 @@ _user:
 	move.l	misc_options,d1
 	btst	#0,d1
 	sne		frameskip
+	tst.b	controller_joypad_0
+	sne		second_joystick
+	jne		0f						| if joypad in 0, force 2nd joy
+	btst	#1,d1
+	* not a joystick but joypad: forced
+	sne		second_joystick
+0:
+	btst	#2,d1
+	* not a joystick but joypad: forced
+	sne		fire1fire2up_controls
+0:
 	.ifndef	RELEASE
 	btst	#31,d1
 	sne		break_at_startup_flag
@@ -866,6 +878,54 @@ _nmi:
 	move.w	#0x7FFF,_custom+intreq
 	rts
 	
+read_controller:
+
+	jbsr	_read_joystick
+	tst.b	fire1fire2up_controls
+	jeq		1f
+	move.l	d1,-(a7)
+	moveq	#0,d1
+	btst	#JPB_BTN_BLU,d0
+	jeq		0f
+	bset	#JPB_BTN_LEFT,d1
+0:	
+	btst	#JPB_BTN_RED,d0
+	jeq		0f
+	bset	#JPB_BTN_RIGHT,d1
+0:	
+	btst	#JPB_BTN_UP,d0
+	jeq		0f
+	bset	#JPB_BTN_RED,d1
+0:
+	btst	#JPB_BTN_LEFT,d0
+	jeq		0f
+	bset	#JPB_BTN_DOWN,d1		| to start 2P game
+0:
+	btst	#JPB_BTN_RIGHT,d0
+	jeq		0f
+	bset	#JPB_BTN_UP,d1		| to start 2P game
+0:
+	move.l	d1,d0
+	move.l (a7)+,d1
+1:
+	rts
+	
+read_joypads:
+	move.l	d0,-(a7)
+	moveq	#1,d0
+	jbsr	read_controller
+	move.l	d0,_joypad_1_state
+
+	tst.b	second_joystick
+	jeq		0f
+	
+	moveq	#0,d0
+	jbsr	read_controller
+	move.l	d0,_joypad_2_state
+0:
+	move.l 	(a7)+,d0
+	rts
+	
 _vblank:
     movem.l d0-d7/a0-a6,-(a7)
 	lea		_custom,a5
@@ -873,16 +933,9 @@ _vblank:
 	btst	#5,d0
 	beq.b		1f
 
-	clr.b	vbl_sync_flag
-	
-	moveq	#0,d0
-	jsr	_read_joystick
-	move.l	d0,_joypad_2_state
-
 	move.l	_joypad_1_state(pc),d1
-	moveq	#1,d0
-	jsr	_read_joystick
-	move.l	d0,_joypad_1_state
+	jbsr		read_joypads
+	move.l	_joypad_1_state(pc),d0
 
 	
 	* CD32 "play" is disabled but it's free to read
@@ -1071,23 +1124,21 @@ osd_is_vblank_interrupt_enabled:
 * Z: set if not playing
 is_game_playing:
 
-	move.l	a5,-(a7)
-	move.l	m6809_direct_page_pointer,a5
-	GET_MEMORY_START_AND_DP
-	cmp.b	#1,global_state_00(a5)
+	move.l	a4,-(a7)
+	move.l	m6809_direct_page_pointer,a4
+	cmp.b	#1,global_state_00(a4)
 	jeq		0f
-	cmp.b	#4,global_state_00(a5)
+	cmp.b	#4,global_state_00(a4)
 	jeq		0f
 	cmp.b	#2,global_state_00(a4)
 	jne		0f
 	* push start screen but also name entry sound
 	* so pressing fire inserts a coin there too, it should not.
 	* since it's tedious, we can check if music is playing...
-	*tst.b	music_playing
-	nop
+	tst.b	music_playing
 	
-0:	cmp.l	#0,a5
-	move.l	(a7)+,a5
+0:	
+	move.l	(a7)+,a4
 	rts
 
 lose_all_lives:
@@ -1098,17 +1149,7 @@ lose_all_lives:
 	movem.l	(a7)+,a6/a5
 	rts
 
-add_10000_points:
-	movem.l	a5/a6,-(a7)
-	GET_MEMORY_START_AND_DP
-	movem.w	d0/d7,-(a7)
-	*move.b	player_1_score_9663+2(a6),d0
-	MOVEQ	#1,d7
-	abcd	d7,d0
-	*move.b	d0,player_1_score_9663+2(a6)
-	movem.w	(a7)+,d0/d7
-	movem.l	(a7)+,a5/a6
-	rts
+
 
 * we're going to scan for scroll values with some optimization
 * to avoid to update copperlist if values don't change
@@ -1236,13 +1277,13 @@ really_update_bobs:
 
 	lea		sprite_groups(pc),a2
 	GET_MEMORY_START_AND_DP
-    lea _custom,A5
 	* last drawn BOB overwrites the previous ones: 
 	* we have to start by the end of the sprite list
 	lea		(LAST_SPRITE,a6),a0		| sprite start
 	lea		bob_table,a4
 	move.w	#NB_TARGET_SPRITES-1,d7
 	move.l	bob_previous_drawn_sprites(pc),a6
+	lea		_custom,a5
 1:
 	lea		sprite_drawn(pc),a3
 	tst.b	(a3,d7.w)
@@ -2236,14 +2277,6 @@ platform_init:
 	jsr		_mt_install_cia
 
 
-	.ifne	OPT_ENABLE_PROFILING
-	* init profiling if enabled
-	lea		0x180000,a0
-	move.l	#0x20000,d0
-	lea		0x100,a1
-	bsr		init_fixed_address
-	bsr		install_profiler_vbl_hook
-	.endif
 
 	
     rts
@@ -2480,8 +2513,7 @@ update_bg_tile:
 	move.l	d0,a2
 	move.b	d3,d1
 	and.w	#0xF,d3
-	.ifdef	N068020
-	add.w	d3,d3
+	.ifdef	NO68020
 	add.w	d3,d3
 	add.w	d3,d3
 	move.l	(a2,d3.w),d0			| pointer on tile bitplanes for that CLUT
@@ -2903,7 +2935,7 @@ osd_read_inputs_1:
 	move.l	_joypad_1_state(pc),d1
 	.else
 	* 2P active with joypad only if joypad connected
-	tst.b	controller_joypad_0
+	tst.b	second_joystick
 	jeq		0f
 	move.l	_joypad_2_state(pc),d1
 	.endif
@@ -3024,13 +3056,6 @@ handle_keyboard:
 	jbsr	maximize_a_lot_of_shit
 	move.w	#0x0FF,_custom+color
 	
-0:
-	cmp.b	#0x52,d0	| F3 key
-	bne.b	0f
-	st.b	cheat_used
-	* add 10000 points
-	move.w	#0x0FF,_custom+color
-	jbsr	add_10000_points
 	
 0:
 *	cmp.b	#0x53,d0	| F4 key
@@ -3406,7 +3431,7 @@ log_buffer_end:
 	.word	0x01+(y_start*256),0xFFFE
 	.word	bplcon1
 	.word	0
-	DECL_EVEN_BITPLANES	4,4
+	DECL_EVEN_BITPLANES	4,NB_TILE_PLANES
 	.set	y_start,y_start+8
 	.endr
 	.endm 
@@ -3437,9 +3462,9 @@ game_copperlist:
 	* enable sprite colors now
 
 bobs_bitplanes:
-	DECL_EVEN_BITPLANES	0,4
+	DECL_EVEN_BITPLANES	0,NB_BOB_PLANES
 tiles_bitplanes:
-	DECL_EVEN_BITPLANES	4,4
+	DECL_EVEN_BITPLANES	4,NB_TILE_PLANES
 	* set 0-scroll value value for both plane sets
 	.word	bplcon1
 reset_bplcon1_1:

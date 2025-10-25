@@ -15633,12 +15633,14 @@ l_9512:
 	addq.b	#1,d1                           	| [$9512: incb]
 l_9513:
 	MAKE_D                                 	| [...]
-	GET_REG_ADDRESS	0,d2                   	| [$9513: std    ,x++]
+	GET_REG_UNCHECKED_ADDRESS	0,d2                   	| [$9513: std    ,x++]
 	addq.w	#2,d2                           	| [...]
 	MOVE_W_FROM_REG	d1,a0                         	| [...]
+	VIDEO_WORD_DIRTY
 	moveq	#0,d0                            	| [$9515: clra]
 	addq	#2,a0                   	| [$9516: sta    ,x]
 	move.b	d0,(a0)                         	| [...]
+	VIDEO_BYTE_DIRTY
 	GET_ADDRESS	0x3420                     	| [$9518: ldu    $3420]
 	MOVE_W_TO_REG	a0,d4                         	| [...]
 	move.w	#0x21e8,d2                      	| [$951b: ldx    #$21e8]
@@ -15657,21 +15659,24 @@ l_952b:
                                          | [$952f: lsra]
 	lsr.b	#4,d0                            	| [$9530: lsra]
 	jbsr	l_956c                            	| [$9531: bsr    $956c]
-	GET_REG_ADDRESS	0,d2                   	| [$9533: sta    ,x+]
+	GET_REG_UNCHECKED_ADDRESS	0,d2                   	| [$9533: sta    ,x+]
 	addq.w	#1,d2                           	| [...]
 	move.b	d0,(a0)                         	| [...]
+	VIDEO_BYTE_DIRTY
 	GET_REG_ADDRESS	0,d4                   	| [$9535: lda    ,u+]
 	addq.w	#1,d4                           	| [...]
 	move.b	(a0),d0                         	| [...]
 	jbsr	l_956c                            	| [$9537: bsr    $956c]
-	GET_REG_ADDRESS	0,d2                   	| [$9539: sta    ,x+]
+	GET_REG_UNCHECKED_ADDRESS	0,d2                   	| [$9539: sta    ,x+]
 	addq.w	#1,d2                           	| [...]
 	move.b	d0,(a0)                         	| [...]
+	VIDEO_BYTE_DIRTY
 	subq.b	#1,d1                           	| [$953b: decb]
 	jne	l_952b                             	| [$953c: bne    $952b]
 	moveq	#0,d0                            	| [$953e: clra]
-	GET_REG_ADDRESS	0,d2                   	| [$953f: sta    ,x]
+	GET_REG_UNCHECKED_ADDRESS	0,d2                   	| [$953f: sta    ,x]
 	move.b	d0,(a0)                         	| [...]
+	VIDEO_BYTE_DIRTY
 	sub.w	#0xc,d2                          	| [$9541: leax   -$c,x]
 	move.b	#0x03,d0                        	| [$9543: lda    #$03]
 	jbsr	l_96ca                            	| [$9545: jsr    $96ca]
