@@ -35,7 +35,7 @@ def convert():
     "LETTER_ENTERED_18_SND"            :{"index":0x18,"channel":3,"sample_rate":hq_sample_rate},
 
     "BOUNCE_23_SND"            :{"index":0x23,"channel":2,"sample_rate":hq_sample_rate},
-    "SOUND_24_SND"            :{"index":0x24,"channel":2,"sample_rate":hq_sample_rate},
+    "SOUND_24_SND"            :{"index":0x24,"channel":3,"sample_rate":hq_sample_rate,"loops":True},
     "HURRY_38_SND"            :{"index":0x38,"channel":3,"sample_rate":hq_sample_rate},
 
     "WIN_39_SND"            :{"index":0x39,"sample_rate":hq_sample_rate},

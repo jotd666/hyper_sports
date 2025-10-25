@@ -18547,19 +18547,24 @@ l_a61f:
 	rts                                    	| [$a62a: rts]
 
 l_a62b:
+	* used on weightlifting
 	OP_1_ON_DP_ADDRESS	clr,0x5f             | [$a62b: clr    $5f]
 	OP_1_ON_DP_ADDRESS	clr,0x5e             | [$a62d: clr    $5e]
 	OP_1_ON_DP_ADDRESS	clr,0x5d             | [$a62f: clr    $5d]
-	roxl.b	#1,d1                           	| [$a631: rolb]
-	roxl.b	#1,d0                           	| [$a632: rola]
-	roxl.b	#1,d1                           	| [$a633: rolb]
-	roxl.b	#1,d0                           	| [$a634: rola]
-	roxl.b	#1,d1                           	| [$a635: rolb]
-	roxl.b	#1,d0                           	| [$a636: rola]
-	roxl.b	#1,d1                           	| [$a637: rolb]
-	roxl.b	#1,d0                           	| [$a638: rola]
-	roxl.b	#1,d1                           	| [$a639: rolb]
-	roxl.b	#1,d0                           	| [$a63a: rola]
+	CLR_XC_FLAGS
+	MAKE_D
+	roxl.w	#5,d1
+	MAKE_A
+											| [$a631: rolb]
+											| [$a632: rola]
+											| [$a633: rolb]
+											| [$a634: rola]
+											| [$a635: rolb]
+											| [$a636: rola]
+											| [$a637: rolb]
+											| [$a638: rola]
+											| [$a639: rolb]
+											| [$a63a: rola]
 	OP_W_ON_DP_ADDRESS	subq,0x5d,#4         | [$a63b: dec    $5d]
 	         | [$a63d: dec    $5d]
 	         | [$a63f: dec    $5d]
@@ -18615,18 +18620,23 @@ l_a65e:
 l_a66c:
 	GET_DP_ADDRESS	0x5e                    	| [$a66c: ldx    $5e]
 	MOVE_W_TO_REG	a0,d2                         	| [...]
+	MAKE_D
 	CLR_XC_FLAGS                           	| [$a66e: andcc  #$fe]
-	* 5 rotates
-	roxr.b	#1,d0                           	| [$a670: rora]
-	roxr.b	#1,d1                           	| [$a671: rorb]
-	roxr.b	#1,d0                           	| [$a672: rora]
-	roxr.b	#1,d1                           	| [$a673: rorb]
-	roxr.b	#1,d0                           	| [$a674: rora]
-	roxr.b	#1,d1                           	| [$a675: rorb]
-	roxr.b	#1,d0                           	| [$a676: rora]
-	roxr.b	#1,d1                           	| [$a677: rorb]
-	roxr.b	#1,d0                           	| [$a678: rora]
-	roxr.b	#1,d1                           	| [$a679: rorb]
+	* 5 rotates with carry propagation, amounts to
+	* word rotate with shift=5
+	* used on weightlifting
+	roxr.w	#5,d1
+	MAKE_A
+	                           	| [$a670: rora]
+	                           	| [$a671: rorb]
+	                           	| [$a672: rora]
+	                           	| [$a673: rorb]
+	                           	| [$a674: rora]
+	                           	| [$a675: rorb]
+	                           	| [$a676: rora]
+	                           	| [$a677: rorb]
+	                           	| [$a678: rora]
+	                           	| [$a679: rorb]
 	rts                                    	| [$a67a: rts]
 
 l_a67b:

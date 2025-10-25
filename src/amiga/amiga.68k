@@ -278,7 +278,7 @@ _user:
     bne.b   .standard
 	move.b	d1,_keyexit
     move.l a0,_resload
-
+	
 	move.l	a0,a2
 	lea	(_tag,pc),a0
 	jsr	(resload_Control,a2)
