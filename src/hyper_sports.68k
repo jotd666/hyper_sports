@@ -4544,10 +4544,12 @@ l_57ef:
 
 l_57f0:
 	move.w	#0x2b00,d4                      	| [$57f0: ldu    #$2b00]
+	GET_REG_UNCHECKED_ADDRESS	0,d4                   	| [$57f3: sta    ,u+]
 l_57f3:
-	GET_REG_ADDRESS	0,d4                   	| [$57f3: sta    ,u+]
 	addq.w	#1,d4                           	| [...]
 	move.b	d0,(a0)                         	| [...]
+	VIDEO_BYTE_DIRTY
+	addq	#1,a0
 	cmp.w	#0x2bc0,d4                       	| [$57f5: cmpu   #$2bc0]
 	jne	l_57f3                             	| [$57f9: bne    $57f3]
 	rts                                    	| [$57fb: rts]
@@ -4563,7 +4565,7 @@ l_5808:
 	GET_REG_ADDRESS	0,d2                   	| [$5808: cmpa   ,x]
 	cmp.b	(a0),d0                          	| [...]
 	jeq	l_5816                             	| [$580a: beq    $5816]
-	GET_REG_ADDRESS	0,d2                   	| [$580c: tst    ,x]
+											| [$580c: tst    ,x]
 	tst.b	(a0)                             	| [...]
 	jeq	l_5817                             	| [$580e: beq    $5817]
 	OP_W_ON_DP_ADDRESS	addq,0x90,#1         | [$5810: inc    $90]
