@@ -21,6 +21,75 @@
 ;	mainlatch.q_out_cb<5>().set_nop(); // SA
 ;	mainlatch.q_out_cb<7>().set(FUNC(base_state::irq_mask_w)); // INT
 
+
+;	PORT_START("SYSTEM")
+;	PORT_BIT( 0x01, IP_ACTIVE_LOW, IPT_COIN1 )
+;	PORT_BIT( 0x02, IP_ACTIVE_LOW, IPT_COIN2 )
+;	PORT_BIT( 0x04, IP_ACTIVE_LOW, IPT_COIN3 )
+;	PORT_BIT( 0x08, IP_ACTIVE_LOW, IPT_START1 )
+;	PORT_BIT( 0x10, IP_ACTIVE_LOW, IPT_START2 )
+;	PORT_BIT( 0x20, IP_ACTIVE_LOW, IPT_COIN4 )
+;	PORT_BIT( 0x40, IP_ACTIVE_LOW, IPT_UNKNOWN )
+;	PORT_BIT( 0x80, IP_ACTIVE_LOW, IPT_UNKNOWN )
+;
+;	PORT_START("P1_P2")
+;	PORT_BIT( 0x01, IP_ACTIVE_LOW, IPT_BUTTON3 ) PORT_PLAYER(1)
+;	PORT_BIT( 0x02, IP_ACTIVE_LOW, IPT_BUTTON2 ) PORT_PLAYER(1)
+;	PORT_BIT( 0x04, IP_ACTIVE_LOW, IPT_BUTTON1 ) PORT_PLAYER(1)
+;	PORT_BIT( 0x08, IP_ACTIVE_LOW, IPT_START3 )
+;	PORT_BIT( 0x10, IP_ACTIVE_LOW, IPT_BUTTON3 ) PORT_PLAYER(2)
+;	PORT_BIT( 0x20, IP_ACTIVE_LOW, IPT_BUTTON2 ) PORT_PLAYER(2)
+;	PORT_BIT( 0x40, IP_ACTIVE_LOW, IPT_BUTTON1 ) PORT_PLAYER(2)
+;	PORT_BIT( 0x80, IP_ACTIVE_LOW, IPT_UNKNOWN )
+;
+;	PORT_START("P3_P4")
+;	PORT_BIT( 0x01, IP_ACTIVE_LOW, IPT_BUTTON3  ) PORT_PLAYER(3) //PORT_COCKTAIL  These were commented out
+;	PORT_BIT( 0x02, IP_ACTIVE_LOW, IPT_BUTTON2  ) PORT_PLAYER(3) //PORT_COCKTAIL  before the system changed.
+;	PORT_BIT( 0x04, IP_ACTIVE_LOW, IPT_BUTTON1  ) PORT_PLAYER(3) //PORT_COCKTAIL  Why?
+;	PORT_BIT( 0x08, IP_ACTIVE_LOW, IPT_START4 )
+;	PORT_BIT( 0x10, IP_ACTIVE_LOW, IPT_BUTTON3  ) PORT_PLAYER(4) //PORT_COCKTAIL
+;	PORT_BIT( 0x20, IP_ACTIVE_LOW, IPT_BUTTON2  ) PORT_PLAYER(4) //PORT_COCKTAIL
+;	PORT_BIT( 0x40, IP_ACTIVE_LOW, IPT_BUTTON1  ) PORT_PLAYER(4) //PORT_COCKTAIL
+;	PORT_BIT( 0x80, IP_ACTIVE_LOW, IPT_UNKNOWN )
+;
+;	PORT_START("DSW1")
+;	KONAMI_COINAGE_LOC(DEF_STR( Free_Play ), "No Coin B", SW1)
+;	// "No Coin B" = coins produce sound, but no effect on coin counter
+;
+;	PORT_START("DSW2")
+;	PORT_DIPNAME( 0x01, 0x01, "After Last Event" ) PORT_DIPLOCATION("SW2:1")
+;	PORT_DIPSETTING(    0x01, "Game Over" )
+;	PORT_DIPSETTING(    0x00, "Game Continues" )
+;	PORT_DIPNAME( 0x02, 0x00, DEF_STR( Cabinet ) ) PORT_DIPLOCATION("SW2:2")
+;	PORT_DIPSETTING(    0x00, DEF_STR( Upright ) )
+;	PORT_DIPSETTING(    0x02, DEF_STR( Cocktail ) )
+;	PORT_DIPNAME( 0x04, 0x00, DEF_STR( Demo_Sounds ) ) PORT_DIPLOCATION("SW2:3")
+;	PORT_DIPSETTING(    0x04, DEF_STR( Off ) )
+;	PORT_DIPSETTING(    0x00, DEF_STR( On ) )
+;	PORT_DIPNAME( 0x08, 0x08, "World Records" ) PORT_DIPLOCATION("SW2:4")
+;	PORT_DIPSETTING(    0x08, "Don't Erase" )
+;	PORT_DIPSETTING(    0x00, "Erase on Reset" )
+;	PORT_DIPNAME( 0xf0, 0x40, DEF_STR( Difficulty ) ) PORT_DIPLOCATION("SW2:5,6,7,8")
+;	PORT_DIPSETTING(    0xf0, "Easy 1" )
+;	PORT_DIPSETTING(    0xe0, "Easy 2" )
+;	PORT_DIPSETTING(    0xd0, "Easy 3" )
+;	PORT_DIPSETTING(    0xc0, "Easy 4" )
+;	PORT_DIPSETTING(    0xb0, "Normal 1" )
+;	PORT_DIPSETTING(    0xa0, "Normal 2" )
+;	PORT_DIPSETTING(    0x90, "Normal 3" )
+;	PORT_DIPSETTING(    0x80, "Normal 4" )
+;	PORT_DIPSETTING(    0x70, "Normal 5" )
+;	PORT_DIPSETTING(    0x60, "Normal 6" )
+;	PORT_DIPSETTING(    0x50, "Normal 7" )
+;	PORT_DIPSETTING(    0x40, "Normal 8" )
+;	PORT_DIPSETTING(    0x30, "Difficult 1" )
+;	PORT_DIPSETTING(    0x20, "Difficult 2" )
+;	PORT_DIPSETTING(    0x10, "Difficult 3" )
+;	PORT_DIPSETTING(    0x00, "Difficult 4" )
+
+INPUT_PORTS_END
+
+
 ; page $38xx
 
 game_playing_00 = $00
@@ -38,6 +107,7 @@ nb_long_horse_turns_ef = $ef
 watchdog_1400 = $1400
 sound_queue_3340 = $3340
 current_level_3068 = $3068
+system_input_copy_10 = $10
 
 dsw2_1600 = $1600
 system_1680 = $1680
@@ -806,7 +876,7 @@ read_inputs_451c:
 4567: 96 3A          LDA    $12
 4569: 9A 99          ORA    $11
 456B: 43             COMA
-456C: 94 38          ANDA   $10
+456C: 94 38          ANDA   system_input_copy_10
 456E: 84 8F          ANDA   #$07
 4570: 27 39          BEQ    $458D
 4572: 97 CA          STA    $48
@@ -901,7 +971,7 @@ read_inputs_451c:
 4612: 48             ASLA
 4613: AD B4          JSR    [A,X]		; [jump_table]
 4615: BD 2C 62       JSR    $AEE0
-4618: BD 70 08       JSR    $5880
+4618: BD 70 08       JSR    check_game_start_5880
 461B: 4D             TSTA
 461C: 27 2C          BEQ    $4622
 461E: 0C AA          INC    $22
@@ -3238,7 +3308,7 @@ force_queue_sound_event_4eb3:
 5866: 26 76          BNE    $585C
 5868: 39             RTS
 
-5869: BD D0 08       JSR    $5880
+5869: BD D0 08       JSR    check_game_start_5880
 586C: 4D             TSTA
 586D: 27 98          BEQ    $587F
 586F: 86 23          LDA    #$01
@@ -3251,32 +3321,35 @@ force_queue_sound_event_4eb3:
 587D: 86 89          LDA    #$01
 587F: 39             RTS
 
-5880: D6 21          LDB    $03
+check_game_start_5880:
+5880: D6 21          LDB    $03		; nb credits
 5882: 86 83          LDA    #$01
 5884: 97 6A          STA    $48
-5886: 96 92          LDA    $10
-5888: 85 20          BITA   #$08
-588A: 26 90          BNE    $58A4
-588C: 0C 60          INC    $48
+5886: 96 92          LDA    system_input_copy_10
+5888: 85 20          BITA   #$08		; 1P start
+588A: 26 90          BNE    try_to_start_game_58a4
+588C: 0C 60          INC    $48			; nb required credits: 1
 588E: 85 98          BITA   #$10
-5890: 26 30          BNE    $58A4
-5892: 0C CA          INC    $48
+5890: 26 30          BNE    try_to_start_game_58a4		; 2P start
+5892: 0C CA          INC    $48			; nb required credits: 2
 5894: 96 31          LDA    $13
 5896: 84 8A          ANDA   #$08
-5898: 26 22          BNE    $58A4
+5898: 26 22          BNE    try_to_start_game_58a4
 589A: 0C C0          INC    $48
 589C: 96 3E          LDA    $16
 589E: 84 80          ANDA   #$08
-58A0: 26 20          BNE    $58A4
+58A0: 26 20          BNE    try_to_start_game_58a4
 58A2: 4F             CLRA
 58A3: 39             RTS
 
+try_to_start_game_58a4:
 58A4: D0 6A          SUBB   $48
 58A6: 25 78          BCS    $58A2
-58A8: D7 2B          STB    $03
+; enough credits to continue
+58A8: D7 2B          STB    $03		; update nb credits
 58AA: 96 C0          LDA    $48
 58AC: 4A             DECA
-58AD: 97 89          STA    $01
+58AD: 97 89          STA    $01		;  nb players minus one
 58AF: 4F             CLRA
 58B0: BD 6C 35       JSR    $4EB7
 58B3: 86 62          LDA    #$40
@@ -3759,7 +3832,7 @@ force_queue_sound_event_4eb3:
 5C61: EC 23          LDD    ,Y++
 5C63: DD 9A          STD    $B8
 5C65: D7 4C          STB    $CE
-5C67: 96 38          LDA    $10
+5C67: 96 38          LDA    system_input_copy_10
 5C69: 84 A8          ANDA   #$20
 5C6B: 26 24          BNE    $5C79
 5C6D: 96 30          LDA    $B8
@@ -3882,7 +3955,7 @@ force_queue_sound_event_4eb3:
 5D66: CE A6 28       LDU    #$2400
 5D69: EC 09          LDD    ,X++
 5D6B: D7 61          STB    $49
-5D6D: D6 98          LDB    $10
+5D6D: D6 98          LDB    system_input_copy_10
 5D6F: C4 02          ANDB   #$20
 5D71: 26 8A          BNE    $5D7B
 5D73: 85 02          BITA   #$20
@@ -3924,7 +3997,7 @@ force_queue_sound_event_4eb3:
 5DC0: CE 01 02       LDU    #$2380
 5DC3: EC A3          LDD    ,X++
 5DC5: D7 CB          STB    $49
-5DC7: D6 38          LDB    $10
+5DC7: D6 38          LDB    system_input_copy_10
 5DC9: C4 A8          ANDB   #$20
 5DCB: 26 20          BNE    $5DD5
 5DCD: 85 A8          BITA   #$20
@@ -3973,7 +4046,7 @@ force_queue_sound_event_4eb3:
 5E28: 97 63          STA    $4B
 5E2A: EC 09          LDD    ,X++
 5E2C: D7 61          STB    $49
-5E2E: D6 98          LDB    $10
+5E2E: D6 98          LDB    system_input_copy_10
 5E30: C4 02          ANDB   #$20
 5E32: 26 8A          BNE    $5E3C
 5E34: 85 02          BITA   #$20
@@ -3998,7 +4071,7 @@ force_queue_sound_event_4eb3:
 5E59: AE 0E          LDX    A,X
 5E5B: CE 0B 28       LDU    #$2300
 5E5E: E6 08          LDB    ,X+
-5E60: 96 32          LDA    $10
+5E60: 96 32          LDA    system_input_copy_10
 5E62: 84 A2          ANDA   #$20
 5E64: 26 2A          BNE    $5E6E
 5E66: C5 A2          BITB   #$20
@@ -5835,7 +5908,7 @@ long_horse_6bcc:
 6D74: 86 20          LDA    #$02
 6D76: 97 E7          STA    $65
 6D78: E6 A8          LDB    ,X+
-6D7A: 96 98          LDA    $10
+6D7A: 96 98          LDA    system_input_copy_10
 6D7C: 84 08          ANDA   #$20
 6D7E: 26 8E          BNE    $6D86
 6D80: C1 82          CMPB   #$A0
@@ -17330,7 +17403,7 @@ CCF8: BD E6 2C       JSR    $CEA4
 CCFB: 0C 0A          INC    $22
 CCFD: 39             RTS
 
-CCFE: 96 98          LDA    $10
+CCFE: 96 98          LDA    system_input_copy_10
 CD00: 84 26          ANDA   #$04
 CD02: 27 81          BEQ    $CD07
 CD04: 0C 00          INC    $22
@@ -17403,7 +17476,7 @@ CD93: 8D 6C          BSR    $CDE3
 CD95: BD 4C B1       JSR    $CE33
 CD98: 39             RTS
 
-CD99: 96 98          LDA    $10
+CD99: 96 98          LDA    system_input_copy_10
 CD9B: 84 38          ANDA   #$10
 CD9D: 27 9C          BEQ    $CDB3
 CD9F: BD EC 74       JSR    $CE56
@@ -17416,7 +17489,7 @@ CDAF: DD 06          STD    $24
 CDB1: DD A4          STD    $26
 CDB3: 39             RTS
 
-CDB4: DC 32          LDD    $10
+CDB4: DC 32          LDD    system_input_copy_10
 CDB6: 84 9D          ANDA   #$1F
 CDB8: C4 37          ANDB   #$1F
 CDBA: 10 83 20 28    CMPD   #$0800

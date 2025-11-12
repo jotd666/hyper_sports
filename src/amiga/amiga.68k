@@ -146,10 +146,6 @@ BIT_INSERT_COIN_2 = 1
 BIT_START_1P = 3
 BIT_START_2P = 4
 
-* in0 bits
-BIT_START_3P = 3
-* in1 bits (the only interesting one is 4P start)
-BIT_START_4P = 3
 
 BIT_RIGHT_1P = 0
 BIT_FIRE_1P = 1
@@ -2834,6 +2830,16 @@ osd_read_inputs_2:
 	movem.l	(a7)+,a0/d1
 	rts
 	
+dct_nowait:
+	move.l 	d0,-(a7)
+	moveq	#0,d0
+	jsr	 _detect_controller_types_no_wait 
+	moveq	#1,d0
+	jsr	 _detect_controller_types_no_wait 
+	
+	move.l	(a7)+,d0
+	rts
+	
 osd_read_system_inputs:
 	st.b	d0
 
@@ -2852,13 +2858,13 @@ osd_read_system_inputs:
 	beq.b	0f
 	bclr	#BIT_START_1P,d0
 	* rescan controller types in case the user swapped mouse after bootup
-	jsr	 _detect_controller_types_no_wait 
+	jbsr	dct_nowait
 0:
 	tst.b	(2,a0)		| "2" key like in MAME
 	beq.b	0f
 	bclr	#BIT_START_2P,d0
 	* rescan controller types
-	jsr	 _detect_controller_types_no_wait 
+	jbsr	dct_nowait
 0:	
 
 	jbsr		is_game_playing
@@ -2869,11 +2875,11 @@ osd_read_system_inputs:
 	beq.b	0f
 	bclr	#BIT_INSERT_COIN_1,d0
 0:
-	btst	#JPB_BTN_UP,d1		| "1" key like in MAME
+	btst	#JPB_BTN_UP,d1
 	beq.b	0f
 	bclr	#BIT_START_1P,d0
 0:
-	btst	#JPB_BTN_DOWN,d1		| "2" key like in MAME
+	btst	#JPB_BTN_DOWN,d1
 	beq.b	0f
 	bclr	#BIT_START_2P,d0
 0:	

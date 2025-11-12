@@ -69,6 +69,7 @@ screen_straight_1a = 0x1a   | set from DSW
 lsb_attempt_score_99 = 0x99
 msb_attempt_score_98 = 0x98
 archery_score_index_2d = 0x2D
+nb_credits_03 = 0x3  | 0x3003
 
 *	PORT_START("SYSTEM")
 *	PORT_BIT( 0x01, IP_ACTIVE_LOW, IPT_COIN1 )
@@ -1122,7 +1123,7 @@ l_4523:
 	jne	l_4523                             	| [$452f: bne    $4523]
 	jbsr	osd_read_system_inputs |  [$4531: lda    system_1680]
 	not.b	d0                               	| [$4534: coma]
-	OP_W_ON_DP_ADDRESS	move,0x10,d0         | [$4535: sta    $10]
+	OP_W_ON_DP_ADDRESS	move,system_input_copy_10,d0         | [$4535: sta    $10]
 	jbsr	osd_read_inputs_1 |  [$4537: lda    in0_1681]
 	not.b	d0                               	| [$453a: coma]
 	OP_W_ON_DP_ADDRESS	move,0x13,d0         | [$453b: sta    $13]
@@ -1137,7 +1138,7 @@ l_4544:
 	cmp.b	#0x0f,d0                         	| [$4548: cmpa   #$0f]
 	jne	l_4551                             	| [$454a: bne    $4551]
 	move.b	#0x63,d0                        	| [$454c: lda    #$63]
-	OP_W_ON_DP_ADDRESS	move,0x03,d0         | [$454e: sta    $03]
+	OP_W_ON_DP_ADDRESS	move,nb_credits_03,d0         | [$454e: sta    $03]
 	rts                                    	| [$4550: rts]
 
 l_4551:
@@ -1157,7 +1158,7 @@ l_4564:
 	GET_DP_ADDRESS	0x11                    	| [$4569: ora    $11]
 	or.b	(a0),d0                           	| [...]
 	not.b	d0                               	| [$456b: coma]
-	GET_DP_ADDRESS	0x10                    	| [$456c: anda   $10]
+	GET_DP_ADDRESS	system_input_copy_10                    	| [$456c: anda   $10] system input copy
 	and.b	(a0),d0                          	| [...]
 	and.b	#0x07,d0                         	| [$456e: anda   #$07]
 	jeq	l_458d                             	| [$4570: beq    $458d]
@@ -1194,7 +1195,7 @@ l_4598:
 	jne	l_45a7                             	| [$459c: bne    $45a7]
 	BIT	#0x02,d0                           	| [$459e: bita   #$02]
 	jne	l_45b9                             	| [$45a0: bne    $45b9]
-	OP_W_ON_DP_ADDRESS	addq,0x03,#1         | [$45a2: inc    $03]
+	OP_W_ON_DP_ADDRESS	addq,nb_credits_03,#1         | [$45a2: inc    $03]
 	jra	l_45c9                             	| [$45a4: bra    $45c9]
 l_45a6:
 	rts                                    	| [$45a6: rts]
@@ -1204,9 +1205,9 @@ l_45a7:
 	OP_R_ON_DP_ADDRESS	move,0x05,d0         | [$45a9: lda    $05]
 	OP_R_ON_DP_ADDRESS	cmp,0x08,d0          | [$45ab: cmpa   $08]
 	jne	l_45a6                             	| [$45ad: bne    $45a6]
-	OP_R_ON_DP_ADDRESS	move,0x09,d0         | [$45af: lda    $09]
-	OP_R_ON_DP_ADDRESS	add,0x03,d0          | [$45b1: adda   $03]
-	OP_W_ON_DP_ADDRESS	move,0x03,d0         | [$45b3: sta    $03]
+	OP_R_ON_DP_ADDRESS	move,0x09,d0         | [$45af: lda    $09]  nb credit per coin
+	OP_R_ON_DP_ADDRESS	add,nb_credits_03,d0          | [$45b1: adda   $03]  0x3003: increment nb credits
+	OP_W_ON_DP_ADDRESS	move,nb_credits_03,d0         | [$45b3: sta    $03]
 	OP_1_ON_DP_ADDRESS	clr,0x05             | [$45b5: clr    $05]
 	jra	l_45c9                             	| [$45b7: bra    $45c9]
 l_45b9:
@@ -1215,15 +1216,15 @@ l_45b9:
 	OP_R_ON_DP_ADDRESS	cmp,0x0a,d0          | [$45bd: cmpa   $0a]
 	jne	l_45a6                             	| [$45bf: bne    $45a6]
 	OP_R_ON_DP_ADDRESS	move,0x0b,d0         | [$45c1: lda    $0b]
-	OP_R_ON_DP_ADDRESS	add,0x03,d0          | [$45c3: adda   $03]
-	OP_W_ON_DP_ADDRESS	move,0x03,d0         | [$45c5: sta    $03]
+	OP_R_ON_DP_ADDRESS	add,nb_credits_03,d0          | [$45c3: adda   $03]
+	OP_W_ON_DP_ADDRESS	move,nb_credits_03,d0         | [$45c5: sta    $03]
 	OP_1_ON_DP_ADDRESS	clr,0x07             | [$45c7: clr    $07]
 l_45c9:
-	OP_R_ON_DP_ADDRESS	move,0x03,d0         | [$45c9: lda    $03]
+	OP_R_ON_DP_ADDRESS	move,nb_credits_03,d0         | [$45c9: lda    $03]
 	cmp.b	#0x64,d0                         	| [$45cb: cmpa   #$64]
 	jcs	l_45d3                             	| [$45cd: bcs    $45d3]
 	move.b	#0x63,d0                        	| [$45cf: lda    #$63]
-	OP_W_ON_DP_ADDRESS	move,0x03,d0         | [$45d1: sta    $03]
+	OP_W_ON_DP_ADDRESS	move,nb_credits_03,d0         | [$45d1: sta    $03]
 l_45d3:
 	rts                                    	| [$45d3: rts]
 
@@ -1287,7 +1288,7 @@ l_460a:
 	asl.b	#1,d0                            	| [$4612: asla]
 	JSR_A_INDEXED	A2                   	| [$4613: jsr    [a,x]] [jump_table]
 	jbsr	l_aee0                            	| [$4615: jsr    $aee0]
-	jbsr	l_5880                            	| [$4618: jsr    $5880]
+	jbsr	check_game_start_5880                            	| [$4618: jsr    $5880]
 	tst.b	d0                               	| [$461b: tsta]
 	jeq	l_4622                             	| [$461c: beq    $4622]
 	OP_W_ON_DP_ADDRESS	addq,0x22,#1         | [$461e: inc    $22]
@@ -1335,7 +1336,7 @@ l_4650:
 	move.b	#0x14,d1                        	| [$465f: ldb    #$14]
 	jra	l_52f5                             	| [$4661: jra    $52f5]
 l_4664:
-	OP_R_ON_DP_ADDRESS	move,0x03,d1         | [$4664: ldb    $03]
+	OP_R_ON_DP_ADDRESS	move,nb_credits_03,d1         | [$4664: ldb    $03]
 	cmp.b	#0x04,d1                         	| [$4666: cmpb   #$04]
 	jcs	l_466c                             	| [$4668: bcs    $466c]
 	move.b	#0x04,d1                        	| [$466a: ldb    #$04]
@@ -4632,7 +4633,7 @@ l_585c:
 	rts                                    	| [$5868: rts]
 
 l_5869:
-	jbsr	l_5880                            	| [$5869: jsr    $5880]
+	jbsr	check_game_start_5880                            	| [$5869: jsr    $5880]
 	tst.b	d0                               	| [$586c: tsta]
 	jeq	l_587f                             	| [$586d: beq    $587f]
 	move.b	#0x01,d0                        	| [$586f: lda    #$01]
@@ -4646,35 +4647,36 @@ l_5869:
 l_587f:
 	rts                                    	| [$587f: rts]
 
-l_5880:
-	OP_R_ON_DP_ADDRESS	move,0x03,d1         | [$5880: ldb    $03]
+check_game_start_5880:
+	OP_R_ON_DP_ADDRESS	move,nb_credits_03,d1         | [$5880: ldb    $03]
 	move.b	#0x01,d0                        	| [$5882: lda    #$01]
 	OP_W_ON_DP_ADDRESS	move,0x48,d0         | [$5884: sta    $48]
-	OP_R_ON_DP_ADDRESS	move,0x10,d0         | [$5886: lda    $10]
+	OP_R_ON_DP_ADDRESS	move,system_input_copy_10,d0         | [$5886: lda    $10]
 	BIT	#0x08,d0                           	| [$5888: bita   #$08]
-	jne	l_58a4                             	| [$588a: bne    $58a4]
+	jne	try_to_start_game_58a4                             	| [$588a: bne    $58a4]
 	OP_W_ON_DP_ADDRESS	addq,0x48,#1         | [$588c: inc    $48]
 	BIT	#0x10,d0                           	| [$588e: bita   #$10]
-	jne	l_58a4                             	| [$5890: bne    $58a4]
+	jne	try_to_start_game_58a4                             	| [$5890: bne    $58a4]
 	OP_W_ON_DP_ADDRESS	addq,0x48,#1         | [$5892: inc    $48]
 	OP_R_ON_DP_ADDRESS	move,0x13,d0         | [$5894: lda    $13]
 	and.b	#0x08,d0                         	| [$5896: anda   #$08]
-	jne	l_58a4                             	| [$5898: bne    $58a4]
+	jne	try_to_start_game_58a4                             	| [$5898: bne    $58a4]
 	OP_W_ON_DP_ADDRESS	addq,0x48,#1         | [$589a: inc    $48]
 	OP_R_ON_DP_ADDRESS	move,0x16,d0         | [$589c: lda    $16]
 	and.b	#0x08,d0                         	| [$589e: anda   #$08]
-	jne	l_58a4                             	| [$58a0: bne    $58a4]
+	jne	try_to_start_game_58a4                             	| [$58a0: bne    $58a4]
 l_58a2:
 	moveq	#0,d0                            	| [$58a2: clra]
 	rts                                    	| [$58a3: rts]
 
-l_58a4:
+try_to_start_game_58a4:
 	OP_R_ON_DP_ADDRESS	sub,0x48,d1          | [$58a4: subb   $48]
 	jcs	l_58a2                             	| [$58a6: bcs    $58a2]
-	OP_W_ON_DP_ADDRESS	move,0x03,d1         | [$58a8: stb    $03]
+	* enough credits for the number of players
+	OP_W_ON_DP_ADDRESS	move,nb_credits_03,d1         | [$58a8: stb    $03]
 	OP_R_ON_DP_ADDRESS	move,0x48,d0         | [$58aa: lda    $48]
 	subq.b	#1,d0                           	| [$58ac: deca]
-	OP_W_ON_DP_ADDRESS	move,0x01,d0         | [$58ad: sta    $01]
+	OP_W_ON_DP_ADDRESS	move,0x01,d0         | [$58ad: sta    $01] nb players minus one
 	moveq	#0,d0                            	| [$58af: clra]
 	jbsr	l_4eb7                            	| [$58b0: jsr    $4eb7]
 	move.b	#0x40,d0                        	| [$58b3: lda    #$40]
@@ -5399,7 +5401,7 @@ l_5c4d:
 	GET_DP_ADDRESS	0xb8                    	| [$5c63: std    $b8]
 	MOVE_W_FROM_REG	d1,a0                         	| [...]
 	OP_W_ON_DP_ADDRESS	move,0xce,d1         | [$5c65: stb    $ce]
-	OP_R_ON_DP_ADDRESS	move,0x10,d0         | [$5c67: lda    $10]
+	OP_R_ON_DP_ADDRESS	move,system_input_copy_10,d0         | [$5c67: lda    $10]
 	and.b	#0x20,d0                         	| [$5c69: anda   #$20]
 	jne	l_5c79                             	| [$5c6b: bne    $5c79]
 	OP_R_ON_DP_ADDRESS	move,0xb8,d0         | [$5c6d: lda    $b8]
@@ -5579,7 +5581,7 @@ l_5d63:
 	addq.w	#2,d2                           	| [...]
 	LOAD_D                                 	| [$5d69: ldd    ,x++]
 	OP_W_ON_DP_ADDRESS	move,0x49,d1         | [$5d6b: stb    $49]
-	OP_R_ON_DP_ADDRESS	move,0x10,d1         | [$5d6d: ldb    $10]
+	OP_R_ON_DP_ADDRESS	move,system_input_copy_10,d1         | [$5d6d: ldb    $10]
 	and.b	#0x20,d1                         	| [$5d6f: andb   #$20]
 	jne	l_5d7b                             	| [$5d71: bne    $5d7b]
 	BIT	#0x20,d0                           	| [$5d73: bita   #$20]
@@ -5642,7 +5644,7 @@ l_5dc0:
 	addq.w	#2,d2                           	| [...]
 	LOAD_D                                 	| [$5dc3: ldd    ,x++]
 	OP_W_ON_DP_ADDRESS	move,0x49,d1         | [$5dc5: stb    $49]
-	OP_R_ON_DP_ADDRESS	move,0x10,d1         | [$5dc7: ldb    $10]
+	OP_R_ON_DP_ADDRESS	move,system_input_copy_10,d1         | [$5dc7: ldb    $10]
 	and.b	#0x20,d1                         	| [$5dc9: andb   #$20]
 	jne	l_5dd5                             	| [$5dcb: bne    $5dd5]
 	BIT	#0x20,d0                           	| [$5dcd: bita   #$20]
@@ -5713,7 +5715,7 @@ l_5e26:
 	addq.w	#2,d2                           	| [...]
 	LOAD_D                                 	| [$5e2a: ldd    ,x++]
 	OP_W_ON_DP_ADDRESS	move,0x49,d1         | [$5e2c: stb    $49]
-	OP_R_ON_DP_ADDRESS	move,0x10,d1         | [$5e2e: ldb    $10]
+	OP_R_ON_DP_ADDRESS	move,system_input_copy_10,d1         | [$5e2e: ldb    $10]
 	and.b	#0x20,d1                         	| [$5e30: andb   #$20]
 	jne	l_5e3c                             	| [$5e32: bne    $5e3c]
 	BIT	#0x20,d0                           	| [$5e34: bita   #$20]
@@ -5755,7 +5757,7 @@ l_5e53:
 	GET_REG_ADDRESS	0,d2                   	| [$5e5e: ldb    ,x+]
 	addq.w	#1,d2                           	| [...]
 	move.b	(a0),d1                         	| [...]
-	OP_R_ON_DP_ADDRESS	move,0x10,d0         | [$5e60: lda    $10]
+	OP_R_ON_DP_ADDRESS	move,system_input_copy_10,d0         | [$5e60: lda    $10]
 	and.b	#0x20,d0                         	| [$5e62: anda   #$20]
 	jne	l_5e6e                             	| [$5e64: bne    $5e6e]
 	BIT	#0x20,d1                           	| [$5e66: bitb   #$20]
@@ -8404,7 +8406,7 @@ l_6d74:
 	GET_REG_ADDRESS	0,d2                   	| [$6d78: ldb    ,x+]
 	addq.w	#1,d2                           	| [...]
 	move.b	(a0),d1                         	| [...]
-	OP_R_ON_DP_ADDRESS	move,0x10,d0         | [$6d7a: lda    $10]
+	OP_R_ON_DP_ADDRESS	move,system_input_copy_10,d0         | [$6d7a: lda    $10]
 	and.b	#0x20,d0                         	| [$6d7c: anda   #$20]
 	jne	l_6d86                             	| [$6d7e: bne    $6d86]
 	cmp.b	#0xa0,d1                         	| [$6d80: cmpb   #$a0]
@@ -10923,7 +10925,7 @@ l_7b9e:
 	and.b	#0x0f,d0                         	| [$7ba0: anda   #$0f]
 	cmp.b	#0x0f,d0                         	| [$7ba2: cmpa   #$0f]
 	jeq	l_7bad                             	| [$7ba4: beq    $7bad]
-	OP_R_ON_DP_ADDRESS	move,0x03,d0         | [$7ba6: lda    $03]
+	OP_R_ON_DP_ADDRESS	move,nb_credits_03,d0         | [$7ba6: lda    $03]
 	jeq	l_7bb4                             	| [$7ba8: beq    $7bb4]
 	jra	l_7c20                             	| [$7baa: jra    $7c20]
 l_7bad:
@@ -10970,7 +10972,7 @@ l_7bdf:
 	and.b	#0x0f,d0                         	| [$7be1: anda   #$0f]
 	cmp.b	#0x0f,d0                         	| [$7be3: cmpa   #$0f]
 	jeq	l_7bee                             	| [$7be5: beq    $7bee]
-	OP_R_ON_DP_ADDRESS	move,0x03,d0         | [$7be7: lda    $03]
+	OP_R_ON_DP_ADDRESS	move,nb_credits_03,d0         | [$7be7: lda    $03]
 	jeq	l_7bf5                             	| [$7be9: beq    $7bf5]
 	jra	l_7c20                             	| [$7beb: jra    $7c20]
 l_7bee:
@@ -15506,7 +15508,7 @@ l_943a:
 	jbsr	l_a1df                            	| [$944e: jsr    $a1df]
 	jra	l_9474                             	| [$9451: bra    $9474]
 l_9453:
-	OP_R_ON_DP_ADDRESS	move,0x03,d0         | [$9453: lda    $03]
+	OP_R_ON_DP_ADDRESS	move,nb_credits_03,d0         | [$9453: lda    $03]
 	jeq	l_9474                             	| [$9455: beq    $9474]
 	move.b	#0x0a,d1                        	| [$9457: ldb    #$0a]
 	jbsr	l_a606                            	| [$9459: jsr    $a606]
@@ -15957,7 +15959,7 @@ l_96d2:
 	and.b	#0x0f,d0                         	| [$96d4: anda   #$0f]
 	cmp.b	#0x0f,d0                         	| [$96d6: cmpa   #$0f]
 	jeq	l_96e2                             	| [$96d8: beq    $96e2]
-	OP_1_ON_DP_ADDRESS	tst,0x03             | [$96da: tst    $03]
+	OP_1_ON_DP_ADDRESS	tst,nb_credits_03             | [$96da: tst    $03]
 	jeq	l_96e2                             	| [$96dc: beq    $96e2]
 	moveq	#0,d0                            	| [$96de: clra]
 	jbsr	force_queue_sound_eventl_4eb3                            	| [$96df: jsr    $4eb3]
@@ -17624,7 +17626,7 @@ l_a091:
 	jne	l_a0a4                             	| [$a09f: bne    $a0a4]
 	jra	l_5869                             	| [$a0a1: jra    $5869]
 l_a0a4:
-	OP_R_ON_DP_ADDRESS	move,0x03,d0         | [$a0a4: lda    $03]
+	OP_R_ON_DP_ADDRESS	move,nb_credits_03,d0         | [$a0a4: lda    $03]
 	jeq	l_a0ab                             	| [$a0a6: beq    $a0ab]
 	jra	l_7c20                             	| [$a0a8: jra    $7c20]
 l_a0ab:
@@ -18086,7 +18088,7 @@ l_a37f:
 	jne	l_a392                             	| [$a38d: bne    $a392]
 	jra	l_5869                             	| [$a38f: jra    $5869]
 l_a392:
-	OP_R_ON_DP_ADDRESS	move,0x03,d0         | [$a392: lda    $03]
+	OP_R_ON_DP_ADDRESS	move,nb_credits_03,d0         | [$a392: lda    $03]
 	jeq	l_a399                             	| [$a394: beq    $a399]
 	jra	l_7c20                             	| [$a396: jra    $7c20]
 l_a399:
@@ -20124,7 +20126,7 @@ l_aed4:
 	rts                                    	| [$aedf: rts]
 
 l_aee0:
-	OP_R_ON_DP_ADDRESS	move,0x03,d0         | [$aee0: lda    $03]
+	OP_R_ON_DP_ADDRESS	move,nb_credits_03,d0         | [$aee0: lda    $03]
 	move.b	#0x0a,d1                        	| [$aee2: ldb    #$0a]
 	jbsr	l_a606                            	| [$aee4: jsr    $a606]
 	GET_UNCHECKED_ADDRESS	0x271d                     	| [$aee7: stb    $271d] [video_address]
@@ -25780,7 +25782,7 @@ l_ccf1:
 	rts                                    	| [$ccfd: rts]
 
 l_ccfe:
-	OP_R_ON_DP_ADDRESS	move,0x10,d0         | [$ccfe: lda    $10]
+	OP_R_ON_DP_ADDRESS	move,system_input_copy_10,d0         | [$ccfe: lda    $10]
 	and.b	#0x04,d0                         	| [$cd00: anda   #$04]
 	jeq	l_cd07                             	| [$cd02: beq    $cd07]
 	OP_W_ON_DP_ADDRESS	addq,0x22,#1         | [$cd04: inc    $22]
@@ -25883,7 +25885,7 @@ l_cd8f:
 	rts                                    	| [$cd98: rts]
 
 l_cd99:
-	OP_R_ON_DP_ADDRESS	move,0x10,d0         | [$cd99: lda    $10]
+	OP_R_ON_DP_ADDRESS	move,system_input_copy_10,d0         | [$cd99: lda    $10]
 	and.b	#0x10,d0                         	| [$cd9b: anda   #$10]
 	jeq	l_cdb3                             	| [$cd9d: beq    $cdb3]
 	jbsr	l_ce56                            	| [$cd9f: jsr    $ce56]
@@ -25907,7 +25909,7 @@ l_cdb3:
 	rts                                    	| [$cdb3: rts]
 
 l_cdb4:
-	GET_DP_ADDRESS	0x10                    	| [$cdb4: ldd    $10]
+	GET_DP_ADDRESS	system_input_copy_10                    	| [$cdb4: ldd    $10] system input copy
 	LOAD_D                                 	| [$cdb4: ldd    $10]
 	and.b	#0x1f,d0                         	| [$cdb6: anda   #$1f]
 	and.b	#0x1f,d1                         	| [$cdb8: andb   #$1f]
