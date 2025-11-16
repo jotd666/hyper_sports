@@ -18,9 +18,9 @@ def get_possible_hw_sprites():
     possible_hw_sprites.add(0x17C)  # nice
     return possible_hw_sprites
 
-possible_hw_sprites = get_possible_hw_sprites()
+#possible_hw_sprites = get_possible_hw_sprites()
 # uncomment to disable hw sprites completely
-#possible_hw_sprites = set()
+possible_hw_sprites = set()
 
 magenta = (254,0,254)
 
@@ -135,9 +135,9 @@ dump=False,name_dict=None,cluts=None,tile_number=0,is_bob=False):
 all_tile_cluts = False
 
 
-nb_planes = 4
+nb_planes = 3
 
-nb_colors = 32
+nb_colors = 16
 
 
 
@@ -245,9 +245,18 @@ for i,tsd in tile_sheet_dict.items():
 
 # pad
 tile_palette = sorted(tile_palette)
+bitplanelib.palette_dump(tile_palette,dump_dir / "orig_tiles_palette.png",pformat=bitplanelib.PALETTE_FORMAT_PNG)
+# reduce colors from 16 to 8. Hard choices!!
+tiles_color_repdict = {
+(0,222,251):(0,184,171),   # cyan => another light blue
+(104,151,171):(0,184,171),   # blue/gray => another light blue
+(33,184,80):(0,222,0),     # green => flashy green
+(151,151,171):(184,184,171), # gray => other gray
+(184,71,80):(222,104,80)
+}
 print(f"Used tile colors: {len(tile_palette)}")
 
-tile_palette += (16-len(tile_palette)) * [(0x10,0x20,0x30)]
+tile_palette += (8-len(tile_palette)) * [(0x10,0x20,0x30)]
 
 sprite_palette = set()
 sprite_set_list = [[] for _ in range(16)]
@@ -285,8 +294,9 @@ sprite_palette.pop(magi)
 sprite_palette.insert(0,magenta)
 
 print(f"Used sprite colors: {len(sprite_palette)}")
-sprite_palette += (16-len(sprite_palette)) * [(0x10,0x20,0x30)]
+sprite_palette += (8-len(sprite_palette)) * [(0x10,0x20,0x30)]
 
+bitplanelib.palette_dump(sprite_palette,dump_dir / "sprites_palette.png",pformat=bitplanelib.PALETTE_FORMAT_PNG)
 
 # sprite_set_list is now a 16x512 matrix of sprite tiles
 
