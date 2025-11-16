@@ -1123,17 +1123,6 @@ is_game_playing:
 	move.l	a4,-(a7)
 	move.l	m6809_direct_page_pointer,a4
 	cmp.b	#1,global_state_00(a4)
-	jeq		0f
-	cmp.b	#4,global_state_00(a4)
-	jeq		0f
-	cmp.b	#2,global_state_00(a4)
-	jne		0f
-	* push start screen but also name entry sound
-	* so pressing fire inserts a coin there too, it should not.
-	* since it's tedious, we can check if music is playing...
-	tst.b	music_playing
-	
-0:	
 	move.l	(a7)+,a4
 	rts
 
@@ -2868,7 +2857,7 @@ osd_read_system_inputs:
 0:	
 
 	jbsr		is_game_playing
-	jne	1f
+	jeq	1f
 	move.l	_joypad_1_state,d1
 	* game not playing, we can insert coin/start with joypad
 	btst	#JPB_BTN_RED,d1		| "5" key like in MAME
