@@ -4,9 +4,9 @@ import os,sys,bitplanelib,subprocess,json,pathlib
 this_dir = pathlib.Path(__file__).absolute().parent
 
 data_dir = this_dir / ".." / ".."
-#aga_src_dir = this_dir / ".." / ".." / "src" / "aga"
-#ocs_src_dir = this_dir / ".." / ".." / "src" / "ocs"
 src_dir = this_dir / ".." / ".." / "src" / "amiga"
+aga_src_dir = src_dir / "aga"
+ocs_src_dir = src_dir / "ocs"
 
 #aga_src_dir.mkdir(exist_ok=True)
 #ocs_src_dir.mkdir(exist_ok=True)

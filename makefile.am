@@ -15,6 +15,8 @@ ASM_020 = $(ASM_BASE) -m68020 --defsym MC68020=1 $(OPT_RELEASE)
 ASM = $(ASM_020)
 WHDLOADER_AGA = ..\$(PROGNAME)_AGA.slave
 WHDLOADER_CHIP_AGA = ..\$(PROGNAME)_AGA_chip.slave
+WHDLOADER_OCS = ..\$(PROGNAME)_OCS.slave
+WHDLOADER_CHIP_OCS = ..\$(PROGNAME)_OCS_chip.slave
 ASSETS = ..\assets\amiga
 AMIGASRC = amiga
 AGASRC = amiga/aga
@@ -33,8 +35,9 @@ WHDASM = vasmm68k_mot -DDATETIME -I$(HDBASE)/amiga39_JFF_OS/include -I$(WHDBASE)
 BASE_OBJS = sounds.o amiga_shared.o $(PROGNAME).o ram.o rom.o vbr.o ReadJoyPad.o ptplayer.o 
 # leave amigaxxx first
 AGA_OBJS = amiga_aga.o $(BASE_OBJS) graphics_aga.o
+OCS_OBJS = amiga_ocs.o $(BASE_OBJS) graphics_ocs.o
 
-all: $(MAIN_AGA) $(WHDLOADER_AGA) $(WHDLOADER_CHIP_AGA) $(AGASRC)/graphics.68k $(AMIGASRC)/sounds.68k
+all: $(MAIN_AGA) $(MAIN_OCS) $(WHDLOADER_OCS) $(WHDLOADER_CHIP_OCS) $(WHDLOADER_AGA) $(WHDLOADER_CHIP_AGA) $(AGASRC)/graphics.68k $(AMIGASRC)/sounds.68k
  
 
 
@@ -43,6 +46,8 @@ clean:
 	
 $(AGASRC)/graphics.68k: $(ASSETS)/convert_graphics_aga.py $(ASSETS)/shared.py
 	cmd /c $(ASSETS)\convert_graphics_aga.py
+$(OCSSRC)/graphics.68k: $(ASSETS)/convert_graphics_ocs.py $(ASSETS)/shared.py
+	cmd /c $(ASSETS)\convert_graphics_ocs.py
 
 $(AGASRC)/sounds.68k: $(ASSETS)/convert_sounds.py 
 	cmd /c $(ASSETS)\convert_sounds.py
@@ -50,6 +55,9 @@ $(AGASRC)/sounds.68k: $(ASSETS)/convert_sounds.py
 	
 $(MAIN_AGA): $(AGA_OBJS)
 	$(GCC_BIN)/m68k-amigaos-ld $(OPT_RELEASE_LINK) -o $(MAIN_AGA) $(AGA_OBJS)
+
+$(MAIN_OCS): $(OCS_OBJS)
+	$(GCC_BIN)/m68k-amigaos-ld $(OPT_RELEASE_LINK) -o $(MAIN_OCS) $(OCS_OBJS)
 
 ram.o: ram.68k $(PROGNAME).inc
 	$(ASM) ram.68k -o ram.o
@@ -59,6 +67,8 @@ $(PROGNAME).o: $(PROGNAME).68k $(PROGNAME).inc include.inc sounds.inc data.inc
 	$(ASM) $(PROGNAME).68k -o $(PROGNAME).o
 amiga_aga.o: $(AMIGASRC)/amiga.68k $(PROGNAME).inc data.inc $(AMIGASRC)/ReadJoyPad.i $(AGASRC)/palette.68k $(AMIGASRC)/sound_entries.68k
 	$(ASM) -I$(AGASRC) -I$(AMIGASRC) -I$(AMIGASRC)/mit_includes $(AMIGASRC)/amiga.68k -o amiga_aga.o
+amiga_ocs.o: $(AMIGASRC)/amiga.68k $(PROGNAME).inc data.inc $(AMIGASRC)/ReadJoyPad.i $(AGASRC)/palette.68k $(AMIGASRC)/sound_entries.68k
+	$(ASM_000) -I$(OCSSRC) -I$(AMIGASRC) -I$(AMIGASRC)/mit_includes $(AMIGASRC)/amiga.68k -o amiga_ocs.o
 amiga_shared.o: $(AMIGASRC)/amiga_shared.68k data.inc $(AMIGASRC)/sound_entries.68k $(PROGNAME).inc $(AMIGASRC)/ReadJoyPad.i
 	$(ASM) -I$(AMIGASRC) -I$(AMIGASRC)/mit_includes $(AMIGASRC)/amiga_shared.68k -o amiga_shared.o
 vbr.o: $(AMIGASRC)/vbr.68k
@@ -71,6 +81,8 @@ ReadJoyPad.o: $(AMIGASRC)/ReadJoyPad.68k amiga/ReadJoyPad.i
 	$(ASM) -I$(AMIGASRC) -I$(AMIGASRC)/mit_includes $(AMIGASRC)/ReadJoyPad.68k -o ReadJoyPad.o
 graphics_aga.o: $(AGASRC)/graphics.68k $(PROGNAME).inc
 	$(ASM) $(AGASRC)/graphics.68k -o graphics_aga.o
+graphics_ocs.o: $(OCSSRC)/graphics.68k $(PROGNAME).inc
+	$(ASM_000) $(OCSSRC)/graphics.68k -o graphics_ocs.o
 
 
 $(WHDLOADER_AGA) : $(AGASRC)/$(PROGNAME)HD.s
@@ -80,3 +92,11 @@ $(WHDLOADER_AGA) : $(AGASRC)/$(PROGNAME)HD.s
 $(WHDLOADER_CHIP_AGA) : $(AGASRC)/$(PROGNAME)HD.s
 	wdate.py> datetime
 	$(WHDASM) -DCHIP_ONLY -o $(WHDLOADER_CHIP_AGA) $(AGASRC)/$(PROGNAME)HD.s
+
+$(WHDLOADER_OCS) : $(OCSSRC)/$(PROGNAME)HD.s
+	wdate.py> datetime
+	$(WHDASM) -o $(WHDLOADER_OCS) $(OCSSRC)/$(PROGNAME)HD.s
+	
+$(WHDLOADER_CHIP_OCS) : $(OCSSRC)/$(PROGNAME)HD.s
+	wdate.py> datetime
+	$(WHDASM) -DCHIP_ONLY -o $(WHDLOADER_CHIP_OCS) $(OCSSRC)/$(PROGNAME)HD.s

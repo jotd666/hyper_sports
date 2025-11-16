@@ -409,12 +409,12 @@ gs_array = [0]*NB_SPRITES
 for i in group_sprite_pairs:
     gs_array[i] = 1
     gs_array[i+1] = 0xFF
-with open(os.path.join(src_dir,"sprite_groups.68k"),"w") as f:
+with open(ocs_src_dir / "sprite_groups.68k","w") as f:
     f.write("* 1: do not display unless mirrored\n")
     bitplanelib.dump_asm_bytes(gs_array,f,mit_format=True)
 
 
-with open(os.path.join(src_dir,"graphics.68k"),"w") as f:
+with open(ocs_src_dir / "graphics.68k","w") as f:
     f.write("\t.global\tcharacter_table\n")
     f.write("\t.global\tbob_table\n")
     f.write("\t.global\thws_table\n")
