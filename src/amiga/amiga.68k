@@ -784,7 +784,6 @@ alloc_sprite:
 	* if we reach that point there's a big problem, break if dev mode
 	* hopefully if we save buffer in A1 we can reproduce the issue at will!
 	.ifndef	RELEASE
-	lea			sprite_buffer(pc),a1
 	lea			sprite_allocation_error,a0
 	jbsr	osd_break
 	.endif
@@ -2023,8 +2022,6 @@ clear_planes_any_blitter_internal:
 sprite_drawn:
 	.skip	NB_TARGET_SPRITES
 
-sprite_buffer:
-	.skip	NB_TARGET_SPRITES*SPRITE_SIZEOF
 	
 bob_previous_positions_1:
 	ds.b	NB_TARGET_SPRITES*PREVIOUS_SPRITE_SIZEOF

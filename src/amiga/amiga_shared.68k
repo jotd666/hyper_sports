@@ -86,7 +86,7 @@ osd_read_high_scores:
 	movem.l	(a7)+,d0-d7/a0-a6
 	rts
 fix_times:
-	tst.b	(a1)
+	tst.w	(a1)
 	jne		2f
 	* zero we should fix it
 	move.l	#0x01030000,(a1)
