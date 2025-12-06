@@ -40,7 +40,7 @@ BORDERBLANK = 0
 
 COPPER_Y_START = 0x18
 BASE_BPLCON3_VALUE = 0x0C00     | for some reason if not set, set to 0x0C40...
-BASE_BPLCON2_VALUE = 0x0020		| sprites above tiles playfield, below bobs playfield
+BASE_BPLCON2_VALUE = 0x0024		| sprites above all playfields (unlike TrackNField)
 BASE_BPLCON0_VALUE = 0x6600+BORDERBLANK  | 6 bitplanes, dual playfield, borderblank
 
 
@@ -461,12 +461,12 @@ _user:
 	bsr		load_palette
 	
 	move.w	#TOTAL_NB_COLORS,d0
-	lea		palette,a0
+	lea		palette+16,a0
 	lea		bobs_colors,a1
 	bsr		load_palette
 	
 	move.w	#TOTAL_NB_COLORS*2,d0
-	lea		palette+16,a0  | TEMP TEMP
+	lea		palette+32,a0
 	lea		sprite_colors,a1
 	bsr		load_palette
 	.else

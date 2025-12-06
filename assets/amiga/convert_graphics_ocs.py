@@ -13,7 +13,7 @@ def get_possible_hw_sprites():
     # declare all player frames: do not declare pole vault jump
     # do not declare sprites that can be displayed several times at once
     possible_hw_sprites = {i for i in range(NB_SPRITES) if i not in mirror_sprites and
-    any(x in sprite_names.get(i,"") for x in ("arrow","shooting_player","running_player","bow_player","caret","apple"))}
+    any(x in sprite_names.get(i,"") for x in ("arrow","misc_player","pole_player","shooting_player","running_player","bow_player","caret","apple"))}
 
     possible_hw_sprites.add(0x17C)  # nice
     return possible_hw_sprites
@@ -300,7 +300,6 @@ cluts = sprite_cluts
 
 for clut_index,tsd in sprite_sheet_dict.items():
     # BOBs
-
     sp,sprite_set = load_tileset(tsd,clut_index,16,16,"sprites",dump_dir,dump=dump_it,
     name_dict=sprite_names,cluts=sprite_cluts,is_bob=True)
     sprite_set_list[clut_index] = sprite_set
@@ -321,18 +320,50 @@ sprite_palette.pop(magi)
 # temporary: put magenta as first color to be able to decode the frames properly
 sprite_palette.insert(0,magenta)
 
-print(f"Used sprite colors: {len(sprite_palette)}")
-sprite_palette += (8-len(sprite_palette)) * [(0x10,0x20,0x30)]  # not needed
+# BOB palette is going to be different from sprite palette. Sprite palette has 16 entries
+# which is perfect for HW sprites palette (attached sprites), but BOBs use the second playfield
+# and thus are limited to 7 colors. Argh! first we have to recompute BOB palette
 
-bitplanelib.palette_dump(sprite_palette,dump_dir / "sprites_palette.png",pformat=bitplanelib.PALETTE_FORMAT_PNG)
+bob_palette = set()
+for sprite_set in sprite_set_list:
+    for i,s in enumerate(sprite_set):
+        if s and i not in possible_hw_sprites:
+            p = bitplanelib.palette_extract(s)
+            bob_palette.update(p)
+            if "girl" in sprite_names.get(i,""):
+                # replace yellow by brown
+                bitplanelib.replace_color(s,{(255,255,0)},(151,71,0))
+print(f"Used HW sprite colors: {len(sprite_palette)}")
+
+# reduce BOB palette to 7 colors! fortunately, HW sprites retain the original palette
+sprites_color_repdict = {
+(222,184,171):(222,104,171), # pink
+(184,184,171):(151,151,171), # gray
+(104,71,0):(151,71,0),
+(222,151,80):(151,71,0),
+(0,255,0):(222,104,171),  # green => pink
+(255,0,0):(222,104,171),  # red => pink
+(0,255,251):(0,0,251),  # cyan => blue
+(255,255,0):(255,222,171), # yellow => pink
+}
+
+bob_palette = sorted({sprites_color_repdict.get(k,k) for k in bob_palette})
+magi = bob_palette.index(magenta)
+bob_palette.pop(magi)
+# temporary: put magenta as first color to be able to decode the frames properly
+bob_palette.insert(0,magenta)
+
+bitplanelib.palette_dump(bob_palette,dump_dir / "bob_sprites_palette.png",pformat=bitplanelib.PALETTE_FORMAT_PNG)
+
+print(f"Used BOB sprite colors: {len(bob_palette)}")
+
+
+bitplanelib.palette_dump(sprite_palette,dump_dir / "hw_sprites_palette.png",pformat=bitplanelib.PALETTE_FORMAT_PNG)
 
 # sprite_set_list is now a 16x512 matrix of sprite tiles
 
-
-full_palette = tile_palette+sprite_palette
-
-print([hex(bitplanelib.to_rgb4_color(x)) for x in full_palette])
-
+bob_palette_black = [(0,0,0)]+bob_palette[1:]
+full_palette = tile_palette+bob_palette_black+sprite_palette
 
 #full_palette_rgb4 = {(x>>4,y>>4,z>>4) for x,y,z in full_palette}
 #actually_used_colors_rgb4 = {(x>>4,y>>4,z>>4) for x,y,z in actually_used_colors}
@@ -350,7 +381,6 @@ plane_orientations = [("standard",lambda x:x),
 ("flip_mirror",lambda x:ImageOps.flip(ImageOps.mirror(x)))]
 
 def read_tileset(img_set_list,palette,plane_orientation_flags,cache,is_bob):
-    print("readtile",[hex(bitplanelib.to_rgb4_color(x)) for x in palette])
     next_cache_id = 1
     tile_table = []
     for n,img_set in enumerate(img_set_list):
@@ -375,22 +405,28 @@ def read_tileset(img_set_list,palette,plane_orientation_flags,cache,is_bob):
                             actual_nb_planes += 1
 
 
-                            # only 4 planes + mask => 5 planes
+                            # only 3 planes + mask => 4 planes
                             orig_wtile = wtile
                             y_start,wtile = bitplanelib.autocrop_y(wtile)
                             height = wtile.size[1]
                             width = wtile.size[0]//8 + 2
-                            bitplane_data = bitplanelib.palette_image2raw(wtile,None,palette,generate_mask=True,mask_color=magenta)
+
+                            # for BOB, we have to reduce colors
+                            wtile_copy = Image.new("RGB",wtile.size)
+                            wtile_copy.paste(wtile)
+                            bitplanelib.replace_color_from_dict(wtile_copy,sprites_color_repdict)
+
+                            bitplane_data = bitplanelib.palette_image2raw(wtile_copy,None,palette,generate_mask=True,mask_color=magenta)
                             # add sprite data if eligible: player frame, not mirrored
 
                             if i in possible_hw_sprites:
                                 # using original, uncropped bitplane data
-                                bitplane_sprite_data = bitplanelib.palette_image2attached_sprites(orig_wtile,None,palette,
+                                bitplane_sprite_data = bitplanelib.palette_image2attached_sprites(orig_wtile,None,sprite_palette,
                                 sprite_fmode=0,with_control_words=True)
                                 # void the blitter data
                                 bitplane_data = b''
                         else:
-                            # 4 planes, no mask
+                            # no mask
                             height = 8
                             width = 1
                             y_start = 0
@@ -416,6 +452,7 @@ def read_tileset(img_set_list,palette,plane_orientation_flags,cache,is_bob):
                         if bitplane_sprite_data:
                             entry[plane_name]["sprdat"] = bitplane_sprite_data
 
+
             tile_entry.append(entry)
 
         tile_table.append(tile_entry)
@@ -435,7 +472,7 @@ tile_table = read_tileset(tile_set_list,tile_palette,[True,False,False,False],ca
 bob_plane_cache = {}
 
 
-sprite_table = read_tileset(sprite_set_list,sprite_palette,[True,False,True,False],cache=bob_plane_cache, is_bob=True)
+sprite_table = read_tileset(sprite_set_list,bob_palette,[True,False,True,False],cache=bob_plane_cache, is_bob=True)
 
 
 # now that the sprites were decoded, put black as first color too (else for some priority reason
