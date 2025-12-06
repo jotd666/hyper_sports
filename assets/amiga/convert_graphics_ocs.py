@@ -18,9 +18,13 @@ def get_possible_hw_sprites():
     possible_hw_sprites.add(0x17C)  # nice
     return possible_hw_sprites
 
-#possible_hw_sprites = get_possible_hw_sprites()
-# uncomment to disable hw sprites completely
-possible_hw_sprites = set()
+possible_hw_sprites = get_possible_hw_sprites()
+
+# group_sprite_pairs must be reworked to exclude sprites that will be HW sprites, as we cannot display
+# more that 16 pixel wide sprites in OCS that's fucking annoying but that's reality give me AGA every day
+
+group_sprite_pairs = {s for s in group_sprite_pairs if s not in possible_hw_sprites}
+
 
 magenta = (254,0,254)
 
@@ -220,6 +224,14 @@ if dump_it:
             tile_cluts_dict = {hex(k):[hex(x) for x in v] for k,v in tile_cluts.items() if v}
             json.dump(tile_cluts_dict,f,indent=2)
 
+
+def replace_colors(set_list,rep_dict):
+    for ts in set_list:
+        for i,t in enumerate(ts):
+            if t:
+                bitplanelib.replace_color_from_dict(ts[i],rep_dict)
+
+
 def add_hw_sprite(index,name,cluts=[0]):
     if isinstance(index,range):
         pass
@@ -251,12 +263,28 @@ tiles_color_repdict = {
 (0,222,251):(0,184,171),   # cyan => another light blue
 (104,151,171):(0,184,171),   # blue/gray => another light blue
 (33,184,80):(0,222,0),     # green => flashy green
-(151,151,171):(184,184,171), # gray => other gray
-(184,71,80):(222,104,80)
+(151,151,171):(200,184,171), # gray => other gray
+(184,71,80):(222,104,80),
+(222,184,171):(200,184,171),  # merge pinkish and gray
+(0,255,251):(0,184,171),
+(184,184,171):(200,184,171),
+(255,0,0):(222,104,80)
+
 }
+
+tile_palette = sorted({tiles_color_repdict.get(k,k) for k in tile_palette})
+bitplanelib.palette_dump(tile_palette,dump_dir / "ocs_tiles_palette.png",pformat=bitplanelib.PALETTE_FORMAT_PNG)
+
+
+# now rework images
+replace_colors(tile_set_list,tiles_color_repdict)
+
+
+
+#tile_palette = bitplanelib.replace_color_from_dict()
 print(f"Used tile colors: {len(tile_palette)}")
 
-tile_palette += (8-len(tile_palette)) * [(0x10,0x20,0x30)]
+tile_palette += (8-len(tile_palette)) * [(0x10,0x20,0x30)]  # not needed!
 
 sprite_palette = set()
 sprite_set_list = [[] for _ in range(16)]
@@ -294,16 +322,16 @@ sprite_palette.pop(magi)
 sprite_palette.insert(0,magenta)
 
 print(f"Used sprite colors: {len(sprite_palette)}")
-sprite_palette += (8-len(sprite_palette)) * [(0x10,0x20,0x30)]
+sprite_palette += (8-len(sprite_palette)) * [(0x10,0x20,0x30)]  # not needed
 
 bitplanelib.palette_dump(sprite_palette,dump_dir / "sprites_palette.png",pformat=bitplanelib.PALETTE_FORMAT_PNG)
 
 # sprite_set_list is now a 16x512 matrix of sprite tiles
 
 
-
 full_palette = tile_palette+sprite_palette
 
+print([hex(bitplanelib.to_rgb4_color(x)) for x in full_palette])
 
 
 #full_palette_rgb4 = {(x>>4,y>>4,z>>4) for x,y,z in full_palette}
@@ -322,6 +350,7 @@ plane_orientations = [("standard",lambda x:x),
 ("flip_mirror",lambda x:ImageOps.flip(ImageOps.mirror(x)))]
 
 def read_tileset(img_set_list,palette,plane_orientation_flags,cache,is_bob):
+    print("readtile",[hex(bitplanelib.to_rgb4_color(x)) for x in palette])
     next_cache_id = 1
     tile_table = []
     for n,img_set in enumerate(img_set_list):
@@ -401,19 +430,21 @@ def read_tileset(img_set_list,palette,plane_orientation_flags,cache,is_bob):
     return new_tile_table
 
 tile_plane_cache = {}
-tile_table = read_tileset(tile_set_list,full_palette[:16],[True,False,False,False],cache=tile_plane_cache, is_bob=False)
+tile_table = read_tileset(tile_set_list,tile_palette,[True,False,False,False],cache=tile_plane_cache, is_bob=False)
 
 bob_plane_cache = {}
 
 
-sprite_table = read_tileset(sprite_set_list,full_palette[16:],[True,False,True,False],cache=bob_plane_cache, is_bob=True)
+sprite_table = read_tileset(sprite_set_list,sprite_palette,[True,False,True,False],cache=bob_plane_cache, is_bob=True)
 
 
 # now that the sprites were decoded, put black as first color too (else for some priority reason
 # the background is magenta or whatever the color is)
-full_palette[16] = (0,0,9)
+#full_palette[16] = (0,0,9)
 
-with open(os.path.join(src_dir,"palette.68k"),"w") as f:
+palette_file = os.path.join(ocs_src_dir,"palette.68k")
+
+with open(palette_file,"w") as f:
     bitplanelib.palette_dump(full_palette,f,bitplanelib.PALETTE_FORMAT_ASMGNU)
 
 gs_array = [0]*NB_SPRITES

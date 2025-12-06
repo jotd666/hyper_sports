@@ -454,10 +454,30 @@ _user:
 	
 	bsr		set_bob_bitplanes
 	
+	.ifdef	OCS_VERSION
+	move.w	#TOTAL_NB_COLORS,d0
+	lea		palette,a0
+	lea		tiles_colors,a1
+	bsr		load_palette
+	
+	move.w	#TOTAL_NB_COLORS,d0
+	lea		palette,a0
+	lea		bobs_colors,a1
+	bsr		load_palette
+	
+	move.w	#TOTAL_NB_COLORS*2,d0
+	lea		palette+16,a0  | TEMP TEMP
+	lea		sprite_colors,a1
+	bsr		load_palette
+	.else
+	* AGA: simple & brutal 32 color load
+	* sprite colors are the same as bob colors
 	move.w	#TOTAL_NB_COLORS*2,d0
 	lea		palette,a0
 	lea		tiles_colors,a1
 	bsr		load_palette
+	
+	.endif
 	
 	.ifne	OPT_ENABLE_LOGGING
 	* protection for end of cpu log buffer
@@ -2487,7 +2507,7 @@ update_bg_tile:
 	movem.w	(a7)+,d2-d3
 	.endif
 
-	bsr		compute_tile_xy
+	jbsr		compute_tile_xy
 	cmp.w	#FG_NB_BYTES_PER_ROW,d0
 	* 0 <= X < FG_NB_BYTES_PER_ROW: we must double the tiles
 	* to simulate tile wrap
@@ -2544,7 +2564,9 @@ update_bg_tile:
 	jne		12f
 	add.w	#VIDEO_ADDRESS,d7
 	lsr.w	#2,d2
+	.ifdef	NO68020
 	lsr.w	#2,d3
+	.endif
 	move.w	#0xF0F,_custom+color
 	jra		11f
 	.endif
@@ -2586,19 +2608,6 @@ update_bg_tile:
 	.endr	
 	.endm
 	
-*	.macro	COPY_TILE_PLANE_ROW_BACKBUFFER
-*	COPY_TILE_PLANE_ROW
-*	move.b	d0,(offset,a3)  | backbuffer
-*	.endm
-*	
-*	.macro	CLEAR_TILE_PLANE_BACKBUFFER
-*	.set	offset,0
-*	.rept	8
-*	clr.b	(offset,a1)
-*	clr.b	(offset,a3)
-*	.set	offset,offset+BG_NB_BYTES_PER_ROW
-*	.endr	
-*	.endm
 	
 	.macro	TILE_NEXT_PLANE
 	add.w	d5,a1
@@ -3491,7 +3500,7 @@ game_copperlist:
 	* black color background plane
 
 	* enable sprite colors now
-
+	
 bobs_bitplanes:
 	DECL_EVEN_BITPLANES	0,NB_BOB_PLANES
 tiles_bitplanes:

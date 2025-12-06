@@ -29,7 +29,6 @@
 
 	.align	2
 
-	
 
 ram_buffer:
 	.ifdef	RELEASE
