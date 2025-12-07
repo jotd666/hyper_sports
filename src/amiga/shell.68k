@@ -1,17 +1,17 @@
 *
-*  Amiga Track & Field startup shell
+*  Amiga Hyper Sports startup shell
 *
-* (c) JOTD 2025
+* (c) JOTD 2024
 *
 
 
 *For Agnus, check ($dff004.b & $7f): $0x/$1x is Agnus pal/ntsc, $20/$30 and $21/$31 is ECS Fat Agnus pal/ntsc, $22/$32 and $23/$33 is AGA (Alice) pal/ntsc.
 *For Denise, check $dff07d.b: ECS is $fc, AGA (Lisa) is $f8. OCS returns a random value (whatever was previously on the data bus). 
 
-	.include "lvo/exec_lvos.i"
-	.include "lvo/dos_lvos.i"
-	.include "lvo/graphics_lvos.i"
-	.include "whdload_funcs.i"
+.include "lvo/exec_lvos.i"
+.include "lvo/dos_lvos.i"
+.include "lvo/graphics_lvos.i"
+.include	"whdload_funcs.i"
 
 .macro 	blitz_bypass
 	move.w	d0,-(a7)
@@ -58,7 +58,16 @@ _user:
 	lea		exe_aga(pc),a0
 	bra.b	run_it
 0:
+	move.w	0xdff07c,d0
+	cmp.b	#0xFC,d0
+	bne.b	0f
+	move.w	0xdff07c,d0
+	cmp.b	#0xFC,d0
+	bne.b	0f
 
+	lea		exe_ecs(pc),a0
+	bra.b	run_it
+0:
 	lea		exe_ocs(pc),a0
 run_it:
 	move.l	a0,d1
@@ -71,7 +80,6 @@ run_it:
 	move.l	d1,a1
 	move.l	a5,a0
 	move.l	d5,d0	| restore arguments, pass them as-is
-	
 	jsr		(4,a1)
 out:
 	move.l	segments,d1
@@ -265,7 +273,9 @@ graphicsname:
 	.asciz	"graphics.library"
 	
 exe_aga:
-	.asciz	"track_and_field_aga"
+	.asciz	"hyper_sports_aga"
+exe_ecs:
+	.asciz	"hyper_sports_ecs"
 exe_ocs:
-	.asciz	"track_and_field_ocs"
+	.asciz	"hyper_sports_ocs"
 	

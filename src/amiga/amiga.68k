@@ -54,6 +54,7 @@ HW_SPRITE_X_CORRECTION = 14
 
 CS_IN_PLAY = 1
 CS_OTHER = 2
+CS_RECORD = 3
 
 	.else
 
@@ -1121,7 +1122,12 @@ detect_current_screen:
 	
 	GET_MEMORY_START_AND_DP
 	lea		(VIDEO_ADDRESS,a6),a6
-	
+
+	cmp.b	#0x79,(0x2D1,a6)
+	jne		0f
+	move.w	#CS_RECORD,d0
+	jra		1f
+0:
 	cmp.b	#0x30,(0x600,a6)
 	jne		0f
 	* in-play with bottom status bar

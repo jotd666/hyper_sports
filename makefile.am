@@ -1,7 +1,8 @@
 PROGNAME = hyper_sports
 MAIN_AGA = ..\$(PROGNAME)_aga
+MAIN_ECS = ..\$(PROGNAME)_ecs
 MAIN_OCS = ..\$(PROGNAME)_ocs
-
+AMIGA_SHELL = ..\$(PROGNAME)
 
 ifdef RELEASE_BUILD
 OPT_RELEASE = --defsym RELEASE=1
@@ -37,13 +38,19 @@ BASE_OBJS = sounds.o amiga_shared.o $(PROGNAME).o ram.o rom.o vbr.o ReadJoyPad.o
 AGA_OBJS = amiga_aga.o $(BASE_OBJS) graphics_aga.o
 OCS_OBJS = amiga_ocs.o $(BASE_OBJS) graphics_ocs.o
 
-all: $(MAIN_AGA) $(MAIN_OCS) $(WHDLOADER_OCS) $(WHDLOADER_CHIP_OCS) $(WHDLOADER_AGA) $(WHDLOADER_CHIP_AGA) $(AGASRC)/graphics.68k $(AMIGASRC)/sounds.68k
+all: $(MAIN_AGA) $(MAIN_OCS) $(AMIGA_SHELL) $(WHDLOADER_OCS) $(WHDLOADER_CHIP_OCS) $(WHDLOADER_AGA) $(WHDLOADER_CHIP_AGA) $(AGASRC)/graphics.68k $(AMIGASRC)/sounds.68k
  
+$(AMIGA_SHELL): shell.o
+	$(GCC_BIN)/m68k-amigaos-ld $(OPT_RELEASE_LINK) -o $(AMIGA_SHELL) shell.o
+
 
 
 clean:
 	del $(AGA_OBJS) $(OCS_OBJS) "$(MAIN_AGA)" "$(MAIN_OCS)"
 	
+shell.o: $(AMIGASRC)/shell.68k
+	$(ASM_000) -I$(AMIGASRC) -I$(AMIGASRC)/mit_includes $(AMIGASRC)/shell.68k -o shell.o
+
 $(AGASRC)/graphics.68k: $(ASSETS)/convert_graphics_aga.py $(ASSETS)/shared.py
 	cmd /c $(ASSETS)\convert_graphics_aga.py
 $(OCSSRC)/graphics.68k: $(ASSETS)/convert_graphics_ocs.py $(ASSETS)/shared.py
