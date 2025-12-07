@@ -92,10 +92,11 @@ NB_POSSIBLE_SPRITES = 0x200
 NB_POSSIBLE_TILES = 0x400
 
 NB_SCROLL_ROWS = 28
-NB_SCROLL_ROWS_PART_1 = NB_SCROLL_ROWS/4+2
-NB_SCROLL_ROWS_PART_2 = NB_SCROLL_ROWS/4-1
-NB_SCROLL_ROWS_PART_3 = NB_SCROLL_ROWS/2
-NB_SCROLL_ROWS_PART_4 = 1
+NB_SCROLL_ROWS_PART_1 = 9
+NB_SCROLL_ROWS_PART_2 = 6
+NB_SCROLL_ROWS_PART_3 = 10
+NB_SCROLL_ROWS_PART_4 = 4
+NB_SCROLL_ROWS_PART_5 = 1
 
 Y_MAX = 256
 
@@ -3416,6 +3417,11 @@ scroll_row_copper_address_table:
 	.endr
 	.set	offset,0
 	.rept	NB_SCROLL_ROWS_PART_4
+	.long	scroll_rows_fourth_part+6+offset
+	.set	offset,offset+ROW_SIZE
+	.endr
+	.set	offset,0
+	.rept	NB_SCROLL_ROWS_PART_5
 	.long	scroll_rows_bottom+6+offset
 	.set	offset,offset+ROW_SIZE
 	.endr
@@ -3575,11 +3581,7 @@ debug_color:
 	dc.l	-2
 	
 
-first_color_change:
-	DECL_OPTIONAL_COLORS	TOTAL_NB_COLORS,TOTAL_NB_COLORS
 
-second_color_change:
-	DECL_OPTIONAL_COLORS	TOTAL_NB_COLORS,TOTAL_NB_COLORS
 
 	
 	* main copperlist
@@ -3622,7 +3624,9 @@ scroll_rows_first_part:
 	* here the top status part just ended
 	* it's a good location to change background colors
 	* when game is playing
-*first_color_change:
+first_color_change:
+	DECL_OPTIONAL_COLORS	TOTAL_NB_COLORS,TOTAL_NB_COLORS
+
 	.endif
 scroll_rows_second_part:
 	DEF_SCROLL_ROWS	NB_SCROLL_ROWS_PART_2
@@ -3632,10 +3636,13 @@ intreq_block_game:
 scroll_rows_third_part:
 	DEF_SCROLL_ROWS	NB_SCROLL_ROWS_PART_3
 	.ifdef	OCS_VERSION
-*second_color_change:
+second_color_change:
+	DECL_OPTIONAL_COLORS	TOTAL_NB_COLORS,TOTAL_NB_COLORS
 scroll_rows_third_part_end:
 	.endif
-	
+scroll_rows_fourth_part	:
+	DEF_SCROLL_ROWS	NB_SCROLL_ROWS_PART_4
+
 	* purple 
 
 
@@ -3649,7 +3656,7 @@ scroll_rows_third_part_end:
 	.word	 intreq,0x8010
 	.set	y_start,0
 scroll_rows_bottom:
-	DEF_SCROLL_ROWS	NB_SCROLL_ROWS_PART_4
+	DEF_SCROLL_ROWS	NB_SCROLL_ROWS_PART_5
 	
 	.word	bplcon1
 	* set 0-scroll value value for both plane sets
