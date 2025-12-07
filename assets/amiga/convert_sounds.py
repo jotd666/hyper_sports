@@ -114,26 +114,23 @@ def convert():
             v["channel"] = -1 # auto
 
     sound_dict.update({
-    "RECORD_BROKEN_TUNE_SND"      :{"index":0x3C,"pattern":0x8,"volume":32},
-    "CHARIOTS_TUNE_SND"      :{"index":0x2D,"pattern":0x3,"volume":32,"loops":True},
-    "BEST_PLAYER_TUNE_SND"      :{"index":0x3E,"pattern":0xA,"volume":32},
-    "GAME_OVER_TUNE_SND"      :{"index":0x3B,"pattern":0xC,"volume":32},
-    "START_EVENT_TUNE_SND"      :{"index":0x3D,"pattern":0xE,"volume":32},
-    "NAME_ENTRY_SND"      :{"index":0x40,"pattern":0x0,"volume":32,"loops":True},
+    "RECORD_BROKEN_TUNE_SND"      :{"index":0x3C,"pattern":0x6,"volume":32},
+    "CHARIOTS_TUNE_SND"      :{"index":0x2D,"pattern":0x10,"volume":32},  # not done yet
+    "PODIUM_TUNE_SND"      :{"index":0x42,"pattern":0x5,"volume":32},
+    "BEST_PLAYER_TUNE_SND"      :{"index":0x3E,"pattern":0x2,"volume":32},
+    "GAME_OVER_TUNE_SND"      :{"index":0x3B,"pattern":7,"volume":32},
+    "START_EVENT_TUNE_SND"      :{"index":0x3D,"pattern":1,"volume":32},
+    "NAME_ENTRY_SND"      :{"index":0x40,"pattern":0x0,"volume":32},
+    "AFTER_NAME_ENTRY_SND"      :{"index":0x30,"pattern":0x3,"volume":32},
 })
     sound_dict["SOMMERSAULT_2_SND"] = {"index":0x1C,"same_as":"SOMMERSAULT_SND"}
     sound_dict["PING_66_SND"] = {"index":0x66,"same_as":"PING_65_SND"}
 
-    dummy_sounds = [#0x40, # start music
-    0x30,  # after start music
-#0x3D, # swim event start
-#0x3B, # game over music
-#0x2D,  # chariots
-0x42, # podium shit
+    dummy_sounds = [
+0x2D,  # chariots
 0x43,  # win tune
 0x44, # win tune
-#0x3E, # 2P end round tune
-#0x43, # win tune (followed by cheering)
+0x43, # win tune (followed by cheering)
 0x47, # another win tune
 0xFF, # ignore
     ]

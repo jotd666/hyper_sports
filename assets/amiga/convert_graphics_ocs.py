@@ -268,12 +268,21 @@ tiles_color_repdict = {
 (222,184,171):(200,184,171),  # merge pinkish and gray
 (0,255,251):(0,184,171),
 (184,184,171):(200,184,171),
-(255,0,0):(222,104,80)
+(255,0,0):(222,104,80)    # red => brownish
 
 }
 
 tile_palette = sorted({tiles_color_repdict.get(k,k) for k in tile_palette})
+
+# now that we degraded 16 -> 8 colors, the menu & osd colors are a bit dull, we need
+# flashy colors back. So let's apply the dict in reverse
+rev_repdict = {v:k for k,v in tiles_color_repdict.items()}
+
+# respect the order of the other palette, we're going to use the same bitmaps!
+osd_tile_palette = [rev_repdict.get(k,k) for k in tile_palette]
+
 bitplanelib.palette_dump(tile_palette,dump_dir / "ocs_tiles_palette.png",pformat=bitplanelib.PALETTE_FORMAT_PNG)
+bitplanelib.palette_dump(osd_tile_palette,dump_dir / "ocs_osd_tiles_palette.png",pformat=bitplanelib.PALETTE_FORMAT_PNG)
 
 
 # now rework images
@@ -343,7 +352,7 @@ sprites_color_repdict = {
 (222,151,80):(151,71,0),
 (0,255,0):(222,104,171),  # green => pink
 (255,0,0):(222,104,171),  # red => pink
-(0,255,251):(0,0,251),  # cyan => blue
+(0,0,251):(0,255,251),  # blue => cyan (we need cyan for water, otherwise it's clothes colors)
 (255,255,0):(255,222,171), # yellow => pink
 }
 
@@ -363,7 +372,6 @@ bitplanelib.palette_dump(sprite_palette,dump_dir / "hw_sprites_palette.png",pfor
 # sprite_set_list is now a 16x512 matrix of sprite tiles
 
 bob_palette_black = [(0,0,0)]+bob_palette[1:]
-full_palette = tile_palette+bob_palette_black+sprite_palette
 
 #full_palette_rgb4 = {(x>>4,y>>4,z>>4) for x,y,z in full_palette}
 #actually_used_colors_rgb4 = {(x>>4,y>>4,z>>4) for x,y,z in actually_used_colors}
@@ -371,7 +379,7 @@ full_palette = tile_palette+bob_palette_black+sprite_palette
 #print([(hex(x<<4),hex(y<<4),hex(z<<4)) for x,y,z in unused_colors])
 
 # pad just in case we don't have 16+16 colors (but we have)
-full_palette += [(0x10,0x20,0x30)] * (nb_colors-len(full_palette))
+#full_palette += [(0x10,0x20,0x30)] * (nb_colors-len(full_palette))
 
 
 
@@ -482,7 +490,14 @@ sprite_table = read_tileset(sprite_set_list,bob_palette,[True,False,True,False],
 palette_file = os.path.join(ocs_src_dir,"palette.68k")
 
 with open(palette_file,"w") as f:
-    bitplanelib.palette_dump(full_palette,f,bitplanelib.PALETTE_FORMAT_ASMGNU)
+    f.write("osd_tile_palette:\n")
+    bitplanelib.palette_dump(osd_tile_palette,f,bitplanelib.PALETTE_FORMAT_ASMGNU)
+    f.write("bob_palette:\n")
+    bitplanelib.palette_dump(bob_palette_black,f,bitplanelib.PALETTE_FORMAT_ASMGNU)
+    f.write("sprite_palette:\n")
+    bitplanelib.palette_dump(sprite_palette,f,bitplanelib.PALETTE_FORMAT_ASMGNU)
+    f.write("playfield_tile_palette:\n")
+    bitplanelib.palette_dump(tile_palette,f,bitplanelib.PALETTE_FORMAT_ASMGNU)
 
 gs_array = [0]*NB_SPRITES
 for i in group_sprite_pairs:

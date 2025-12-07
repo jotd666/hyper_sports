@@ -42,7 +42,7 @@ all: $(MAIN_AGA) $(MAIN_OCS) $(WHDLOADER_OCS) $(WHDLOADER_CHIP_OCS) $(WHDLOADER_
 
 
 clean:
-	del $(AGA_OBJS) "$(MAIN_AGA)" "$(MAIN_OCS)"
+	del $(AGA_OBJS) $(OCS_OBJS) "$(MAIN_AGA)" "$(MAIN_OCS)"
 	
 $(AGASRC)/graphics.68k: $(ASSETS)/convert_graphics_aga.py $(ASSETS)/shared.py
 	cmd /c $(ASSETS)\convert_graphics_aga.py

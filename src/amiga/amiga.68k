@@ -22,6 +22,9 @@ AFB_68010 = 0
 AFB_68020 = 1
 AFB_68030 = 2
 
+
+COPPER_NOP = 0x01FE
+
 	.ifdef	OCS_VERSION
 	
 ********************************
@@ -48,6 +51,10 @@ SPRITE_X_CORRECTION = 8
 SPRITE_Y_CORRECTION = 0
 HW_SPRITE_Y_CORRECTION = -4
 HW_SPRITE_X_CORRECTION = 14
+
+CS_IN_PLAY = 1
+CS_OTHER = 2
+
 	.else
 
 ********************************
@@ -85,9 +92,10 @@ NB_POSSIBLE_SPRITES = 0x200
 NB_POSSIBLE_TILES = 0x400
 
 NB_SCROLL_ROWS = 28
-NB_SCROLL_ROWS_PART_1 = NB_SCROLL_ROWS/2
-NB_SCROLL_ROWS_PART_2 = NB_SCROLL_ROWS/2+1
-NB_SCROLL_ROWS_PART_3 = 1
+NB_SCROLL_ROWS_PART_1 = NB_SCROLL_ROWS/4+2
+NB_SCROLL_ROWS_PART_2 = NB_SCROLL_ROWS/4-1
+NB_SCROLL_ROWS_PART_3 = NB_SCROLL_ROWS/2
+NB_SCROLL_ROWS_PART_4 = 1
 
 Y_MAX = 256
 
@@ -456,19 +464,39 @@ _user:
 	
 	.ifdef	OCS_VERSION
 	move.w	#TOTAL_NB_COLORS,d0
-	lea		palette,a0
+	lea		osd_tile_palette,a0
 	lea		tiles_colors,a1
 	bsr		load_palette
 	
 	move.w	#TOTAL_NB_COLORS,d0
-	lea		palette+16,a0
+	lea		bob_palette,a0
 	lea		bobs_colors,a1
 	bsr		load_palette
 	
 	move.w	#TOTAL_NB_COLORS*2,d0
-	lea		palette+32,a0
+	lea		sprite_palette,a0
 	lea		sprite_colors,a1
 	bsr		load_palette
+	
+	* playfield colors
+	
+	lea	first_color_change,a0
+	move.l	#scroll_rows_second_part,d0
+	jbsr	install_optional_copperlist
+	move.w	#TOTAL_NB_COLORS,d0
+	lea		playfield_tile_palette,a0
+	lea		first_color_change+12,a1
+	jbsr		load_palette
+	
+	* put panel colors again
+	lea	second_color_change,a0
+	move.l	#scroll_rows_third_part_end,d0
+	jbsr	install_optional_copperlist
+	move.w	#TOTAL_NB_COLORS,d0
+	lea		osd_tile_palette,a0
+	lea		second_color_change+12,a1
+	jbsr		load_palette
+
 	.else
 	* AGA: simple & brutal 32 color load
 	* sprite colors are the same as bob colors
@@ -554,6 +582,14 @@ _user:
 	.endif
 	jra		demo_game
 
+* < A0: copperlist start
+* < D0:	copperlist end
+install_optional_copperlist:
+	move.w	d0,(6,a0)
+	swap	d0
+	move.w	d0,(2,a0)
+	rts	
+	
 	.ifndef	RELEASE
 dump_and_quit:	
 	jbsr	osd_dump_logs
@@ -1067,12 +1103,49 @@ _vblank:
 	jbsr	process_speech_queue
 
 	.ifdef	OCS_VERSION
-	*jbsr	detect_current_screen
+	jbsr	detect_current_screen
 	.endif
 
 3:
     movem.l (a7)+,d0-d7/a0-a6
     rte
+	
+	.ifdef	OCS_VERSION
+	
+detect_current_screen:
+	* too difficult to know which screen is currently displayed
+	* the current screen allows to know which is the screen/color
+	* layout and change copperlist accordignly by reading at
+	* strategic locations for each screen
+	
+	GET_MEMORY_START_AND_DP
+	lea		(VIDEO_ADDRESS,a6),a6
+	
+	cmp.b	#0x30,(0x600,a6)
+	jne		0f
+	* in-play with bottom status bar
+	move.w	#CS_IN_PLAY,d0
+	jra		1f
+0:
+	move.w	#CS_OTHER,d0
+1:
+	cmp.w	current_screen,d0
+	jeq		1f
+	* context switch
+	cmp.w	#CS_IN_PLAY,d0
+	jne		2f
+	* in-play: enable palette changes
+	* so the playfield doesn't have that flashy colors
+	move.w	#COPPER_NOP,first_color_change+8
+	move.w	#COPPER_NOP,second_color_change+8
+	rts
+2:
+	* other screens (including record screen)
+	move.w	#copjmp2,first_color_change+8
+	move.w	#copjmp2,second_color_change+8
+1:
+	rts
+	.endif
 	
 	
 	.ifndef	RELEASE
@@ -3328,16 +3401,21 @@ ROW_SIZE = NB_TILE_PLANES*8+8
 	.set	offset,0
 scroll_row_copper_address_table:
 	.rept	NB_SCROLL_ROWS_PART_1
-	.long	scroll_rows_first_half+6+offset
+	.long	scroll_rows_first_part+6+offset
 	.set	offset,offset+ROW_SIZE
 	.endr
 	.set	offset,0
 	.rept	NB_SCROLL_ROWS_PART_2
-	.long	scroll_rows_second_half+6+offset
+	.long	scroll_rows_second_part+6+offset
 	.set	offset,offset+ROW_SIZE
 	.endr
 	.set	offset,0
 	.rept	NB_SCROLL_ROWS_PART_3
+	.long	scroll_rows_third_part+6+offset
+	.set	offset,offset+ROW_SIZE
+	.endr
+	.set	offset,0
+	.rept	NB_SCROLL_ROWS_PART_4
 	.long	scroll_rows_bottom+6+offset
 	.set	offset,offset+ROW_SIZE
 	.endr
@@ -3447,6 +3525,13 @@ log_buffer_end:
 	.endr
 	.endm
 	
+	.macro	DECL_OPTIONAL_COLORS	offset,nb_colors
+	.word	cop2lc,0	| jump high
+	.word	cop2lc+2,0	| jump high
+	.word	copjmp2,0
+	DECL_COLORS	\offset,\nb_colors
+	.endm
+	
 * game	
 	.macro	DECL_EVEN_BITPLANES	bpoff_start,nb_planes
 	.set	bpoff,\bpoff_start
@@ -3490,6 +3575,11 @@ debug_color:
 	dc.l	-2
 	
 
+first_color_change:
+	DECL_OPTIONAL_COLORS	TOTAL_NB_COLORS,TOTAL_NB_COLORS
+
+second_color_change:
+	DECL_OPTIONAL_COLORS	TOTAL_NB_COLORS,TOTAL_NB_COLORS
 
 	
 	* main copperlist
@@ -3515,6 +3605,7 @@ sprite_colors:
 	DECL_COLORS	16,16
 	.endif
 
+	
 game_sprites:
 	DECL_SPRITES
 game_sprites_end:
@@ -3525,16 +3616,26 @@ bobs_colors:
 	DECL_COLORS	0,TOTAL_NB_COLORS
 
 	.set	y_start,COPPER_Y_START
-scroll_rows_first_half:
+scroll_rows_first_part:
 	DEF_SCROLL_ROWS	NB_SCROLL_ROWS_PART_1
+	.ifdef	OCS_VERSION
+	* here the top status part just ended
+	* it's a good location to change background colors
+	* when game is playing
+*first_color_change:
+	.endif
+scroll_rows_second_part:
+	DEF_SCROLL_ROWS	NB_SCROLL_ROWS_PART_2
 	* not sure if it's really half screen but it doesn't matter
 intreq_block_game:
 	.word	 intreq,0x8014  | call copper interrupt in the middle of a frame, also flag so copper interrupt knows that we're going to call copper int
-
-scroll_rows_second_half:
-	DEF_SCROLL_ROWS	NB_SCROLL_ROWS_PART_2
-
-
+scroll_rows_third_part:
+	DEF_SCROLL_ROWS	NB_SCROLL_ROWS_PART_3
+	.ifdef	OCS_VERSION
+*second_color_change:
+scroll_rows_third_part_end:
+	.endif
+	
 	* purple 
 
 
@@ -3548,7 +3649,7 @@ scroll_rows_second_half:
 	.word	 intreq,0x8010
 	.set	y_start,0
 scroll_rows_bottom:
-	DEF_SCROLL_ROWS	NB_SCROLL_ROWS_PART_3
+	DEF_SCROLL_ROWS	NB_SCROLL_ROWS_PART_4
 	
 	.word	bplcon1
 	* set 0-scroll value value for both plane sets

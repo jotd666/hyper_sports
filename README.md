@@ -3,18 +3,18 @@ remake of Hyper Sports / Hyper Olympic'84 for amiga AGA & ECS
 
 credits:
 - jotd: transcode and amiga port, graphics & sound conversion
-- no9: music (not yet!)
-- PascalDe73: amiga icon
+- no9: music
+- PascalDe73,DanyPPC,Turrican3: amiga icons
 - Konami: original game
 
 features:
 
 - runs in PAL or NTSC, NTSC being possibly more reactive to button readings
 (no effect when playing from keyboard)
-- TODO: fixed record times at zero on free style (swimming) in the original. On the original game
+- fixed record times at zero on free style (swimming) in the original. On the original game
   you have to use DSW to reset records and get valid times (but they're super hard
   to beat... At least with this version you get your own times, even if they suck).
-- TODO: AGA and ECS versions available (ATM only AGA)
+- AGA, ECS and OCS versions available
 
 controls (joypad 1P/2P):
 
