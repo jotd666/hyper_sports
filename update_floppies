@@ -1,0 +1,36 @@
+.key nope
+set prefix hyper_sports
+
+; AGA
+
+set game ${prefix}_aga
+set drive "Hyper Sports AGA"
+copy $game.RNC "$drive:$game"
+protect "$drive:$game" RWED
+
+copy readme.md "$drive:"
+if exists "$drive:$game.high"
+   delete "$drive:$game.high"
+endif
+
+; ECS
+set game ${prefix}_ecs
+set drive "Hyper Sports ECS"
+copy $game.RNC "$drive:$game"
+protect "$drive:$game" RWED
+
+copy readme.md "$drive:"
+if exists "$drive:$game.high"
+   delete "$drive:$game.high"
+endif
+
+
+set arc ${prefix}_HD.lha
+if exists ${arc}
+    echo deleting ${arc}...
+    delete ${arc}
+endif
+
+; also archive with lha
+lha a -r $arc ${prefix}_HD
+

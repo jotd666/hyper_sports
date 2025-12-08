@@ -24,7 +24,10 @@ AFB_68030 = 2
 
 
 COPPER_NOP = 0x01FE
-
+	.ifdef	ECS_VERSION
+OCS_VERSION = 1
+	.endif
+	
 	.ifdef	OCS_VERSION
 	
 ********************************
@@ -55,6 +58,7 @@ HW_SPRITE_X_CORRECTION = 14
 CS_IN_PLAY = 1
 CS_OTHER = 2
 CS_RECORD = 3
+CS_IN_PLAY_WITH_BAR = 4
 
 	.else
 
@@ -95,9 +99,10 @@ NB_POSSIBLE_TILES = 0x400
 NB_SCROLL_ROWS = 28
 NB_SCROLL_ROWS_PART_1 = 9
 NB_SCROLL_ROWS_PART_2 = 6
-NB_SCROLL_ROWS_PART_3 = 10
-NB_SCROLL_ROWS_PART_4 = 4
-NB_SCROLL_ROWS_PART_5 = 1
+NB_SCROLL_ROWS_PART_3 = 9
+NB_SCROLL_ROWS_PART_4 = 1
+NB_SCROLL_ROWS_PART_5 = 4
+NB_SCROLL_ROWS_PART_6 = 1
 
 Y_MAX = 256
 
@@ -488,16 +493,25 @@ _user:
 	move.w	#TOTAL_NB_COLORS,d0
 	lea		playfield_tile_palette,a0
 	lea		first_color_change+12,a1
-	jbsr		load_palette
+	jbsr	load_palette
 	
-	* put panel colors again
+	* put panel colors again (just before power/speed bar)
 	lea	second_color_change,a0
 	move.l	#scroll_rows_third_part_end,d0
 	jbsr	install_optional_copperlist
 	move.w	#TOTAL_NB_COLORS,d0
 	lea		osd_tile_palette,a0
 	lea		second_color_change+12,a1
-	jbsr		load_palette
+	jbsr	load_palette
+
+	lea		third_color_change,a0	
+	* put panel colors again (no power/speed bar)
+	move.l	#scroll_rows_fourth_part_end,d0
+	jbsr	install_optional_copperlist
+	move.w	#TOTAL_NB_COLORS,d0
+	lea		osd_tile_palette,a0
+	lea		third_color_change+12,a1
+	jbsr	load_palette
 
 	.else
 	* AGA: simple & brutal 32 color load
@@ -1123,6 +1137,16 @@ detect_current_screen:
 	GET_MEMORY_START_AND_DP
 	lea		(VIDEO_ADDRESS,a6),a6
 
+	move.b	(0x5C0,a6),d0
+	cmp.b	#0x22,d0
+	jeq		2f
+	cmp.b	#0x5B,d0
+	jne		0f
+2:
+	* speed/power bar
+	move.w	#CS_IN_PLAY_WITH_BAR,d0
+	jra		1f
+0:
 	cmp.b	#0x79,(0x2D1,a6)
 	jne		0f
 	move.w	#CS_RECORD,d0
@@ -1137,21 +1161,53 @@ detect_current_screen:
 	move.w	#CS_OTHER,d0
 1:
 	cmp.w	current_screen,d0
-	jeq		1f
+	jne		1f
+	rts
+1:
 	* context switch
+	move.w	d0,current_screen
+	lea		context_table,a0
+	add.w	d0,d0
+	add.w	d0,d0
+	move.l	(a0,d0.w),a0
+	jmp		(a0)
+	
 	cmp.w	#CS_IN_PLAY,d0
 	jne		2f
+
+
+context_table:
+	.long	1b	
+	.long	set_in_play
+	.long	set_other
+	.long	set_record
+	.long	set_in_play_with_bar
+	
+set_record:
+	move.w	#copjmp2,first_color_change+8
+	move.w	#copjmp2,second_color_change+8
+	move.w	#COPPER_NOP,third_color_change+8
+	rts	
+set_in_play:
 	* in-play: enable palette changes
 	* so the playfield doesn't have that flashy colors
 	move.w	#COPPER_NOP,first_color_change+8
-	move.w	#COPPER_NOP,second_color_change+8
-	rts
-2:
-	* other screens (including record screen)
+	move.w	#copjmp2,second_color_change+8
+	move.w	#COPPER_NOP,third_color_change+8
+	rts	
+set_other:
+	* other screens (including record screen) palette doesn't change
 	move.w	#copjmp2,first_color_change+8
 	move.w	#copjmp2,second_color_change+8
-1:
+	move.w	#copjmp2,third_color_change+8
 	rts
+set_in_play_with_bar:
+	* in-play: enable palette changes but slightly higher (power bar)
+	move.w	#COPPER_NOP,first_color_change+8
+	move.w	#COPPER_NOP,second_color_change+8
+	move.w	#copjmp2,third_color_change+8
+	rts
+	
 	.endif
 	
 	
@@ -3428,6 +3484,11 @@ scroll_row_copper_address_table:
 	.endr
 	.set	offset,0
 	.rept	NB_SCROLL_ROWS_PART_5
+	.long	scroll_rows_fifth_part+6+offset
+	.set	offset,offset+ROW_SIZE
+	.endr
+	.set	offset,0
+	.rept	NB_SCROLL_ROWS_PART_6
 	.long	scroll_rows_bottom+6+offset
 	.set	offset,offset+ROW_SIZE
 	.endr
@@ -3632,7 +3693,6 @@ scroll_rows_first_part:
 	* when game is playing
 first_color_change:
 	DECL_OPTIONAL_COLORS	TOTAL_NB_COLORS,TOTAL_NB_COLORS
-
 	.endif
 scroll_rows_second_part:
 	DEF_SCROLL_ROWS	NB_SCROLL_ROWS_PART_2
@@ -3646,8 +3706,15 @@ second_color_change:
 	DECL_OPTIONAL_COLORS	TOTAL_NB_COLORS,TOTAL_NB_COLORS
 scroll_rows_third_part_end:
 	.endif
-scroll_rows_fourth_part	:
+scroll_rows_fourth_part:
 	DEF_SCROLL_ROWS	NB_SCROLL_ROWS_PART_4
+	.ifdef	OCS_VERSION
+third_color_change:
+	DECL_OPTIONAL_COLORS	TOTAL_NB_COLORS,TOTAL_NB_COLORS
+scroll_rows_fourth_part_end:
+	.endif
+scroll_rows_fifth_part:
+	DEF_SCROLL_ROWS	NB_SCROLL_ROWS_PART_5
 
 	* purple 
 
@@ -3662,7 +3729,7 @@ scroll_rows_fourth_part	:
 	.word	 intreq,0x8010
 	.set	y_start,0
 scroll_rows_bottom:
-	DEF_SCROLL_ROWS	NB_SCROLL_ROWS_PART_5
+	DEF_SCROLL_ROWS	NB_SCROLL_ROWS_PART_6
 	
 	.word	bplcon1
 	* set 0-scroll value value for both plane sets

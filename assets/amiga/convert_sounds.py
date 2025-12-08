@@ -115,8 +115,11 @@ def convert():
 
     sound_dict.update({
     "RECORD_BROKEN_TUNE_SND"      :{"index":0x3C,"pattern":0x6,"volume":32},
-    "CHARIOTS_TUNE_SND"      :{"index":0x2D,"pattern":0x10,"volume":32},  # not done yet
+    "CHARIOTS_TUNE_SND"      :{"index":0x2D,"pattern":0xC,"volume":32},
     "PODIUM_TUNE_SND"      :{"index":0x42,"pattern":0x5,"volume":32},
+    "WIN_TUNE_SND"      :{"index":0x43,"pattern":0x8,"volume":32},
+    "WIN_TUNE2_SND"      :{"index":0x44,"pattern":0x8,"volume":32},
+    "WIN_TUNE3_SND"      :{"index":0x47,"pattern":0x8,"volume":32},
     "BEST_PLAYER_TUNE_SND"      :{"index":0x3E,"pattern":0x2,"volume":32},
     "GAME_OVER_TUNE_SND"      :{"index":0x3B,"pattern":7,"volume":32},
     "START_EVENT_TUNE_SND"      :{"index":0x3D,"pattern":1,"volume":32},
@@ -127,11 +130,7 @@ def convert():
     sound_dict["PING_66_SND"] = {"index":0x66,"same_as":"PING_65_SND"}
 
     dummy_sounds = [
-0x2D,  # chariots
-0x43,  # win tune
-0x44, # win tune
-0x43, # win tune (followed by cheering)
-0x47, # another win tune
+
 0xFF, # ignore
     ]
 

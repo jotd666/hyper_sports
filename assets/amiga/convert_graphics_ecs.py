@@ -346,13 +346,14 @@ print(f"Used HW sprite colors: {len(sprite_palette)}")
 
 # reduce BOB palette to 7 colors! fortunately, HW sprites retain the original palette
 sprites_color_repdict = {
-(222,184,171):(222,104,171), # pink
-(184,184,171):(151,151,171), # gray
+(222,104,171):(222,184,171), # pink
+(184,184,171):(200,184,171), # gray200,184,171
+(151,151,171):(200,184,171), # gray
 (104,71,0):(151,71,0),
 (222,151,80):(151,71,0),
-(0,255,0):(222,104,171),  # green => pink
-(255,0,0):(222,104,171),  # red => pink
-(0,0,251):(0,255,251),  # blue => cyan (we need cyan for water, otherwise it's clothes colors)
+(0,255,0):(222,184,171),  # green => pink
+(255,0,0):(222,184,171),  # red => pink
+(0,255,251):(0,0,251),  # cyan => blue to match shorts & eyes when not sprites
 (255,255,0):(255,222,171), # yellow => pink
 }
 

@@ -1,35 +1,36 @@
-import subprocess,os,glob,shutil
+import subprocess,os,glob,shutil,pathlib
 
-progdir = os.path.abspath(os.path.join(os.path.dirname(__file__),os.pardir))
+progdir = pathlib.Path(os.path.abspath(os.path.join(os.path.dirname(__file__),os.pardir)))
 
 gamename = "hyper_sports"
 # JOTD path for cranker, adapt to whatever your path is :)
 os.environ["PATH"] += os.pathsep+r"K:\progs\cli"
 
-cmd_prefix = ["make","-f",os.path.join(progdir,"makefile.am")]
+cmd_prefix = ["make","-f",progdir/"makefile.am"]
 
-subprocess.check_call(cmd_prefix+["clean"],cwd=os.path.join(progdir,"src"))
+subprocess.check_call(cmd_prefix+["clean"],cwd=progdir / "src")
 
-subprocess.check_call(cmd_prefix+["RELEASE_BUILD=1"],cwd=os.path.join(progdir,"src"))
+subprocess.check_call(cmd_prefix+["RELEASE_BUILD=1"],cwd=progdir / "src")
 # create archive
 
-outdir = os.path.join(progdir,f"{gamename}_HD")
+outdir = progdir / f"{gamename}_HD"
 
 if os.path.exists(outdir):
-    for x in glob.glob(os.path.join(outdir,"*")):
-        os.remove(x)
+    for x in outdir.glob("*"):
+        x.unlink()
 else:
-    os.mkdir(outdir)
-for file in ["readme.md",f"{gamename}_AGA.slave",f"{gamename}_OCS.slave"]:
-    shutil.copy(os.path.join(progdir,file),outdir)
+    outdir.mkdir()
+for file in ["readme.md",f"{gamename}_AGA.slave",f"{gamename}_ECS.slave"]:
+    shutil.copy(progdir / file,outdir)
 
-#shutil.copy(os.path.join(progdir,"assets","amiga","Gyruss.info"),outdir)
+for file in (progdir / "assets" / "amiga").glob("*.info"):
+    shutil.copy(file,outdir)
 
 
 
-for suffix in ["ocs","aga"]:
+for suffix in ["ecs","aga"]:
     exename = f"{gamename}_{suffix}"
-    shutil.copy(os.path.join(progdir,exename),outdir)
-    subprocess.check_output(["cranker_windows.exe","-f",os.path.join(progdir,exename),"-o",os.path.join(progdir,f"{exename}.rnc")])
+    shutil.copy(progdir/exename,outdir)
+    subprocess.check_output(["cranker_windows.exe","-f",progdir/exename,"-o",progdir/f"{exename}.rnc"])
 
-subprocess.check_call(cmd_prefix+["clean"],cwd=os.path.join(progdir,"src"))
+subprocess.check_call(cmd_prefix+["clean"],cwd=progdir/"src")
