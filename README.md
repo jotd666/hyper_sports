@@ -14,7 +14,8 @@ features:
 - fixed record times at zero on free style (swimming) in the original. On the original game
   you have to use DSW to reset records and get valid times (but they're super hard
   to beat... At least with this version you get your own times, even if they suck).
-- AGA, ECS and OCS versions available
+- AGA, ECS versions available (ECS version needs whdload, 1MB chip and some fast, AGA
+  comes in bootable floppy or whdload.
 
 controls (joypad 1P/2P):
 

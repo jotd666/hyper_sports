@@ -21,7 +21,7 @@ def get_possible_hw_sprites():
 possible_hw_sprites = get_possible_hw_sprites()
 
 # group_sprite_pairs must be reworked to exclude sprites that will be HW sprites, as we cannot display
-# more that 16 pixel wide sprites in OCS that's fucking annoying but that's reality give me AGA every day
+# more that 16 pixel wide sprites in ECS that's fucking annoying but that's reality give me AGA every day
 
 group_sprite_pairs = {s for s in group_sprite_pairs if s not in possible_hw_sprites}
 
@@ -416,7 +416,7 @@ def read_tileset(img_set_list,palette,plane_orientation_flags,cache,is_bob):
 
                             # only 3 planes + mask => 4 planes
                             orig_wtile = wtile
-                            y_start,wtile = bitplanelib.autocrop_y(wtile)
+                            y_start,wtile = bitplanelib.autocrop_y(wtile,mask_color=magenta)
                             height = wtile.size[1]
                             width = wtile.size[0]//8 + 2
 
@@ -488,7 +488,7 @@ sprite_table = read_tileset(sprite_set_list,bob_palette,[True,False,True,False],
 # the background is magenta or whatever the color is)
 #full_palette[16] = (0,0,9)
 
-palette_file = os.path.join(ocs_src_dir,"palette.68k")
+palette_file = os.path.join(ecs_src_dir,"palette.68k")
 
 with open(palette_file,"w") as f:
     f.write("osd_tile_palette:\n")
@@ -504,12 +504,12 @@ gs_array = [0]*NB_SPRITES
 for i in group_sprite_pairs:
     gs_array[i] = 1
     gs_array[i+1] = 0xFF
-with open(ocs_src_dir / "sprite_groups.68k","w") as f:
+with open(ecs_src_dir / "sprite_groups.68k","w") as f:
     f.write("* 1: do not display unless mirrored\n")
     bitplanelib.dump_asm_bytes(gs_array,f,mit_format=True)
 
 
-with open(ocs_src_dir / "graphics.68k","w") as f:
+with open(ecs_src_dir / "graphics.68k","w") as f:
     f.write("\t.global\tcharacter_table\n")
     f.write("\t.global\tbob_table\n")
     f.write("\t.global\thws_table\n")

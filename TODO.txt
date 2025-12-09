@@ -1,0 +1,23 @@
+- adjust command line: difficulty level, cheats, 50 FPS...
+- long horse: missing easter egg. Ship appeared at some point as it was ripped but
+  when??
+- ECS version: 
+  * make mirror/flip sprites eligible for HW sprites (else colors look wrong, specially player 2)
+  * nice to have:
+    => skeet shooting replace one blue from sky by unused color on that stage
+	   and set different palette
+	=> same for free style with water tile
+- free style record doesn't work (stays at 0)
+- OCS/ECS: cyan sprite color => blueish else water color is not good
+- ECS version floppy not working on 68000 1MB chip
+	
+log sounds: bpset 45dd,,{print A;g}
+sim sound on credit: bpset 45dd,,{A=$12;g}, or just sound test
+perfect archery: bpset 9eca,,{A=$A;g}
+
+3A: credit
+40: start music
+3C: qualified music
+3D: swim event start
+3B: game over music
+2D: chariots

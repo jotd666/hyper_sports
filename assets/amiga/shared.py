@@ -6,7 +6,7 @@ this_dir = pathlib.Path(__file__).absolute().parent
 data_dir = this_dir / ".." / ".."
 src_dir = this_dir / ".." / ".." / "src" / "amiga"
 aga_src_dir = src_dir / "aga"
-ocs_src_dir = src_dir / "ocs"
+ecs_src_dir = src_dir / "ecs"
 
 #aga_src_dir.mkdir(exist_ok=True)
 #ocs_src_dir.mkdir(exist_ok=True)
