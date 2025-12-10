@@ -327,6 +327,7 @@ _user:
 	lea	(_tag,pc),a0
 	jsr	(resload_Control,a2)
 	
+
     bra		.no_forbid
 .standard:
 	
@@ -523,6 +524,7 @@ _user:
 	
 	.endif
 	
+	
 	.ifne	OPT_ENABLE_LOGGING
 	* protection for end of cpu log buffer
 	lea		log_buffer_end,a0
@@ -596,6 +598,9 @@ _user:
 	move.l	#0x4AFC4EF9,(a0)+
 	move.l	(a7)+,(a0)+
 	.endif
+	
+
+	
 	jra		demo_game
 
 * < A0: copperlist start
@@ -866,7 +871,7 @@ alloc_sprite:
 demo_game:
 		move		#0x4000,_custom+intena						| disable interrupts
 		move		#0x7FFF,_custom+intreq						| ack all interrupts
-		bsr			platform_init					| amiga-specific init
+		jbsr			platform_init					| amiga-specific init
 		
 0:	
 	.ifndef	RELEASE
