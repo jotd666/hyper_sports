@@ -174,9 +174,6 @@ get_address:
 	.macro PUSH_SR
 	move.w	ccr,-(sp)
 	.endm
-	.macro POP_SR
-	move.w	(sp)+,ccr
-	.endm
 
 
 	.macro	MOVE_W_TO_REG	src,dest
@@ -222,9 +219,6 @@ get_address:
 	.macro PUSH_SR
 	move.w	sr,-(sp)
 	.endm
-	.macro POP_SR
-	move.w	(sp)+,sr
-	.endm
 
 	.macro	MOVE_W_TO_REG	src,dest
 	ror.w	#8,\dest
@@ -267,6 +261,11 @@ get_address:
 	.endm
 
 	.endif
+
+	.macro POP_SR
+	move.w	(sp)+,ccr
+	.endm
+
 	
 	.macro	JSR_A_INDEXED	reg
 	JXX_A_INDEXED	jsr,\reg
