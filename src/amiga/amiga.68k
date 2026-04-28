@@ -3605,7 +3605,7 @@ log_buffer_end:
 	
 	.macro	DECL_OPTIONAL_COLORS	offset,nb_colors
 	.word	cop2lc,0	| jump high
-	.word	cop2lc+2,0	| jump high
+	.word	cop2lc+2,0	| jump low
 	.word	copjmp2,0
 	DECL_COLORS	\offset,\nb_colors
 	.endm
