@@ -48,6 +48,14 @@ $(AMIGA_SHELL): shell.o
 clean:
 	del $(AGA_OBJS) $(ECS_OBJS) "$(MAIN_AGA)" "$(MAIN_ECS)"
 	
+$(AGASRC)/graphics.68k: $(ASSETS)/convert_graphics_aga.py
+	cmd /c $(ASSETS)\convert_graphics_aga.py
+$(AGASRC)/palette.68k: $(ASSETS)/convert_graphics_aga.py
+	cmd /c $(ASSETS)\convert_graphics_aga.py
+$(ECSSRC)/graphics.68k: $(ASSETS)/convert_graphics_ecs.py
+	cmd /c $(ASSETS)\convert_graphics_ecs.py
+$(ECSSRC)/palette.68k: $(ASSETS)/convert_graphics_ecs.py
+	cmd /c $(ASSETS)\convert_graphics_ecs.py
 shell.o: $(AMIGASRC)/shell.68k
 	$(ASM_000) -I$(AMIGASRC) -I$(AMIGASRC)/mit_includes $(AMIGASRC)/shell.68k -o shell.o
 
@@ -56,7 +64,7 @@ $(AGASRC)/graphics.68k: $(ASSETS)/convert_graphics_aga.py $(ASSETS)/shared.py
 $(ECSSRC)/graphics.68k: $(ASSETS)/convert_graphics_ecs.py $(ASSETS)/shared.py
 	cmd /c $(ASSETS)\convert_graphics_ecs.py
 
-$(AGASRC)/sounds.68k: $(ASSETS)/convert_sounds.py 
+$(AMIGASRC)/sound_entries.68k: $(ASSETS)/convert_sounds.py 
 	cmd /c $(ASSETS)\convert_sounds.py
 	del sound_entries.o sounds.o
 	
